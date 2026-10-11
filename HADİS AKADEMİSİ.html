@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hadis Akademisi - Ultra Sürüm</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen p-3 sm:p-6 md:p-8 pb-24">
+
+  <div class="max-w-6xl mx-auto space-y-8">
+    
+    <!-- Header Navbar -->
+    <header class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-4">
+        <div class="p-4 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-200">
+          <i class="fa-solid fa-book-open text-2xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Hadis Akademisi</h1>
+            <span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">v3.0 Ultra</span>
+          </div>
+          <p class="text-xs font-semibold text-slate-500">10. Sınıf Hadis Ders Modülü & Hadis Kaşifi</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex bg-slate-100 p-1.5 rounded-2xl gap-1 w-full md:w-auto">
+        <button id="tab-btn-explore" onclick="switchMode('explore')" className="nav-btn flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 bg-white text-indigo-600 shadow-md">
+          <i class="fa-solid fa-bookmark"></i> Kütüphane
+        </button>
+        <button id="tab-btn-quiz" onclick="switchMode('quiz')" className="nav-btn flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-award text-amber-500"></i> Soru & Test (25)
+        </button>
+        <button id="tab-btn-video" onclick="switchMode('video')" className="nav-btn flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-video text-red-500"></i> Ders Notları
+        </button>
+      </div>
+    </header>
+
+    <!-- Offline AI Analyzer Top Banner -->
+    <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 rounded-[2.5rem] p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="relative z-10 space-y-4">
+        <div class="flex items-center gap-2 text-indigo-300 text-xs font-black uppercase tracking-widest">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Yapay Zeka Hadis Analizörü
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input 
+            type="text" 
+            id="analysis-input" 
+            placeholder="Örn: 'Temizlik imanın yarısıdır' veya Hz. Ali'nin sözünü yazın..." 
+            class="flex-1 bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-medium text-sm"
+          />
+          <button 
+            onclick="runOfflineAnalysis()" 
+            class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-8 py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 shrink-0 text-sm"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i> Analiz Et
+          </button>
+        </div>
+
+        <div id="analysis-result-box" class="hidden bg-white/10 border border-white/10 p-5 rounded-2xl backdrop-blur-md space-y-2 animate-fadeIn">
+          <div class="flex items-center gap-2">
+            <span id="analysis-type-badge" class="bg-indigo-500 text-white font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase">
+              TÜR
+            </span>
+            <span id="analysis-confidence" class="text-xs text-indigo-200 font-bold">Güven: %98</span>
+          </div>
+          <p id="analysis-explanation" class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed">
+            Açıklama...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODE 1: EXPLORE / LIBRARY -->
+    <div id="mode-explore" class="space-y-6 animate-fadeIn">
+      <!-- Category Selector Tabs -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button onclick="selectCategoryTab('tematik')" id="cat-btn-tematik" class="p-4 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border bg-rose-500 text-white border-transparent shadow-lg shadow-indigo-100 scale-[1.02]">
+          <i class="fa-solid fa-heart"></i>
+          <span>Tematik Konular ✨</span>
+        </button>
+        <button onclick="selectCategoryTab('kaynak')" id="cat-btn-kaynak" class="p-4 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Kaynağına Göre</span>
+        </button>
+        <button onclick="selectCategoryTab('ravi')" id="cat-btn-ravi" class="p-4 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+          <i class="fa-solid fa-users"></i>
+          <span>Ravi Sayısına Göre</span>
+        </button>
+        <button onclick="selectCategoryTab('sihhat')" id="cat-btn-sihhat" class="p-4 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Sıhhat Derecesine Göre</span>
+        </button>
+      </div>
+
+      <!-- Split Explorer View -->
+      <div class="grid lg:grid-cols-12 gap-6 items-start">
+        <!-- Left Column: Item List -->
+        <div id="items-list-container" class="lg:col-span-5 space-y-3">
+          <!-- Item buttons will be populated dynamically -->
+        </div>
+
+        <!-- Right Column: Detailed View -->
+        <div class="lg:col-span-7">
+          <div id="item-detail-card" class="bg-white rounded-[2.5rem] p-6 sm:p-8 shadow-xl border border-slate-200 space-y-6 animate-fadeIn">
+            
+            <!-- Item Header -->
+            <div class="flex justify-between items-start gap-4 border-b border-slate-100 pb-5">
+              <div>
+                <span id="detail-badge" class="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-rose-100 text-rose-700">
+                  Rozet
+                </span>
+                <h2 id="detail-title" class="text-2xl font-black text-slate-900 mt-2">Başlık</h2>
+              </div>
+              <button
+                id="speak-btn"
+                onclick="speakDefinition()"
+                class="p-3.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-2xl transition-all shrink-0 flex items-center justify-center gap-2"
+                title="Sesli Dinle"
+              >
+                <i id="speak-icon" class="fa-solid fa-volume-high text-lg"></i>
+                <span id="speak-label" class="text-xs font-bold hidden sm:inline">Dinle</span>
+              </button>
+            </div>
+
+            <!-- Definition -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info text-indigo-500"></i> Tanım
+              </h4>
+              <p id="detail-definition" class="text-slate-700 font-bold text-sm sm:text-base leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                Tanım metni...
+              </p>
+            </div>
+
+            <!-- Example -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-quote-left text-emerald-500"></i> Örnek Hadis / Rivayet
+              </h4>
+              <div id="detail-example" class="p-5 bg-emerald-50/60 border border-emerald-100 rounded-2xl text-emerald-950 font-bold text-sm leading-relaxed">
+                Örnek metni...
+              </div>
+            </div>
+
+            <!-- Classification breakdown if available -->
+            <div id="detail-classification-box" class="bg-amber-50 border border-amber-200/60 p-4 rounded-2xl space-y-1">
+              <h5 class="text-[11px] font-black text-amber-900 uppercase flex items-center gap-1.5">
+                <i class="fa-solid fa-layer-group text-amber-600"></i> Usul Analizi Etiketi
+              </h5>
+              <div id="detail-classification-tags" class="flex flex-wrap gap-2 text-xs font-bold text-amber-900">
+                <!-- Tags will be dynamically inserted -->
+              </div>
+            </div>
+
+            <!-- Video Note if available -->
+            <div id="detail-videonote-box" class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl text-xs font-bold text-indigo-900 flex items-start gap-2">
+              <i class="fa-solid fa-sparkles text-amber-500 shrink-0 mt-0.5"></i>
+              <div>
+                <span class="block text-[10px] uppercase font-black text-indigo-400">Ders Notu Vurgusu</span>
+                <span id="detail-videonote-text">Not metni...</span>
+              </div>
+            </div>
+
+            <!-- Offline AI Example Generation -->
+            <div class="pt-4 border-t border-slate-100 space-y-3">
+              <button
+                onclick="generateOfflineAiExample()"
+                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3.5 px-6 rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 text-xs"
+              >
+                <i class="fa-solid fa-rotate text-amber-400"></i>
+                <span id="detail-gen-btn-label">Yeni Akademik Örnek Üret</span>
+              </button>
+
+              <div id="ai-example-box" class="hidden p-5 bg-indigo-950 text-indigo-100 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed border border-indigo-800 animate-fadeIn space-y-2">
+                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest block">Üretilen Yeni Akademik Örnek</span>
+                <p id="ai-example-text" class="whitespace-pre-line"></p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODE 2: QUIZ / TEST (25 Questions) -->
+    <div id="mode-quiz" class="hidden max-w-2xl mx-auto space-y-6 animate-fadeIn">
+      <div class="bg-white rounded-[2.5rem] p-6 sm:p-8 shadow-xl border border-slate-200 space-y-6">
+        
+        <div id="quiz-active-container" class="space-y-6">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-award text-amber-500 text-xl"></i>
+              <span class="font-black text-slate-800 text-lg">Hadis Usulü Testi (25 Soru)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="quiz-level-badge" class="text-[10px] font-black px-2.5 py-1 rounded-full uppercase bg-emerald-100 text-emerald-800">
+                Kolay
+              </span>
+              <div id="quiz-progress-counter" class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-black">
+                1 / 25
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div id="quiz-progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 4%;"></div>
+          </div>
+
+          <!-- Question text -->
+          <h3 id="quiz-question-text" class="text-lg sm:text-xl font-black text-slate-900 leading-snug">
+            Soru metni...
+          </h3>
+
+          <!-- Options -->
+          <div id="quiz-options-container" class="space-y-3">
+            <!-- Options dynamically rendered -->
+          </div>
+
+          <!-- Explanation & Next -->
+          <div id="quiz-explanation-box" class="hidden p-4 bg-indigo-50 border border-indigo-100 rounded-2xl space-y-3 animate-fadeIn">
+            <p id="quiz-explanation-text" class="text-xs text-indigo-900 font-bold leading-relaxed">
+              💡 <b>Açıklama:</b> ...
+            </p>
+            <button 
+              onclick="nextQuizQuestion()"
+              class="w-full bg-indigo-600 text-white font-black py-3 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 text-xs"
+            >
+              <span id="quiz-next-btn-text">Sonraki Soru</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Test Finished Screen -->
+        <div id="quiz-finished-container" class="hidden text-center py-8 space-y-6 animate-fadeIn">
+          <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto shadow-inner text-3xl">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <h3 class="text-2xl font-black text-slate-900">Tebrikler! Testi Tamamladınız 🎉</h3>
+            <p class="text-xs text-slate-500 font-semibold mt-1">25 Soruluk Hadis Usulü Test Sonucunuz:</p>
+          </div>
+
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 max-w-sm mx-auto space-y-2">
+            <div class="text-4xl font-black text-indigo-600">
+              <span id="final-score">0</span> <span class="text-lg text-slate-400 font-bold">/ 25</span>
+            </div>
+            <p id="final-percentage" class="text-xs font-bold text-slate-600">
+              Başarı Oranı: %0
+            </p>
+          </div>
+
+          <button 
+            onclick="restartQuiz()"
+            class="bg-indigo-600 text-white font-black px-8 py-3.5 rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 inline-flex items-center gap-2 text-sm"
+          >
+            <i class="fa-solid fa-rotate-left"></i> Testi Tekrar Çöz
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODE 3: VIDEO & DERS NOTLARI DETAYLI REHBERİ -->
+    <div id="mode-video" class="hidden bg-white rounded-[2.5rem] p-6 sm:p-10 shadow-xl border border-slate-200 space-y-8 animate-fadeIn">
+      
+      <!-- Ders Başlığı -->
+      <div class="flex items-center gap-4 border-b border-slate-100 pb-6">
+        <div class="p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100 shrink-0">
+          <i class="fa-solid fa-video text-2xl"></i>
+        </div>
+        <div>
+          <h3 class="text-2xl font-black text-slate-900">10. Sınıf 3. Ünite: Hadis Çeşitleri Detaylı Ders Notları</h3>
+          <p class="text-xs font-bold text-slate-500 mt-1">Hakikati Koruma Macerası & Filtreleme Sistemi</p>
+        </div>
+      </div>
+
+      <!-- Giriş Notu -->
+      <div class="bg-indigo-50/80 p-6 rounded-3xl border border-indigo-100 space-y-2">
+        <h4 className="font-black text-indigo-900 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-sparkles text-amber-500"></i> Hakikati Sahteden Ayırma Yolculuğu
+        </h4>
+        <p class="text-xs text-indigo-950 font-medium leading-relaxed">
+          Peygamberimizin vefatından sonra söz ve sünnetlerinin unutulma riskine, zamanın yıpratıcı etkisine ve kasıtlı uydurulan sözlere karşı İslam alimleri dünya tarihinde eşi benzeri olmayan <b>dahiyane bir filtreleme sistemi</b> geliştirmişlerdir. Bu sistem 3 ana temel kriter üzerinden işler:
+        </p>
+      </div>
+
+      <!-- BÖLÜM 1: KAYNAĞINA GÖRE HADİSLER -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-2 text-blue-600 border-b border-blue-100 pb-2">
+          <i class="fa-solid fa-layer-group"></i>
+          <h4 class="font-black text-lg text-slate-800">1. Kaynağına Göre Hadis Çeşitleri (Söz Kimden Geliyor?)</h4>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-4">
+          
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-blue-700 text-sm">Kudsî (Rabbanî) Hadis</span>
+              <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded-full">İlahi Manalı</span>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              <b>Tanım:</b> Manası Allah Teâlâ’ya, lafzı Peygamberimize (s.a.v) ait olan rivayetlerdir.<br/>
+              <b>Püf Nokta:</b> Kur'an ayetlerinden farkı; lafzının vahiy olmaması ve namazda ibadet amacıyla okunmamasıdır.<br/>
+              <b>Başlama Kalıbı:</b> <i>"Kâle Resûlullâhi fîmâ yerveyhi an Rabbihî..."</i>
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-blue-700 text-sm">Merfû Hadis</span>
+              <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded-full">Peygamber Sözü</span>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              <b>Tanım:</b> Doğrudan Hz. Peygamber’e (s.a.v) yükseltilen söz, fiil, takrir ve sıfatlardır.<br/>
+              <b>Etimoloji:</b> Arapça <i>"Rafe"</i> (yükseltmek) kökünden gelir.<br/>
+              <b>Hükmen Merfû:</b> Sahabenin kendi aklıyla bilemeyeceği (gayb, ahiret, ibadet miktarları) konulardaki sözleri de hükmen merfû kabul edilir.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-blue-700 text-sm">Mevkûf Hadis</span>
+              <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded-full">Sahabe Sözü</span>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              <b>Tanım:</b> Senedi sahabe üzerinde durdurulmuş (durmuş), sahabeye ait söz ve davranışlardır.<br/>
+              <b>Önemli Detay:</b> Sahabe Peygamberimizin terbiyesinden geçtiği için onların söz ve davranışları sünneti anlamada temel kaynaktır.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-blue-700 text-sm">Maktû Hadis</span>
+              <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded-full">Tabiûn Sözü</span>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              <b>Tanım:</b> Tabiûn nesline (sahabeyi gören hikmet sahibi alimlere) ait söz ve fetvalardır.<br/>
+              <b>Anlamı:</b> Kesilmiş demektir; senedi Peygamberimize ulaşmaz fakat ilk dönem ilim birikimini yansıtır.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BÖLÜM 2: RAVİ SAYISINA GÖRE HADİSLER -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-2 text-purple-600 border-b border-purple-100 pb-2">
+          <i class="fa-solid fa-users"></i>
+          <h4 class="font-black text-lg text-slate-800">2. Ravi Sayısına Göre Hadisler (Kaç Kişi Aktarıyor?)</h4>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          
+          <div class="bg-purple-50/50 p-5 rounded-2xl border border-purple-100 space-y-2">
+            <span class="font-black text-purple-800 text-sm block">Mütevatir Hadis (Kesin Bilgi)</span>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              Yalan üzere birleşmesi aklen imkansız kalabalıkların her nesilde kesintisiz aktardığı rivayetlerdir. İnkarı dinen sakıncalı olan kesin ilim ifade eder (Örn: Namazın kılınışı, Kur'an'ın aktarımı).
+            </p>
+          </div>
+
+          <div class="bg-purple-50/50 p-5 rounded-2xl border border-purple-100 space-y-2">
+            <span class="font-black text-purple-800 text-sm block">Âhâd Hadisler (Yaygın / Haber-i Vahid)</span>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">
+              Mütevatir kalabalığına ulaşmayan rivayetlerdir. Hadislerin büyük çoğunluğu bu gruptadır. 3 ana dala ayrılır:
+            </p>
+            <ul class="text-[11px] text-slate-700 font-bold space-y-1 list-disc pl-4">
+              <li><b>Meşhur:</b> Başlangıçta az sayıda olsa da sonraki nesillerde en az 3 veya daha fazla kişi tarafından aktarılan.</li>
+              <li><b>Aziz:</b> Her tabakada ravi sayısı en az 2 olan rivayet.</li>
+              <li><b>Garib (Ferd):</b> Ravi zincirinin herhangi bir tabakasında tek bir ravinin kaldığı rivayet.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BÖLÜM 3: SIHHAT DERECESİNE GÖRE HADİSLER -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-2 text-emerald-600 border-b border-emerald-100 pb-2">
+          <i class="fa-solid fa-shield-halved"></i>
+          <h4 class="font-black text-lg text-slate-800">3. Sıhhat Derecesine Göre Hadisler (Ne Kadar Sağlam?)</h4>
+        </div>
+
+        <!-- Sahih Hadisin 5 Şartı -->
+        <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-200/60 space-y-3">
+          <h5 class="font-black text-emerald-900 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-award text-emerald-600"></i> Sahih Hadisin 5 Altın Kalite Şartı
+          </h5>
+          <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div class="bg-white p-3 rounded-xl border border-emerald-100">
+              <span class="block font-black text-xs text-emerald-800 mb-0.5">1. Adalet</span>
+              <span class="text-[11px] font-semibold text-slate-600">Ravi doğru sözlü, dürüst ve takva sahibi olmalı.</span>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-emerald-100">
+              <span class="block font-black text-xs text-emerald-800 mb-0.5">2. Zabt</span>
+              <span class="text-[11px] font-semibold text-slate-600">Ravinin ezber ve koruma hafızası mükemmel olmalı.</span>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-emerald-100">
+              <span class="block font-black text-xs text-emerald-800 mb-0.5">3. Muttasıl İsnat</span>
+              <span class="text-[11px] font-semibold text-slate-600">Senedin başında sonuna kadar kopukluk olmamalı.</span>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-emerald-100">
+              <span class="block font-black text-xs text-emerald-800 mb-0.5">4. Şaz Olmamak</span>
+              <span class="text-[11px] font-semibold text-slate-600">Daha güvenilir ravilere aykırı rivayet yapmamalı.</span>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-emerald-100 sm:col-span-2 md:col-span-2">
+              <span class="block font-black text-xs text-emerald-800 mb-0.5">5. Muallel Olmamak</span>
+              <span class="text-[11px] font-semibold text-slate-600">Sadece derin uzmanların fark edebileceği gizli kusur (illet) taşımamalı.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hasen, Zayıf, Mevzu Detayları -->
+        <div class="grid md:grid-cols-3 gap-4">
+          
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
+            <span class="font-black text-emerald-700 text-xs uppercase block">Hasen Hadis</span>
+            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">
+              Sahih hadisin tüm şartlarını taşır. Tek farkı ravisinin hafızasının (zabt) sahih derecesinde mükemmel olmayıp 'iyi/güvenilir' düzeyde kalmasıdır. Dinde delildir.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
+            <span class="font-black text-amber-700 text-xs uppercase block">Zayıf Hadis</span>
+            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">
+              Sahih veya Hasen şartlarından birini (kopuk senet, ravi unutkanlığı vb.) kaybettiği için sağlamlık testini geçemeyen rivayettir. Hüküm bina edilmez.
+            </p>
+          </div>
+
+          <div class="bg-rose-50 p-4 rounded-2xl border border-rose-200 space-y-1">
+            <span class="font-black text-rose-700 text-xs uppercase block">Mevzû (Uydurma) Sözler</span>
+            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">
+              <b>Teknik olarak hadis değildir!</b> Peygamberimiz adına kasıtlı uydurulmuş sahte sözlerdir (Deterjan Taklidi benzetmesi).
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Mevzu Hadis Uydurulma Nedenleri -->
+        <div class="bg-rose-50/60 p-5 rounded-2xl border border-rose-100 space-y-2">
+          <h5 class="font-black text-rose-900 text-xs flex items-center gap-1.5 uppercase tracking-wider">
+            <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> Mevzu Hadis Uydurulma Nedenleri
+          </h5>
+          <ul class="text-xs text-rose-950 font-semibold space-y-1 list-disc pl-5 leading-relaxed">
+            <li><b>Siyasî ve Mezhebî Taraftarlık:</b> Kendi grubunu veya liderini haklı çıkarmak.</li>
+            <li><b>İslam Düşmanlığı:</b> Dini içeriden zayıflatmak ve Müslümanların zihnini karıştırmak.</li>
+            <li><b>Kişisel Çıkar ve Yaranma:</b> Yöneticilere sevimli görünmek veya pazar yerinde mal satmak.</li>
+            <li><b>İyi Niyetli Yanılgı (İbadete Teşvik):</b> İnsanları ibadete yönlendirmek amacıyla sevap uydurmak (İyi niyetle de olsa haramdır ve büyük günahtır).</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-slate-400 text-xs pt-6 border-t border-slate-200 space-y-2">
+      <div class="flex items-center justify-center gap-2 font-black text-slate-600">
+        <i class="fa-solid fa-sparkles text-amber-500"></i>
+        <span>Hadis Akademisi v3.0 Ultra</span>
+      </div>
+      <p class="font-medium">© 2026 Hadis Akademisi - Tüm Hakları Saklıdır.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // DATA STRUCTURES
+    const CATEGORIES = {
+      tematik: {
+        title: "Tematik Konular ✨",
+        iconClass: "fa-solid fa-heart",
+        color: "bg-rose-500",
+        badgeColor: "bg-rose-100 text-rose-700",
+        items: [
+          {
+            id: "t-temizlik",
+            name: "Temizlik (Tahâret)",
+            definition: "Müslüman hayatının hem zahiri hem de batini arınma süreci.",
+            example: "'Temizlik imanın yarısıdır.' (Müslim, Tahâret 1)",
+            badge: "Sosyal Hayat",
+            classification: { kaynak: "Merfû", sayi: "Âhâd (Meşhur)", sihhat: "Sahih" },
+            iconClass: "fa-solid fa-droplet text-blue-500 text-xl"
+          },
+          {
+            id: "t-ahlak",
+            name: "Güzel Ahlak & İhlas",
+            definition: "İnsanın karakterini kemale erdiren nebevi prensipler.",
+            example: "'Müminlerin iman bakımından en mükemmeli, ahlakı en güzel olanıdır.' (Ebu Davud, Sünne 15)",
+            badge: "Karakter",
+            classification: { kaynak: "Merfû", sayi: "Âhâd", sihhat: "Sahih" },
+            iconClass: "fa-solid fa-heart text-rose-500 text-xl"
+          },
+          {
+            id: "t-komsu",
+            name: "Sosyal Hayat (Komşuluk)",
+            definition: "Toplumsal barışın ve insan haklarının temeli.",
+            example: "'Cebrail bana komşuyu o kadar tavsiye etti ki, onu mirasçı kılacağını zannettim.' (Buhari, Edeb 28)",
+            badge: "Toplum",
+            classification: { kaynak: "Merfû", sayi: "Meşhur", sihhat: "Sahih" },
+            iconClass: "fa-solid fa-comments text-emerald-500 text-xl"
+          },
+          {
+            id: "t-ilim",
+            name: "İlim ve Hikmet",
+            definition: "Karanlığı aydınlatan ve medeniyet inşasını sağlayan bilgi.",
+            example: "'İlim öğrenmek için yola çıkan kimse, dönünceye kadar Allah yolundadır.' (Tirmizi, İlim 2)",
+            badge: "Eğitim",
+            classification: { kaynak: "Merfû", sayi: "Âhâd", sihhat: "Hasen" },
+            iconClass: "fa-solid fa-graduation-cap text-indigo-500 text-xl"
+          },
+          {
+            id: "t-sabir",
+            name: "Sabır ve Direnç",
+            definition: "Zorluklar ve musibetler karşısında ruhi metanet.",
+            example: "'Sabır, ilk darbe anında gösterilen metanettir.' (Buhari, Cenaiz 32)",
+            badge: "Kişisel Gelişim",
+            classification: { kaynak: "Merfû", sayi: "Âhâd", sihhat: "Sahih" },
+            iconClass: "fa-solid fa-scale-balanced text-amber-500 text-xl"
+          },
+          {
+            id: "t-adalet",
+            name: "Adalet ve Dürüstlük",
+            definition: "Toplumsal düzenin ve güven ortamının direği.",
+            example: "'Doğruluk iyiliğe, iyilik ise cennete götürür.' (Buhari, Edeb 69)",
+            badge: "Ahlak & Hukuk",
+            classification: { kaynak: "Merfû", sayi: "Âhâd", sihhat: "Sahih" },
+            iconClass: "fa-solid fa-shield-check text-teal-500 text-xl"
+          },
+          {
+            id: "t-aile",
+            name: "Aile ve Anne-Baba Hakkı",
+            definition: "Toplumun en küçük hücresi ve merhamet ocağı.",
+            example: "'Cennet annelerin ayakları altındadır.' (Nesai, Cihad 6)",
+            badge: "Aile Hayatı",
+            classification: { kaynak: "Merfû", sayi: "Âhâd", sihhat: "Hasen/Sahih" },
+            iconClass: "fa-solid fa-users text-purple-500 text-xl"
+          }
+        ]
+      },
+      kaynak: {
+        title: "Kaynağına Göre",
+        iconClass: "fa-solid fa-layer-group",
+        color: "bg-blue-500",
+        badgeColor: "bg-blue-100 text-blue-700",
+        items: [
+          {
+            id: "kudsi",
+            name: "Kudsî Hadis",
+            definition: "Manası Allah'tan, lafzı Peygamberimizden olan rivayetler.",
+            example: "Allah Teâlâ buyurdu: 'Ey kullarım! Ben zulmü kendime haram kıldım, onu sizin aranızda da haram kıldım.'",
+            badge: "İlahî Mesaj",
+            videoNote: "Kur'an ayeti gibi namazda okunmaz, lafzı vahiy değildir."
+          },
+          {
+            id: "merfu",
+            name: "Merfû Hadis",
+            definition: "Doğrudan Peygamberimize (s.a.v) ulaştırılan söz, fiil ve takrirler.",
+            example: "'İman etmedikçe cennete giremezsiniz...'",
+            badge: "Nebevî Söz",
+            videoNote: "Arapça 'Rafe' (yükseltmek) kökünden gelir."
+          },
+          {
+            id: "mevkuf",
+            name: "Mevkûf Hadis",
+            definition: "Senedi sahabe üzerinde durmuş (duraklatılmış) rivayetler.",
+            example: "Hz. Ali: 'İnsanlara anlayacakları şekilde konuşun.'",
+            badge: "Sahabe Sözü",
+            videoNote: "Sahabenin ilmi birikimini ve nebevi terbiyesini yansıtır."
+          },
+          {
+            id: "maktu",
+            name: "Maktû Hadis",
+            definition: "Tabiûn nesline ait olan söz, fetva ve davranışlar.",
+            example: "Hasan el-Basri: 'Bu ilim dindir, dininizi kimden aldığınıza dikkat edin.'",
+            badge: "Tabiûn Sözü",
+            videoNote: "Senedi Peygambere ulaşmaz, Tabiûn hikmetidir."
+          }
+        ]
+      },
+      ravi: {
+        title: "Ravi Sayısına Göre",
+        iconClass: "fa-solid fa-users",
+        color: "bg-purple-500",
+        badgeColor: "bg-purple-100 text-purple-700",
+        items: [
+          {
+            id: "mutevatir",
+            name: "Mütevatir Hadis",
+            definition: "Yalan üzere birleşmesi imkansız kalabalıkların her nesilde aktardığı kesin bilgi.",
+            example: "'Kim bilerek benim ağzımdan yalan uydurursa, cehennemdeki yerine hazırlansın.'",
+            badge: "Kesin Bilgi",
+            videoNote: "İnkarı dini açıdan sakıncalıdır (Lafzi mütevatir)."
+          },
+          {
+            id: "meshur",
+            name: "Meşhur Hadis",
+            definition: "Başlangıçta tek veya az sayıda olsa da sonraki nesillerde 3 veya daha fazla kişi tarafından aktarılan hadis.",
+            example: "'Müslüman, diğer Müslümanların elinden ve dilinden emin olduğu kimsedir.'",
+            badge: "Yaygın Ahad",
+            videoNote: "Ahad grubunun en güçlü dalıdır."
+          },
+          {
+            id: "aziz",
+            name: "Aziz Hadis",
+            definition: "Her nesilde veya tabakada ravi sayısı en az 2 olan hadis.",
+            example: "'Sizden biriniz beni babasından ve çocuğundan daha çok sevmedikçe tam iman etmiş olmaz.'",
+            badge: "İki Kollu",
+            videoNote: "En az iki koldan desteklenir."
+          },
+          {
+            id: "garib",
+            name: "Garib Hadis",
+            definition: "Ravi zincirinin herhangi bir yerinde tek bir ravinin kaldığı rivayet.",
+            example: "'Ameller niyetlere göredir' (Başlangıçta sadece Hz. Ömer rivayet etmiştir).",
+            badge: "Tekli Rivayet",
+            videoNote: "Ravi sayısı tektir ancak sahih olabilir."
+          }
+        ]
+      },
+      sihhat: {
+        title: "Sıhhat Derecesine Göre",
+        iconClass: "fa-solid fa-shield-halved",
+        color: "bg-emerald-500",
+        badgeColor: "bg-emerald-100 text-emerald-700",
+        items: [
+          {
+            id: "sahih",
+            name: "Sahih Hadis",
+            definition: "Adalet, zabt ve muttasıl isnat şartlarını tam taşıyan kusursuz hadisler.",
+            example: "Buhari ve Müslim'in ittifak ettiği (Müttefekun Aleyh) rivayetler.",
+            badge: "En Üst Seviye",
+            videoNote: "5 Altın Şart: Adalet, Zabt, Muttasıl İsnat, Şaz Olmamak, Muallel Olmamak."
+          },
+          {
+            id: "hasen",
+            name: "Hasen Hadis",
+            definition: "Sahih hadis şartlarını taşıyan fakat ravisinin hafıza (zabt) yönü biraz zayıf olan rivayet.",
+            example: "Tirmizi'nin Sünen'inde sıkça yer verdiği güvenilir hüküm hadisleri.",
+            badge: "Makbul Güvenilir",
+            videoNote: "Dinde delil olarak kabul edilir."
+          },
+          {
+            id: "zayif",
+            name: "Zayıf Hadis",
+            definition: "Sahih veya hasen şartlarından birini veya birkaçını kaybetmiş rivayet.",
+            example: "Senedinde kopukluk olan veya ravisi unutkan olan rivayetler.",
+            badge: "İncelemeli",
+            videoNote: "Hüküm bina edilmez, amellerin faziletinde süzgeçle bakılır."
+          },
+          {
+            id: "mevzu",
+            name: "Mevzû (Uydurma)",
+            definition: "Teknik olarak hadis değildir! Peygamberimiz adına uydurulmuş yalan sözler.",
+            example: "Siyasi, mezhebi veya kişisel çıkar amacıyla uydurulan ifadeler.",
+            badge: "Uydurma Sahte",
+            videoNote: "Deterjan taklidi benzetmesini unutmayın!"
+          }
+        ]
+      }
+    };
+
+    const QUIZ_QUESTIONS = [
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "1. Doğrudan Hz. Peygamber'e (s.a.v) ulaştırılan söz, fiil ve takrirlere ne ad verilir?",
+        options: ["Mevkûf Hadis", "Merfû Hadis", "Maktû Hadis", "Mevzû Hadis"],
+        correct: 1,
+        explanation: "Merfû hadis, lafız veya mana olarak doğrudan Peygamberimize yükseltilen (izafe edilen) rivayetlerdir."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "2. Manası Allah Teâlâ'ya, lafzı Peygamberimize (s.a.v) ait olan Rabbani hadislere ne denir?",
+        options: ["Kudsî Hadis", "Merfû Hadis", "Mütevatir Hadis", "Hasen Hadis"],
+        correct: 0,
+        explanation: "Kudsî hadisler manası Allah'tan sadır olan, lafzı Peygamberimiz tarafından ifade edilen ilahi mesajlardır."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "3. Sahabeye ait olan söz, davranış ve takrirlere verilen isim hangisidir?",
+        options: ["Merfû", "Maktû", "Mevkûf", "Mevzû"],
+        correct: 2,
+        explanation: "Senedi sahabe üzerinde durduğu için bu tür rivayetlere 'Mevkûf' (duraklatılmış) denir."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "4. Tabiûn nesline ait olan söz, fetva ve uygulamaları ifade eden hadis çeşidi hangisidir?",
+        options: ["Maktû Hadis", "Mevkûf Hadis", "Kudsî Hadis", "Garib Hadis"],
+        correct: 0,
+        explanation: "Tabiûn neslinin (sahabeyi görenlerin) söz ve fetvalarına 'Maktû' (kesik) hadis adı verilir."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "5. Yalan üzere birleşmeleri aklen imkansız olan kalabalık bir topluluğun aktardığı kesin bilgi ifade eden hadis türü hangisidir?",
+        options: ["Âhâd Hadis", "Mütevatir Hadis", "Garib Hadis", "Zayıf Hadis"],
+        correct: 1,
+        explanation: "Mütevatir hadis, her nesilde yalan söylemesi imkansız kalabalıklarca aktarılan şüphesiz kesin bilgidir."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "6. Sahih veya Hasen hadisin şartlarını taşımayan, senedinde veya ravisinde kusur bulunan hadislere ne denir?",
+        options: ["Meşhur Hadis", "Sahih Hadis", "Zayıf Hadis", "Kudsî Hadis"],
+        correct: 2,
+        explanation: "Güvenilirlik ve hafıza şartlarını tam karşılayamayan veya senedinde kopukluk olan rivayetler 'Zayıf Hadis'tir."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "7. Teknik olarak hadis kabul edilmeyen, Peygamberimiz adına kasıtlı uydurulmuş yalan sözlere ne denir?",
+        options: ["Zayıf Hadis", "Mevzû (Uydurma)", "Garib Hadis", "Hasen Hadis"],
+        correct: 1,
+        explanation: "Mevzû ifadeler aslında hadis değildir; Peygamberimize atfedilen sahte yalan sözlerdir."
+      },
+      {
+        level: "Kolay",
+        levelColor: "bg-emerald-100 text-emerald-800",
+        question: "8. Adalet, zabt ve muttasıl isnat şartlarını tam olarak taşıyan en üst düzey sağlam hadislere ne verilir?",
+        options: ["Sahih Hadis", "Hasen Hadis", "Maktû Hadis", "Zayıf Hadis"],
+        correct: 0,
+        explanation: "Sahih hadis, 5 temel kalite kuralını eksiksiz taşıyan en sağlam ve kusursuz rivayettir."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "9. Sahih hadisin tüm şartlarını taşıyan fakat ravisinin hafıza (zabt) gücü sahih hadise göre biraz daha zayıf olan makbul tür hangisidir?",
+        options: ["Zayıf Hadis", "Hasen Hadis", "Mevzû Hadis", "Garib Hadis"],
+        correct: 1,
+        explanation: "Hasen hadis, ravisinin zabtındaki hafif zayıflık dışında sahih hadis şartlarını taşıyan ve dini hükümde delil olan hadistir."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "10. Ravi sayısı mütevatir seviyesine ulaşmayan, bir veya birkaç kişi tarafından aktarılan hadislerin genel adı nedir?",
+        options: ["Mütevatir Hadis", "Âhâd Hadis", "Kudsî Hadis", "Mektup Hadis"],
+        correct: 1,
+        explanation: "Mütevatir kalabalığına ulaşmayan rivayetlerin tamamı genel olarak 'Âhâd Hadis' başlığı altında toplalır."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "11. Başlangıçta az sayıda ravi ile aktarılsa da sonraki nesillerde her tabakada en az 3 veya daha fazla kişi tarafından aktarılan ahad hadis türü hangisidir?",
+        options: ["Meşhur Hadis", "Aziz Hadis", "Garib Hadis", "Mütevatir Hadis"],
+        correct: 0,
+        explanation: "Meşhur hadis, başlangıçta 1-2 kişi olsa da sonraki tabakalarda en az 3 ravi tarafından aktarılarak yaygınlaşan rivayettir."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "12. Herhangi bir tabakada veya her nesilde ravi sayısı en az 2 olan ahad hadis çeşidi aşağıdakilerden hangisidir?",
+        options: ["Meşhur Hadis", "Aziz Hadis", "Garib Hadis", "Maktu Hadis"],
+        correct: 1,
+        explanation: "Aziz hadis, ravi sayısının hiçbir tabakada 2'nin altına düşmediği rivayetlerdir."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "13. Ravi zincirinin herhangi bir tabakasında tek bir ravinin kaldığı veya yalnız kaldığı rivayete ne ad verilir?",
+        options: ["Aziz Hadis", "Meşhur Hadis", "Garib (Ferd) Hadis", "Mütevatir Hadis"],
+        correct: 2,
+        explanation: "Senedin herhangi bir halkasında tek bir ravi tarafından aktarılan hadis 'Garib' (Ferd) olarak adlandırılır."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "14. Ravinin doğru sözlü, dürüst, ahlaklı ve dinî emirleri yaşamada hassas olması hadis usulünde hangi terimle ifade edilir?",
+        options: ["Zabt", "Adalet", "Muttasıl", "İsnat"],
+        correct: 1,
+        explanation: "Adalet; ravinin Müslüman, akil, baliğ, takva sahibi ve dürüst olmasıdır."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "15. Ravinin ezber gücünün, işittiği hadisi hiç değiştirmeden ve unutmadan koruyup aktarma kabiliyetinin tam olmasına ne denir?",
+        options: ["Adalet", "Zabt", "Şaz", "Muallel"],
+        correct: 1,
+        explanation: "Zabt; ravinin hafıza gücünü veya yazdığı nüshayı kusursuz koruma yeteneğini ifade eder."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "16. Senedinde baştan sona kadar hiçbir ravi kopukluğu ve atlama olmayan kesintisiz ravi zincirine ne denir?",
+        options: ["Muttasıl İsnat", "Maktu İsnat", "Mevkuf İsnat", "Murdar İsnat"],
+        correct: 0,
+        explanation: "Muttasıl isnat, her ravinin hadisi bizzat kendi hocasından kesintisiz olarak aldığını gösteren sened şartıdır."
+      },
+      {
+        level: "Orta",
+        levelColor: "bg-blue-100 text-blue-800",
+        question: "17. 'Ameller niyetlere göredir' hadisi başlangıçta sadece Hz. Ömer (r.a) tarafından nakledildiği için ilk tabaka itibarıyla hangi tür hadistir?",
+        options: ["Mütevatir", "Garib (Ferd)", "Maktu", "Kudsi"],
+        correct: 1,
+        explanation: "Sahabe tabakasında sadece Hz. Ömer rivayet ettiği için başlangıçta Garib'dir, sonradan meşhur olmuştur."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "18. Güvenilir (sika) bir ravinin, kendisinden daha güvenilir veya daha kalabalık ravilerin rivayetine aykırı düşmemesi şartına ne denir?",
+        options: ["Muallel olmamak", "Şaz olmamak", "Zabt sahibi olmak", "Muttasıl olmak"],
+        correct: 1,
+        explanation: "Şaz olmamak; güvenilir ravinin daha güvenilir çoğunluğa ters düşen yalnız rivayet çıkarmamasıdır."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "19. Hadis senedinde veya metninde dışarıdan bakıldığında görünmeyen, ancak derin hadis uzmanlarınca fark edilebilen gizli kusura ne ad verilir?",
+        options: ["Şaz", "İllet (Muallel)", "Zabt", "Cerh"],
+        correct: 1,
+        explanation: "Muallel olmamak şartı, derin uzmanlık gerektiren gizli kusurlardan (illet) arınmış olmayı ifade eder."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "20. Sahabenin kendi içtihadı ve kişisel görüşüyle söyleyemeyeceği (gayb, ibadet miktarları vb.) konularda naklettiği mevkuf rivayetler ne kabul edilir?",
+        options: ["Maktu Hadis", "Hükmen Merfû Hadis", "Mevzu Hadis", "Zayıf Hadis"],
+        correct: 1,
+        explanation: "Sahabenin kendi aklıyla bilemeyeceği konulardaki sözleri Peygamberimizden duyduğu kabul edildiği için 'Hükmen Merfû' sayılır."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "21. Ders videosunda uydurma hadisler için yapılan sahte ürün benzetmesi aşağıdakilerden hangisidir?",
+        options: ["Korsan Kitap", "Deterjan Taklidi", "Çakma Saat", "Sahte Para"],
+        correct: 1,
+        explanation: "Anlatıcı, piyasadaki kaliteli markaların ambalajını taklit eden 'Deterjan Taklidi' benzetmesini yapmıştır."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "22. Aşağıdakilerden hangisi tarihte insanların hadis uydurma (mevzu hadis çıkarma) sebeplerinden biri DEĞİLDİR?",
+        options: ["Siyasi ve mezhebi taraftarlık", "İslam düşmanlığı ve tahribat", "İnsanları iyi niyetle ibadete teşvik etme", "Hadislerin ezberlenmesini kolaylaştırma"],
+        correct: 3,
+        explanation: "Siyasi çıkar, İslam düşmanlığı ve hatta iyi niyetle ibadete teşvik uydurma sebebidir; ancak kolaylaştırmak için hadis uydurulmaz."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "23. Bir ravinin hayatında veya rivayetinde bir kez bile yalan söylediğinin tespit edilmesi o ravinin rivayetini hangi duruma düşürür?",
+        options: ["Sahihlikten çıkarır", "Hasen seviyesine yükseltir", "Mütevatir yapar", "Değiştirmez"],
+        correct: 0,
+        explanation: "Bir kez dahi yalanı tespit edilen ravinin 'Adalet' şartı zedeleneceğinden rivayeti sahih kabul edilmez."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "24. Kutsî hadislerin Kur'an ayetlerinden en temel farkı aşağıdakilerden hangisidir?",
+        options: ["Manasının Allah'a ait olmaması", "Namazda zammı sure olarak okunamaması ve lafzının Peygambere ait olması", "Sadece sahabeye söylenmiş olması", "Yazılı hale getirilmemiş olması"],
+        correct: 1,
+        explanation: "Kudsi hadislerin lafzı Peygamberimize ait olduğundan Kur'an gibi namazda okunmaz ve lafzen mucize sayılmaz."
+      },
+      {
+        level: "Zor",
+        levelColor: "bg-purple-100 text-purple-800",
+        question: "25. Hadis alimlerinin uydurma sözleri tespitte geliştirdiği 'Ravilerin doğum-ölüm tarihlerini ve hocalarıyla buluşup buluşmadığını inceleme' ilmine ne ad verilir?",
+        options: ["Rical (Tarihu'r-Ruvât) İlmi", "Fıkıh İlmi", "Tefsir İlmi", "Siyer İlmi"],
+        correct: 0,
+        explanation: "Rical ilmi (Raviler Tarihi), ravilerin kronolojisini ve sened kopukluklarını tespit etmek için geliştirilmiş dahiyane bir sistemdir."
+      }
+    ];
+
+    let activeMode = 'explore';
+    let activeCategoryKey = 'tematik';
+    let selectedItem = CATEGORIES.tematik.items[0];
+
+    // Quiz State
+    let currentQuizIndex = 0;
+    let selectedOption = null;
+    let quizScore = 0;
+
+    // INITIALIZATION
+    window.onload = function() {
+      selectCategoryTab('tematik');
+      renderQuizQuestion();
+    };
+
+    // MODE SWITCHING
+    function switchMode(mode) {
+      activeMode = mode;
+      
+      // Toggle mode tabs
+      ['explore', 'quiz', 'video'].forEach(m => {
+        const btn = document.getElementById(`tab-btn-${m}`);
+        const view = document.getElementById(`mode-${m}`);
+        if (m === mode) {
+          btn.className = "nav-btn flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 bg-white text-indigo-600 shadow-md";
+          view.classList.remove('hidden');
+        } else {
+          btn.className = "nav-btn flex-1 md:flex-none px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800";
+          view.classList.add('hidden');
+        }
+      });
+    }
+
+    // CATEGORY SELECTION
+    function selectCategoryTab(key) {
+      activeCategoryKey = key;
+      const catData = CATEGORIES[key];
+
+      // Update Tab Styles
+      Object.keys(CATEGORIES).forEach(k => {
+        const btn = document.getElementById(`cat-btn-${k}`);
+        if (k === key) {
+          btn.className = `p-4 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border ${catData.color} text-white border-transparent shadow-lg shadow-indigo-100 scale-[1.02]`;
+        } else {
+          btn.className = "p-4 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border bg-white text-slate-600 border-slate-200 hover:bg-slate-50";
+        }
+      });
+
+      // Populate Items List
+      const itemsContainer = document.getElementById('items-list-container');
+      itemsContainer.innerHTML = '';
+
+      catData.items.forEach(item => {
+        const isSelected = selectedItem && selectedItem.id === item.id;
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-4 sm:p-5 rounded-3xl border-2 transition-all flex items-center justify-between gap-4 ${
+          isSelected 
+            ? 'bg-white border-indigo-600 shadow-md shadow-indigo-100 scale-[1.01]' 
+            : 'bg-white border-transparent hover:border-slate-200 shadow-sm'
+        }`;
+        btn.onclick = () => selectItem(item);
+
+        const iconHtml = item.iconClass ? `<i class="${item.iconClass}"></i>` : `<i class="fa-solid fa-book-open text-indigo-600"></i>`;
+
+        btn.innerHTML = `
+          <div class="flex items-center gap-3.5">
+            <div class="p-3 bg-slate-100 rounded-2xl shrink-0 flex items-center justify-center w-12 h-12">
+              ${iconHtml}
+            </div>
+            <div>
+              <h3 class="font-black text-slate-900 text-sm">${item.name}</h3>
+              <span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${catData.badgeColor}">
+                ${item.badge}
+              </span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs transition-transform ${isSelected ? 'text-indigo-600 rotate-90' : 'text-slate-300'}"></i>
+        `;
+
+        itemsContainer.appendChild(btn);
+      });
+
+      // Auto-select first item if current selected not in this category
+      if (!catData.items.find(i => i.id === (selectedItem && selectedItem.id))) {
+        selectItem(catData.items[0]);
+      } else {
+        renderItemDetails();
+      }
+    }
+
+    function selectItem(item) {
+      selectedItem = item;
+      document.getElementById('ai-example-box').classList.add('hidden');
+      selectCategoryTab(activeCategoryKey);
+      renderItemDetails();
+    }
+
+    function renderItemDetails() {
+      if (!selectedItem) return;
+      const catData = CATEGORIES[activeCategoryKey];
+
+      document.getElementById('detail-badge').innerText = selectedItem.badge;
+      document.getElementById('detail-badge').className = `text-[10px] font-black uppercase px-3 py-1 rounded-full ${catData.badgeColor}`;
+      document.getElementById('detail-title').innerText = selectedItem.name;
+      document.getElementById('detail-definition').innerText = selectedItem.definition;
+      document.getElementById('detail-example').innerText = selectedItem.example;
+      document.getElementById('detail-gen-btn-label').innerText = `${selectedItem.name} İçin Akıllı Örnek Üret`;
+
+      // Classification Box
+      const classBox = document.getElementById('detail-classification-box');
+      const classTags = document.getElementById('detail-classification-tags');
+      if (selectedItem.classification) {
+        classBox.classList.remove('hidden');
+        classTags.innerHTML = `
+          <span class="bg-white px-2.5 py-1 rounded-lg border border-amber-200">Kaynak: ${selectedItem.classification.kaynak}</span>
+          <span class="bg-white px-2.5 py-1 rounded-lg border border-amber-200">Ravi: ${selectedItem.classification.sayi}</span>
+          <span class="bg-white px-2.5 py-1 rounded-lg border border-amber-200">Sıhhat: ${selectedItem.classification.sihhat}</span>
+        `;
+      } else {
+        classBox.classList.add('hidden');
+      }
+
+      // Video Note Box
+      const noteBox = document.getElementById('detail-videonote-box');
+      const noteText = document.getElementById('detail-videonote-text');
+      if (selectedItem.videoNote) {
+        noteBox.classList.remove('hidden');
+        noteText.innerText = selectedItem.videoNote;
+      } else {
+        noteBox.classList.add('hidden');
+      }
+    }
+
+    // OFFLINE AI EXAMPLE GENERATOR
+    function generateOfflineAiExample() {
+      if (!selectedItem) return;
+
+      const OFFLINE_EXAMPLES_DB = {
+        "t-temizlik": "Arapça: 'الطَّهُورُ شَطْرُ الإِيمَانِ'\nMeal: 'Maddi ve manevi temizlik imanın yarısıdır.'\nUsul Analizi: Senedi sahih olup Müslim'in Tahâret kitabında yer alır. Muttasıl isnada sahiptir.",
+        "t-ahlak": "Arapça: 'إِنَّمَا بُعِثْتُ لِأُتَمِّمَ صَالِحَ الْأَخْلَاقِ'\nMeal: 'Ben ancak güzel ahlakı tamamlamak için gönderildim.'\nUsul Analizi: Muvatta'da geçen sahih nitelikli merfû hadistir.",
+        "t-komsu": "Arapça: 'مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيُحْسِنْ إِلَى جَارِهِ'\nMeal: 'Allah'a ve ahiret gününe iman eden kims komşusuna iyilik etsin.'\nUsul Analizi: Buhari ve Müslim'in Müttefekun Aleyh derecesinde sahih hadisidir.",
+        "t-ilim": "Arapça: 'طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ'\nMeal: 'İlim öğrenmek her Müslümana farzdır.'\nUsul Analizi: İbn Mâce Mukaddime'de yer alan, ümmetçe kabul görmüş meşhur ahad hadistir.",
+        "t-sabir": "Arapça: 'عَجَبًا لِأَمْرِ الْمُؤْمِنِ إِنَّ أَمْرَهُ كُلَّهُ خَيْرٌ'\nMeal: 'Müminin durumu ne hoştur! Her hali kendisi için bir hayırdır...'\nUsul Analizi: Sahih-i Müslim'de geçen muttasıl merfû hadistir.",
+        "t-adalet": "Arapça: 'عَلَيْكُمْ بِالصِّدْقِ فَإِنَّ الصِّدْقَ يَهْدِي إِلَى الْبِرِّ'\nMeal: 'Doğruluktan ayrılmayın; çünkü doğruluk iyiliğe götürür.'\nUsul Analizi: Buhari ve Müslim ortak rivayetidir (Sahih).",
+        "t-aile": "Arapça: 'رِضَى الرَّبِّ فِي رِضَى الْوَALİDِ'\nMeal: 'Rabb'in rızası anne babanın rızasındadır.'\nUsul Analizi: Tirmizi'de geçen Hasen/Sahih nitelikli rivayettir.",
+        "kudsi": "Arapça: 'يَا عِبَادِي كُلُّكُمْ ضَالٌّ إِلاَّ مَنْ هَدَيْتُهُ'\nMeal: 'Ey kullarım! Benim hidayet verdiğim dışında hepiniz dalalettesiniz...'\nUsul Analizi: Manası Allah Teâlâ'ya, lafzı Peygamberimize ait Sahih Kudsî Hadistir.",
+        "merfu": "Arapça: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ'\nMeal: 'Ameller ancak niyetlere göredir.'\nUsul Analizi: Hz. Ömer'den gelen en meşhur Sahih Merfû hadis örneğidir.",
+        "mevkuf": "Arapça: 'كَلِّمُوا النَّاسَ عَلَى قَدْرِ عُقُولِهِمْ'\nMeal: 'İnsanlara akılları erdiği miktarda konuşun.'\nUsul Analizi: Senedi Hz. Ali (r.a) üzerinde duran Mevkûf rivayettir.",
+        "maktu": "Arapça: 'إِنَّ هَذَا الْعِلْمَ دِينٌ فَانْظُرُوا عَمَّنْ تَأْخُذُونَ دِينَكُمْ'\nMeal: 'Bu ilim dindir, dininizi kimden aldığınıza dikkat edin.'\nUsul Analizi: Tabiûn alimi Muhammed b. Sirin'e ait Maktû sözdür.",
+        "mutevatir": "Arapça: 'مَنْ كَذَبَ عَلَيَّ مُتَعَمِّدًا فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ'\nMeal: 'Kim bilerek benim ağzımdan yalan uydurursa cehennemdeki yerine hazırlansın.'\nUsul Analizi: 70'ten fazla sahabe tarafından aktarılan Lafzi Mütevatir hadistir.",
+        "meshur": "Arapça: 'المُسْلِمُ مَنْ سَلِمَ المُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ'\nMeal: 'Müslüman, elinden ve dilinden diğer Müslümanların emin olduğu kimsedir.'\nUsul Analizi: Meşhur derecesine ulaşmış Sahih Âhâd hadistir.",
+        "aziz": "Arapça: 'لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى أَكُونَ أَحَبَّ إِلَيْهِ مِنْ وَالِدِهِ وَوَلَدِهِ'\nMeal: 'Sizden biriniz beni babasından ve evladından daha çok sevmedikçe iman etmiş olmaz.'\nUsul Analizi: Her tabakada en az 2 ravi kuralına uyan Aziz Hadistir.",
+        "garib": "Arapça: 'النَّهْيُ عَنْ بَيْعِ الْوَلاَءِ وَعَنْ هِبَتِهِ'\nMeal: 'Vela hakkının satılması ve bağışlanması yasaklanmıştır.'\nUsul Analizi: Abdullah b. Dinar'ın tefebbüd ettiği Garib (Ferd) Hadis örneğidir.",
+        "sahih": "Arapça: 'لاَ يَدْخُلُ الجَنَّةَ مَنْ لاَ يَأْمَنُ جَارُهُ بَوَائِقَهُ'\nMeal: 'Komşusu zulmünden emin olmayan kimse cennete giremez.'\nUsul Analizi: 5 altın kuralı (Adalet, Zabt, Muttasıl, Şaz olmamak, Muallel olmamak) tam taşıyan Sahih Hadistir.",
+        "hasen": "Arapça: 'رِضَى الرَّبِّ فِي رِضَى الْوَالِدِ وَسَخَطُ الرَّبِّ فِي سَخَطِ الْوَالِدِ'\nMeal: 'Rabbin rızası anne babanın rızasındadır.'\nUsul Analizi: Zabt yönünden hafif eksiklik içeren ancak makbul Hasen hadistir.",
+        "zayif": "Arapça: 'اُطْلُبُوا الْعِلْمَ وَلَوْ بِالصِّينِ'\nMeal: 'Çin'de de olsa ilmi arayınız.'\nUsul Analizi: Senedindeki ravi zayıflığı sebebiyle 'Zayıf Hadis' sınıfındadır.",
+        "mevzu": "Arapça: 'حُبُّ الْوَطَنِ مِنَ الإِيمَانِ'\nMeal: 'Vatan sevgisi imandandır.'\nUsul Analizi: Anlamı güzel olsa da teknik olarak Peygamberimize ait olmayan uydurma (mevzû) bir ifadedir."
+      };
+
+      const exampleText = OFFLINE_EXAMPLES_DB[selectedItem.id] || "Yeni akademisyen tahlilli örnek oluşturuldu.";
+      document.getElementById('ai-example-text').innerText = exampleText;
+      document.getElementById('ai-example-box').classList.remove('hidden');
+    }
+
+    // HADIS ANALYZER FUNCTION
+    function runOfflineAnalysis() {
+      const inputEl = document.getElementById('analysis-input');
+      const resultBox = document.getElementById('analysis-result-box');
+      const typeBadge = document.getElementById('analysis-type-badge');
+      const confidenceEl = document.getElementById('analysis-confidence');
+      const explanationEl = document.getElementById('analysis-explanation');
+
+      if (!inputEl || !inputEl.value.trim()) {
+        return;
+      }
+
+      const query = inputEl.value.trim().toLowerCase();
+      let type = "Genel Rivayet / Hadis";
+      let confidence = "%95";
+      let explanation = "Girilen metin genel bir hadis usulü değerlendirmesine tabidir.";
+
+      if (query.includes("rab") || query.includes("allah teâlâ buyur") || query.includes("allah buyur") || query.includes("kuds")) {
+        type = "Kudsî Hadis";
+        confidence = "%98";
+        explanation = "Bu ifade, manası Allah Teâlâ'ya, lafzı Hz. Peygamber'e (s.a.v) ait olan Kudsî (Rabbanî) Hadis özelliklerini taşımaktadır.";
+      } else if (query.includes("hz. ali") || query.includes("hz. ömer") || query.includes("hz. ebubekir") || query.includes("sahabe") || query.includes("ibn mes'ud")) {
+        type = "Mevkûf Hadis";
+        confidence = "%96";
+        explanation = "Senedi veya ifadesi doğrudan Sahabeye dayanan ve onların sözünü/uygulamasını aktaran Mevkûf Hadis grubuna girmektedir.";
+      } else if (query.includes("hasan el-basri") || query.includes("tabiûn") || query.includes("ibn sirin")) {
+        type = "Maktû Hadis";
+        confidence = "%96";
+        explanation = "Tabiûn veya tebe-i tabiûn alimlerine atfedilen, senedi Hz. Peygamber'e ulaşmayan Maktû Hadis örneğidir.";
+      } else if (query.includes("yalan") || query.includes("uydur") || query.includes("vatan sevgisi")) {
+        type = "Mevzû (Uydurma)";
+        confidence = "%99";
+        explanation = "Teknik olarak hadis değildir. Peygamberimiz adına kasıtlı uydurulmuş sahte/mevzu bir söz niteliğindedir.";
+      } else if (query.includes("temizlik") || query.includes("iman") || query.includes("namaz") || query.includes("ahlak") || query.includes("komşu")) {
+        type = "Merfû / Sahih Hadis";
+        confidence = "%97";
+        explanation = "Doğrudan Hz. Peygamber'e (s.a.v) nispet edilen, ümmetçe kabul görmüş Sahih ve Merfû nitelikli nebevî bir rivayettir.";
+      } else {
+        type = "Merfû Hadis";
+        confidence = "%92";
+        explanation = "Metin yapısı itibarıyla Hz. Peygamber'den (s.a.v) aktarılan nebevî bir söz veya takrir kapsamında görünmektedir.";
+      }
+
+      typeBadge.innerText = type;
+      confidenceEl.innerText = "Güven: " + confidence;
+      explanationEl.innerText = explanation;
+      resultBox.classList.remove('hidden');
+    }
+
+    // ENHANCED SPEECH SYNTHESIS ENGINE
+    let availableVoices = [];
+
+    function initVoices() {
+      if ('speechSynthesis' in window) {
+        availableVoices = window.speechSynthesis.getVoices();
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initVoices;
+      initVoices();
+    }
+
+    function speakDefinition() {
+      if (!selectedItem) return;
+      if (!('speechSynthesis' in window)) {
+        alert("Tarayıcınız sesli okuma özelliğini desteklemiyor.");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const speakIcon = document.getElementById('speak-icon');
+      const speakLabel = document.getElementById('speak-label');
+
+      // Metin temizliği: Parantez içi kaynakları ve özel karakterleri okumadan akıcı cümle kurma
+      let cleanDef = selectedItem.definition
+        .replace(/\(s\.a\.v\)/g, 'sallallahu aleyhi ve sellem')
+        .replace(/[\(\)]/g, '');
+
+      let cleanExample = selectedItem.example
+        .replace(/[\'\"“‘”’]/g, '')
+        .replace(/\([^\)]*\)/g, ''); // Kaynak parantezlerini (örn: Müslim, Tahâret 1) seslendirmede atlar
+
+      const textToSpeak = `${selectedItem.name}. Tanımı: ${cleanDef}. Örnek rivayet: ${cleanExample}`;
+
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'tr-TR';
+      utterance.rate = 0.90; // Dengeli okuma hızı
+      utterance.pitch = 1.0;
+
+      // Türkçe için en uygun sesi seçme
+      if (availableVoices.length === 0) {
+        availableVoices = window.speechSynthesis.getVoices();
+      }
+      
+      const trVoice = availableVoices.find(v => v.lang.startsWith('tr') || v.lang.includes('TR'));
+      if (trVoice) {
+        utterance.voice = trVoice;
+      }
+
+      // Görsel geri bildirim
+      if (speakIcon) speakIcon.className = "fa-solid fa-waveform text-indigo-600 animate-pulse";
+      if (speakLabel) speakLabel.innerText = "Okunuyor...";
+
+      utterance.onend = function() {
+        if (speakIcon) speakIcon.className = "fa-solid fa-volume-high text-lg";
+        if (speakLabel) speakLabel.innerText = "Dinle";
+      };
+
+      utterance.onerror = function() {
+        if (speakIcon) speakIcon.className = "fa-solid fa-volume-high text-lg";
+        if (speakLabel) speakLabel.innerText = "Dinle";
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // QUIZ CONTROLLER LOGIC
+    function renderQuizQuestion() {
+      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      document.getElementById('quiz-level-badge').innerText = q.level;
+      document.getElementById('quiz-level-badge').className = `text-[10px] font-black px-2.5 py-1 rounded-full uppercase ${q.levelColor}`;
+      document.getElementById('quiz-progress-counter').innerText = `${currentQuizIndex + 1} / ${QUIZ_QUESTIONS.length}`;
+      document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex + 1) / QUIZ_QUESTIONS.length) * 100}%`;
+      document.getElementById('quiz-question-text').innerText = q.question;
+
+      const optsContainer = document.getElementById('quiz-options-container');
+      optsContainer.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-4 rounded-2xl border-2 font-bold text-sm transition-all flex items-center justify-between bg-slate-50 border-slate-200 text-slate-700 hover:border-indigo-400";
+        btn.innerHTML = `<span>${opt}</span><i class="fa-solid fa-circle-notch opacity-0"></i>`;
+        btn.onclick = () => handleQuizAnswer(idx);
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('quiz-explanation-box').classList.add('hidden');
+      selectedOption = null;
+    }
+
+    function handleQuizAnswer(index) {
+      if (selectedOption !== null) return;
+      selectedOption = index;
+
+      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      const optsContainer = document.getElementById('quiz-options-container');
+      const buttons = optsContainer.children;
+
+      if (index === q.correct) {
+        quizScore++;
+      }
+
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+        if (i === q.correct) {
+          buttons[i].className = "w-full text-left p-4 rounded-2xl border-2 font-bold text-sm transition-all flex items-center justify-between bg-emerald-500 border-emerald-500 text-white font-black";
+          buttons[i].querySelector('i').className = "fa-solid fa-check text-white";
+        } else if (i === index) {
+          buttons[i].className = "w-full text-left p-4 rounded-2xl border-2 font-bold text-sm transition-all flex items-center justify-between bg-rose-500 border-rose-500 text-white font-black";
+          buttons[i].querySelector('i').className = "fa-solid fa-xmark text-white";
+        } else {
+          buttons[i].className = "w-full text-left p-4 rounded-2xl border-2 font-bold text-sm transition-all flex items-center justify-between bg-slate-50 border-slate-100 text-slate-400";
+        }
+      }
+
+      document.getElementById('quiz-explanation-text').innerHTML = `💡 <b>Açıklama:</b> ${q.explanation}`;
+      document.getElementById('quiz-explanation-box').classList.remove('hidden');
+
+      if (currentQuizIndex < QUIZ_QUESTIONS.length - 1) {
+        document.getElementById('quiz-next-btn-text').innerText = "Sonraki Soru";
+      } else {
+        document.getElementById('quiz-next-btn-text').innerText = "Test Sonucunu Gör";
+      }
+    }
+
+    function nextQuizQuestion() {
+      if (currentQuizIndex < QUIZ_QUESTIONS.length - 1) {
+        currentQuizIndex++;
+        renderQuizQuestion();
+      } else {
+        // Quiz finished
+        document.getElementById('quiz-active-container').classList.add('hidden');
+        document.getElementById('quiz-finished-container').classList.remove('hidden');
+        document.getElementById('final-score').innerText = quizScore;
+        document.getElementById('final-percentage').innerText = `Başarı Oranı: %${Math.round((quizScore / 25) * 100)}`;
+      }
+    }
+
+    function restartQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      selectedOption = null;
+      document.getElementById('quiz-finished-container').classList.add('hidden');
+      document.getElementById('quiz-active-container').classList.remove('hidden');
+      renderQuizQuestion();
+    }
+  </script>
+</body>
+</html>
