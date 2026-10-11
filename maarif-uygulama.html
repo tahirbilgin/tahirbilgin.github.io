@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maarif Platformu</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Import Maps for React and Lucide Icons -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.292.0"
+      }
+    }
+    </script>
+    
+    <style>
+        /* Modern kaydırma çubuğu tasarımı */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+          BookOpen, LayoutDashboard, BrainCircuit, Users, BookOpenText, Layers, Sparkles, BookCheck, Scale, Settings, FlaskConical, Briefcase, Presentation, ChevronDown, ChevronUp, ArrowLeft, ArrowRight, Brain, Microscope, Clock, Heart, Target, Info, Compass, Zap, Anchor, UnfoldVertical, Puzzle, MessageCircle, Calculator, Globe, Palette, PenTool, Code, Book, Activity, Database, Waypoints, Eye, ClipboardCheck, Share2, Lightbulb, List, Network, RefreshCw, Layers3, Component, HeartHandshake, Leaf, GraduationCap, Workflow, Rocket, SplitSquareHorizontal, TrendingUp, LifeBuoy, Building, CalendarDays, BarChart, Layout
+        } from 'lucide-react';
+
+        const styles = {
+          container: "flex h-screen bg-slate-50 font-sans text-slate-900",
+          sidebar: "w-64 bg-white border-r border-slate-200 flex flex-col",
+          navButton: "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+          card: "bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow",
+        };
+
+        // --- MODÜL 1 DATA ---
+        const profileData = [
+          { name: 'Ahlaklı', desc: 'Erdem, değer ve eylem bütünlüğü içinde hareket eden; doğruyu yanlıştan ayıran etik bir pusulaya sahip birey.' },
+          { name: 'Bilge', desc: 'Bilgiyi hikmetle harmanlayan, hayatın anlamı üzerinde düşünen, edindiği bilgiyi insanlığın faydası için kullanan kişi.' },
+          { name: 'Cesaretli', desc: 'Hakikatten taviz vermeden sorumluluk alabilen, zorluklar karşısında yılmadan erdemli duruşunu koruyan birey.' },
+          { name: 'Estetik', desc: 'Güzeli arayan, sanatın ve tabiatın inceliklerini fark ederek ruh dünyasını zenginleştiren, nezaket sahibi birey.' },
+          { name: 'İradeli', desc: 'Kararlarında istikrarlı, nefsine hakim, özgür düşünceli ve hedeflerine disiplinle yürüyebilen karakterli birey.' },
+          { name: 'Merhametli', desc: 'Yaratılan her şeye şefkatle yaklaşan, başkalarının acısını kalbinde hisseden ve vicdanıyla hareket eden kişi.' },
+          { name: 'Sağlıklı', desc: 'Bedensel, zihinsel ve ruhsal bütünlüğünü koruyan, yaşam enerjisini verimli kullanan dengeli birey.' },
+          { name: 'Sorgulayıcı', desc: 'Eleştirel düşünen, merak duygusunu diri tutan, bilginin nedenlerini araştıran analitik düşünceli birey.' },
+          { name: 'Üretken', desc: 'Akademik ve pratik bilgiyi değer odaklı somut faydaya dönüştürebilen, toplumsal kalkınmaya katkı sağlayan birey.' },
+          { name: 'Vatansever', desc: 'Köklerine, tarihine ve kültürüne bağlı; vatanın birliği, geleceği ve yükselmesi için sorumluluk duyan birey.' }
+        ];
+
+        const temelYaklasimData = [
+          { icon: Layers, name: "Ontolojik Bütünlük", desc: "İnsanı; zihinsel, sosyal, duygusal, fiziksel ve ahlaki yönleriyle bir bütün olarak ele alır." },
+          { icon: Microscope, name: "Epistemolojik Bütünlük", desc: "Bilginin sadece teorik düzeyde kalmayıp hikmetle harmanlanarak hayata aktarılmasını sağlar." },
+          { icon: Clock, name: "Zamansal Bütünlük", desc: "Toplumsal tarihsel tecrübeyi devralarak geleceğe yönelik başarılar için zemin hazırlar." },
+          { icon: Heart, name: "Aksiyolojik Olgunluk", desc: "Etik ve estetik değer yargılarının içselleştirilerek davranışa dönüştürülmesini hedefler." }
+        ];
+
+        const bütüncülCerceveData = [
+          { title: "Öğrenme Çıktıları Çerçevesi", icon: BookCheck, desc: "Alana ait bilgi kümeleri, kavramsal beceriler ve alan becerilerinden oluşur." },
+          { title: "Ölçme ve Değerlendirme", icon: Scale, desc: "Problem çözmeye dayalı; durum, süreç ve sonuç temelli çok boyutlu bir yaklaşım benimsenir. Süreç ve öğretimsel değerlendirme ile öğrenme kanıtları üzerinde durulur." },
+          { title: "Öğrenme Yaşantıları", icon: BrainCircuit, desc: "Bütüncül gelişim için çeşitli öğrenme süreçlerinin (yaşantı, bağlam, proje, sorgulama ve iş birliği temelli) deneyimlenmesini sağlar. Beceriler, eğilimler ile desteklenir." },
+          { title: "Farklılaştırılmış Öğretim", icon: Users, desc: "Yarıştıran değil, bireysel farklılıklara duyarlı nitelikli bir çeşitlilik (zenginleştirme ve destekleme) sağlanır." },
+          { title: "Programlar Arası Bileşenler", icon: Heart, desc: "Sosyal-duygusal öğrenme becerileri, milli ve manevi değerler (ahlaki pusula) ve okuryazarlık becerilerini kapsar." },
+          { title: "Bilim/Teknoloji/Çevre", icon: FlaskConical, desc: "Teknolojinin sadece tüketicisi değil, üreticisi ve yöneticisi olmayı hedefler. Bilim, teknoloji, mühendislik, matematik, toplum ve çevre odaklıdır." },
+          { title: "Okul Temelli Planlama", icon: Settings, desc: "Uygulamada esneklik, yerel ihtiyaçların dikkate alınması, öğretmen iş birliği ve ihtiyaca göre ders saatlerinin kullanımı vurgulanır." },
+          { title: "Öğretmen Yansıtmaları", icon: Presentation, desc: "Uygulayıcıların yorumlama, akıl yürütme ve eleştirel düşünme ile süreci iyileştirmesi ve gelecekteki uygulamaları geliştirmesi amaçlanır." },
+          { title: "Program Dışı Etkinlikler", icon: Briefcase, desc: "Disiplinler üstü yaklaşımlar, sosyal sorumluluk programları, hayat boyu öğrenme ve kariyer deneyimleri ile çok yönlü gelişim desteklenir." }
+        ];
+
+        // --- MODÜL 3 DATA (Eğilimler Rehberi) ---
+        const egilimRehberiData = [
+          {
+            category: "Benlik Eğilimleri (E1)",
+            icon: Compass,
+            subtitle: "Kişisel Potansiyelin Yansıması",
+            desc: "Bireyin kendi iç dünyasıyla barışık olması ve yeteneklerini tanıması.",
+            items: [
+              { name: "Merak ve Bağımsızlık", content: "Öğrenme sürecine ilgiyle yaklaşmayı ve kendi kararlarını sorumluluk alarak verebilmeyi içerir." },
+              { name: "Öz Yeterlilik ve Öz Güven", content: "Hedeflere ulaşabileceğine dair içsel inanış (kendine inanma) ve yeteneklerine olan güveni (kendine güvenme) temsil eder." },
+              { name: "Azim, Kararlılık ve Seçicilik", content: "Hedef yolunda direnç göstermeyi ve değerleri ile amaçlarına uygun olanı seçebilecek bir yolda sabit olmayı ifade eder." }
+            ]
+          },
+          {
+            category: "Sosyal Eğilimler (E2)",
+            icon: Users,
+            subtitle: "Toplumsal Etkileşimin Temeli",
+            desc: "Bireyin başkalarıyla kurduğu sağlıklı iletişim ve iş birliği yetisi.",
+            items: [
+              { name: "Empati ve Sorumluluk", content: "Başkalarının duygularını anlama ve toplumsal görevlerin bilincinde olup erdemli bir birey olarak topluma yönelme yetisidir." },
+              { name: "Girişkenlik ve Güven", content: "Sosyal ortamlarda inisiyatif alma ve hem kendine hem de çevresine karşı dürüst, açık bir tutum sergilemeyi kapsar." },
+              { name: "Uyumluluk", content: "Sosyal çevreye ve etkileşim ortamına ön yargısız ve açık bir bakış açısıyla katılım sağlamayı ifade eder." }
+            ]
+          },
+          {
+            category: "Entelektüel Eğilimler (E3)",
+            icon: Brain,
+            subtitle: "Düşünsel Birikimin Gücü",
+            desc: "Bilginin eleştirel bir süzgeçten geçirilmesi ve yeni fikirlerin inşası.",
+            items: [
+              { name: "Muhakeme ve Odaklanma", content: "Mantıklı ve tutarlı sonuçlara ulaşma süreci ile dikkati belirli bir noktada toplama becerisidir." },
+              { name: "Yaratıcılık ve Gerçeği Arama", content: "Özgün fikirlerin üretimi ile bilginin doğruluğunu araştırma ve dürüstçe ifade edilme tutumudur." },
+              { name: "Analitiklik, Sistematiklik ve Açık Fikirlilik", content: "Verileri parçalara ayırarak inceleme, düzenli bir akış izleme ve farklı görüşlere karşı ön yargısız olma eğilimidir." },
+              { name: "Soru Sorma, Şüphe Duyma ve Eleştirel Bakma", content: "Bilginin doğruluğunu, kanıtlarını ve olası hatalarını tetkik etme ile yargılarını verilerle temellendirme tutumudur." }
+            ]
+          }
+        ];
+
+        // --- MODÜL 4 DATA (Alan Becerileri Rehberi) ---
+        const alanBecerileriData = [
+          {
+            category: "Dil ve İletişim Odaklı Beceriler",
+            items: [
+              { icon: MessageCircle, name: "Türkçe: Anlama ve Anlatma", desc: "Dinleme, izleme ve okuma yoluyla anlamlandırma; konuşma ve yazma yoluyla içerik üretme süreçlerini kapsar." },
+              { icon: Globe, name: "Yabancı Dil: Alımlayıcı ve Üretici Beceriler", desc: "Dinleme/okuma ile anlamlandırma (alımlayıcı) ve konuşma/yazma ile mesaj iletme (üretici) yetkinliklerini odağa alır." }
+            ]
+          },
+          {
+            category: "Analitik ve Bilimsel Beceriler",
+            items: [
+              { icon: Calculator, name: "Matematik: Muhakeme ve Problem Çözme", desc: "Mantıksal çıkarımlar yapma, analiz etme ve matematiksel çözümler geliştirerek yansıtma süreçlerinden oluşur." },
+              { icon: FlaskConical, name: "Fen Bilimleri: Araştırma ve Kanıt", desc: "Bilimsel sorgulama yoluyla veri toplama, deney yapma ve elde edilen kanıtları analiz ederek model oluşturma becerilerini içerir." },
+              { icon: Code, name: "Bilişim Teknolojileri: Bilgi İşlemsel Düşünme", desc: "Dijital teknolojileri kullanarak problem çözme, algoritma geliştirme ve veriyi yaratıcı çözümlere dönüştürme sürecidir." }
+            ]
+          },
+          {
+            category: "Sosyal, Kültürel ve Manevi Beceriler",
+            items: [
+              { icon: Compass, name: "Sosyal Bilimler: Kronolojik ve Mekânsal Düşünme", desc: "Olayları zaman dizinine yerleştirme ile mekân kavramlarını kullanarak dünyayı modelleme ve analiz etme becerisidir." },
+              { icon: Book, name: "Din Eğitimi: Kaynak Tetkiki ve Tefekkür", desc: "Dini kaynakları inceleme, tahkik etme ve derinlemesine düşünerek (tefekkür) bilgiye ulaşma sürecini ifade eder." }
+            ]
+          },
+          {
+            category: "Uygulamalı ve Yaratıcı Beceriler",
+            items: [
+              { icon: Palette, name: "Sanat: Algılama ve Üretim", desc: "Görsel ve işitsel mesajları okuma/inceleme ile sanatsal tasarımlar ve ürünler ortaya koyma yetisidir." },
+              { icon: Activity, name: "Beden Eğitimi: Hareket ve Liderlik", desc: "Fiziksel hareket kavramlarını uygulama, strateji geliştirme ve grup içerisinde liderlik sergileme becerilerini kapsar." },
+              { icon: PenTool, name: "Tasarım: Ürün Geliştirme", desc: "Fikirleri somut tasarımlara dönüştürme, benzetim yapma ve çoklu ortam sunumlarıyla ürün oluşturma sürecidir." }
+            ]
+          }
+        ];
+
+        // --- MODÜL 5 DATA (Öğrenme Çıktıları ve İçerik Çerçevesi) ---
+        const ogrenmeCiktisiFormulu = [
+          { icon: Database, title: "Bilgi Kümesi", desc: "Soyuttan Somuta Dönüşüm. Bilgi ve Becerinin Stratejik Birleşimi." },
+          { icon: Activity, title: "Beceri (Alan/Kavramsal)", desc: "Öğrenme sürecinin temel taşı olan beceri bileşenleri." },
+          { icon: Waypoints, title: "Süreç Bileşenlerine Tam Sadakat", desc: "Soyuttan Somuta Dönüşüm: Dersin hedeflerini yansıtan, bilgi kümesi ile alan/kavramsal becerilerin etkileşimli sentezidir. Bilgi ve Becerinin Stratejik Birleşimi: Soyut zihinsel süreçler, bilgi kümeleriyle birleşerek adımlanabilir ve anlaşılır çıktılara dönüşür." },
+          { icon: Eye, title: "Gözlenebilir ve Ölçülebilir Yapı", desc: "Öğrencinin süreçteki ilerlemesini nitelik ve nicelik olarak izlemeyi sağlayan süreç temelli eylemlerdir." },
+          { icon: ClipboardCheck, title: "Öğretim ve Ölçme Rehberi", desc: "Öğrenme-öğretme faaliyetlerini yönlendirir ve ölçme süreçlerinin yapılandırılmasında temel referans noktasıdır." }
+        ];
+
+        const bilgininDinamikYapisi = [
+          { icon: Book, title: "Disipline Özgü Bilgi (Temel Kavramlar)", desc: "Öğrencilerin dünyayı anlamasını sağlayan; alana özgü ilke, sembol, anahtar kavram ve genellemeleri içeren derin anlayış seviyesidir." },
+          { icon: Share2, title: "Disiplinler Arası Bilgi (Bağlantılar)", desc: "Bir disipline ait kavramların farklı disiplinlerle ilişkilendirilmesiyle bilginin yeni durumlara transfer edilmesini sağlar." },
+          { icon: Lightbulb, title: "Epistemik Bilgi (Uzman Bakış Açısı)", desc: "Alan uzmanlarının nasıl düşündüğünü ve çalıştığını anlamaya yardımcı olan, öğrenmeyi derinleştiren bilgi kümesidir." },
+          { icon: List, title: "İşlemsel Bilgi (Süreç Adımları)", desc: "Bir hedefe ulaşmak için gerçekleştirilen eylem adımlarını ve süreçlerin nasıl yürütüldüğünü anlamayı sağlayan uygulamalı bilgidir." }
+        ];
+
+        const ErdemCard = ({ name, desc, icon: Icon, defaultOpen = false }) => {
+          const [isOpen, setIsOpen] = useState(defaultOpen);
+          return (
+            <div className="bg-white rounded-xl border border-indigo-100 shadow-sm overflow-hidden transition-all mb-3 hover:border-indigo-300 h-full flex flex-col">
+              <button 
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full p-4 flex items-center justify-between text-indigo-800 font-bold hover:bg-indigo-50/50 transition-colors"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  {Icon && <Icon className="w-5 h-5 text-indigo-600 flex-shrink-0" />}
+                  <span className="text-sm md:text-base">{name}</span>
+                </div>
+                {isOpen ? <ChevronUp className="w-4 h-4 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 flex-shrink-0" />}
+              </button>
+              {isOpen && (
+                <div className="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-indigo-50 bg-indigo-50/10 flex-grow">
+                  {desc}
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        function App() {
+          const [currentView, setCurrentView] = useState('m1');
+
+          const navigate = (direction) => {
+            if (direction === 'next') {
+              if (currentView === 'm1') setCurrentView('m2');
+              else if (currentView === 'm2') setCurrentView('m3');
+              else if (currentView === 'm3') setCurrentView('m4');
+              else if (currentView === 'm4') setCurrentView('m5');
+              else if (currentView === 'm5') setCurrentView('m6');
+              else if (currentView === 'm6') setCurrentView('m7');
+              else if (currentView === 'm7') setCurrentView('m8');
+              else if (currentView === 'm8') setCurrentView('m9');
+            } else if (direction === 'prev') {
+              if (currentView === 'm9') setCurrentView('m8');
+              else if (currentView === 'm8') setCurrentView('m7');
+              else if (currentView === 'm7') setCurrentView('m6');
+              else if (currentView === 'm6') setCurrentView('m5');
+              else if (currentView === 'm5') setCurrentView('m4');
+              else if (currentView === 'm4') setCurrentView('m3');
+              else if (currentView === 'm3') setCurrentView('m2');
+              else if (currentView === 'm2') setCurrentView('m1');
+            }
+          };
+
+          return (
+            <div className={styles.container}>
+              <aside className={styles.sidebar}>
+                <div className="p-6 font-bold text-xl text-indigo-900 border-b border-slate-100">Maarif Platformu</div>
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                  <button onClick={() => setCurrentView('dashboard')} className={`${styles.navButton} ${currentView === 'dashboard' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <LayoutDashboard className="w-5 h-5"/> Ana Ekran</button>
+                  <button onClick={() => setCurrentView('m1')} className={`${styles.navButton} ${currentView === 'm1' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <BookOpenText className="w-5 h-5"/> Modül 1</button>
+                  <button onClick={() => setCurrentView('m2')} className={`${styles.navButton} ${currentView === 'm2' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <BrainCircuit className="w-5 h-5"/> Modül 2</button>
+                  <button onClick={() => setCurrentView('m3')} className={`${styles.navButton} ${currentView === 'm3' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Compass className="w-5 h-5"/> Modül 3</button>
+                  <button onClick={() => setCurrentView('m4')} className={`${styles.navButton} ${currentView === 'm4' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Puzzle className="w-5 h-5"/> Modül 4</button>
+                  <button onClick={() => setCurrentView('m5')} className={`${styles.navButton} ${currentView === 'm5' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Database className="w-5 h-5"/> Modül 5</button>
+                  <button onClick={() => setCurrentView('m6')} className={`${styles.navButton} ${currentView === 'm6' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Component className="w-5 h-5"/> Modül 6</button>
+                  <button onClick={() => setCurrentView('m7')} className={`${styles.navButton} ${currentView === 'm7' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <GraduationCap className="w-5 h-5"/> Modül 7</button>
+                  <button onClick={() => setCurrentView('m8')} className={`${styles.navButton} ${currentView === 'm8' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Rocket className="w-5 h-5"/> Modül 8</button>
+                  <button onClick={() => setCurrentView('m9')} className={`${styles.navButton} ${currentView === 'm9' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Layout className="w-5 h-5"/> Modül 9</button>
+                </nav>
+              </aside>
+
+              <main className="flex-1 overflow-y-auto p-10">
+                <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto">
+                  
+                  {/* ANA EKRAN / DASHBOARD */}
+                  {currentView === 'dashboard' && (
+                    <div className="space-y-8">
+                      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-indigo-950 to-indigo-850 p-10 text-white shadow-2xl">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                        <h1 className="text-4xl font-black mb-3 tracking-tight">TÜRKİYE YÜZYILI MAARİF MODELİ</h1>
+                        <p className="text-indigo-200 text-lg mb-8 max-w-2xl">Köklerden geleceğe uzanan, yetkin ve erdemli nesiller yetiştirmeyi amaçlayan bütüncül eğitim vizyonu.</p>
+                        <div className="flex flex-wrap gap-3 relative z-10">
+                          <button onClick={() => setCurrentView('m1')} className="px-5 py-2.5 bg-white text-indigo-950 font-bold rounded-xl shadow hover:bg-indigo-50 transition-all flex items-center gap-2">Başla <ArrowRight className="w-4 h-4"/></button>
+                          <button onClick={() => setCurrentView('m2')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 2</button>
+                          <button onClick={() => setCurrentView('m3')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 3</button>
+                          <button onClick={() => setCurrentView('m4')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 4</button>
+                          <button onClick={() => setCurrentView('m5')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 5</button>
+                          <button onClick={() => setCurrentView('m6')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 6</button>
+                          <button onClick={() => setCurrentView('m7')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 7</button>
+                          <button onClick={() => setCurrentView('m8')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 8</button>
+                          <button onClick={() => setCurrentView('m9')} className="px-5 py-2.5 bg-indigo-800/40 text-white font-bold rounded-xl hover:bg-indigo-800/60 border border-indigo-700 transition-all">Modül 9</button>
+                        </div>
+                      </section>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div className={`${styles.card} p-5`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100"><BookOpenText className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 1</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Bütüncül Eğitim Yaklaşımı, felsefi temeller ve Yetkin ve Erdemli İnsan Profili.</p>
+                          <button onClick={() => setCurrentView('m1')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100"><BrainCircuit className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 2</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Temel eylemlerden üst düzey analitik düşünmeye uzanan kavramsal beceriler.</p>
+                          <button onClick={() => setCurrentView('m2')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100"><Compass className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 3</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Öğrencinin potansiyelini güçlendiren temel eğilimler rehberi.</p>
+                          <button onClick={() => setCurrentView('m3')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100"><Puzzle className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 4</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Farklı disiplinlere özgü becerilerin hayata aktarılması süreci.</p>
+                          <button onClick={() => setCurrentView('m4')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100"><Database className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 5</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Öğrenme çıktılarının formülü ve bilginin dinamik içerik çerçevesi.</p>
+                          <button onClick={() => setCurrentView('m5')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100"><Component className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 6</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Eğitimin örtük hedeflerini özetleyen programlar arası bileşenler.</p>
+                          <button onClick={() => setCurrentView('m6')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5 border-2 border-indigo-100`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-200"><GraduationCap className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 7</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Bilgi, beceri, eğilim ve değerleri bütünleştiren aktif öğrenme yaşantıları.</p>
+                          <button onClick={() => setCurrentView('m7')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5 border-2 border-indigo-100`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-200"><Rocket className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 8</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Uygulama safhası ve kapsayıcı yapıyı vurgulayan farklılaştırma yaklaşımları.</p>
+                          <button onClick={() => setCurrentView('m8')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                        <div className={`${styles.card} p-5 border-2 border-indigo-100`}>
+                          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-200"><Layout className="w-5 h-5 text-indigo-600"/></div>
+                          <h3 className="font-bold text-base text-indigo-900 mb-2">Modül 9</h3>
+                          <p className="text-[11px] text-slate-600 mb-4 leading-relaxed">Okul temelli planlama, program dışı etkinlikler, rehberlik ve program yapısı.</p>
+                          <button onClick={() => setCurrentView('m9')} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">Keşfet <ArrowRight className="w-3 h-3"/></button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* MODÜL 1 */}
+                  {currentView === 'm1' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 1: Eğitim Yaklaşımı ve Öğrenci Profili</h2>
+                      
+                      <div className={styles.card}>
+                        <h3 className="font-bold text-xl mb-6 text-indigo-900 flex items-center gap-2.5"><BookOpen className="w-6 h-6 text-indigo-600"/> 1. Temel Yaklaşım: Bütüncül Eğitim</h3>
+                        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                          Türkiye Yüzyılı Maarif Modeli, eğitimi parçalı bir yapıdan ziyade, insanı ontolojik, epistemolojik, zamansal ve aksiyolojik bütünlük içinde ele alan bütüncül bir yaklaşım ile kurgular:
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {temelYaklasimData.map((item, i) => (
+                            <ErdemCard key={i} name={item.name} desc={item.desc} icon={item.icon} />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className={styles.card}>
+                        <h3 className="font-bold text-xl mb-4 text-indigo-900 flex items-center gap-2.5"><Sparkles className="w-6 h-6 text-indigo-600"/> 2. Bütüncül Eğitim Çerçevesi</h3>
+                        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                          Öğrenciyi merkeze alan ve akademik bilginin ötesinde; karakter, beceri ve değer gelişimini bir bütün olarak tasarlayan eğitim sisteminin 9 temel alan ve içeriği:
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {bütüncülCerceveData.map((item, i) => (
+                            <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-indigo-50 hover:border-indigo-200 hover:bg-white transition-all shadow-sm flex flex-col h-full justify-between">
+                              <div>
+                                <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-3 border border-indigo-100">
+                                  <item.icon className="w-5 h-5 text-indigo-600"/>
+                                </div>
+                                <h4 className="font-bold text-indigo-950 text-sm mb-2">{item.title}</h4>
+                                <p className="text-[11px] text-slate-600 leading-relaxed">{item.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className={styles.card}>
+                        <h3 className="font-bold text-xl mb-4 text-indigo-900 flex items-center gap-2.5"><Users className="w-6 h-6 text-indigo-600"/> 3. Yetkin ve Erdemli İnsan Profili</h3>
+                        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                          Şemanın en üstünde "Yetkinlikler", en altında ise "Erdemler" vurgulanarak, tüm sürecin bu iki temel hedef arasında şekillendiği belirtilmiştir. Aşağıdaki erdemlerin üzerine tıklayarak detaylarını inceleyebilirsiniz:
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {profileData.map((item, i) => (
+                            <ErdemCard key={i} name={item.name} desc={item.desc} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 2 */}
+                  {currentView === 'm2' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 2: Kavramsal Beceriler Yapısı</h2>
+                      
+                      <div className={styles.card}>
+                        <div className="flex gap-4 items-start bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                          <Info className="w-10 h-10 text-indigo-600 flex-shrink-0 mt-1" />
+                          <div>
+                            <h3 className="font-bold text-indigo-900 mb-1">Kavramsal Beceriler Yaklaşımı</h3>
+                            <p className="text-sm text-slate-700 leading-relaxed italic">
+                              Kavramsal beceri; karmaşık bir süreç gerektirmeden edinilen ve gözlenebilen temel beceriler ile soyut fikirleri ve karmaşık süreçleri eyleme dönüştürürken zihinsel faaliyetlerin bir ürünü olarak kullanılan bütünleşik ve üst düzey düşünme becerilerini ifade eder. Bu eylemler iç içe geçmiş üç farklı boyut (temel, bütünleşik ve üst düzey düşünme) içeren geniş bir beceri kümesinin parçaları olarak tanımlanmıştır. Bu beceri kümesini terminolojik olarak tanımlamak ve tüm boyutları ortak bir yapıda ifade etmek amacıyla becerilerin ilişkisel süreç bileşenlerini ifade eden "kavramsal beceri" terimi kullanılmıştır. Temel ve bütünleşik beceriler aşamalı bir durum olmaksızın üst düzey düşünme becerilerinin gerçekleştirilmesinin alt yapısını oluşturmaktadır.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className={`${styles.card} flex flex-col justify-between h-full border-t-4 border-t-indigo-500`}>
+                          <div>
+                            <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 border border-indigo-100">
+                              <Target className="w-6 h-6 text-indigo-600"/>
+                            </div>
+                            <h3 className="font-bold text-lg text-indigo-950 mb-2">KB1: Temel Beceriler</h3>
+                            <p className="text-xs text-slate-500 mb-4 leading-relaxed">Karmaşık bir süreç gerektirmeden edinilen ve doğrudan gözlemlenebilen temel eylemler.</p>
+                            <div className="border-t border-slate-100 pt-4">
+                              <span className="text-xs font-bold text-indigo-800 block mb-2">Eylem Alanları:</span>
+                              <ul className="text-xs text-slate-600 space-y-2 pl-4 list-disc marker:text-indigo-400">
+                                <li>Yazmak, Okumak, Saymak, Ölçmek</li>
+                                <li>İşaret etmek, Bulmak, Seçmek</li>
+                                <li>Çizmek, Sunmak, Çevirmek, Kaydetmek</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`${styles.card} flex flex-col justify-between h-full border-t-4 border-t-teal-500`}>
+                          <div>
+                            <div className="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center mb-4 border border-teal-100">
+                              <BrainCircuit className="w-6 h-6 text-teal-600"/>
+                            </div>
+                            <h3 className="font-bold text-lg text-teal-950 mb-2">KB2: Bütünleşik Beceriler</h3>
+                            <p className="text-xs text-slate-500 mb-4 leading-relaxed">Bilgiyi işleme ve yapılandırma süreçlerini içeren, adım adım zihinsel operasyon gerektiren beceriler.</p>
+                            <div className="border-t border-slate-100 pt-4">
+                              <span className="text-xs font-bold text-teal-800 block mb-2">Eylem Alanları:</span>
+                              <ul className="text-xs text-slate-600 space-y-2 pl-4 list-disc marker:text-teal-400">
+                                <li>Gözlemleme, Özetleme, Sınıflandırma</li>
+                                <li>Bilgi Toplama, Karşılaştırma</li>
+                                <li>Çözümleme, Çelişki Giderme</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`${styles.card} flex flex-col justify-between h-full border-t-4 border-t-amber-500`}>
+                          <div>
+                            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4 border border-amber-100">
+                              <Sparkles className="w-6 h-6 text-amber-600"/>
+                            </div>
+                            <h3 className="font-bold text-lg text-amber-950 mb-2">KB3: Üst Düzey Düşünme Becerileri</h3>
+                            <p className="text-xs text-slate-500 mb-4 leading-relaxed">Birden fazla zihinsel beceriyi entegre eden, yüksek karmaşıklık düzeyine sahip bilişsel süreçler.</p>
+                            <div className="border-t border-slate-100 pt-4">
+                              <span className="text-xs font-bold text-amber-800 block mb-2">Eylem Alanları:</span>
+                              <ul className="text-xs text-slate-600 space-y-2 pl-4 list-disc marker:text-amber-400">
+                                <li>Karar Verme</li>
+                                <li>Problem Çözme</li>
+                                <li>Eleştirel Düşünme</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 3 */}
+                  {currentView === 'm3' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 3: Eğilimler Rehberi</h2>
+                      
+                      <div className={styles.card}>
+                        <div className="flex gap-4 items-start bg-indigo-50/40 p-4 rounded-xl border border-indigo-100">
+                          <UnfoldVertical className="w-8 h-8 text-indigo-600 flex-shrink-0 mt-1" />
+                          <div>
+                            <h4 className="font-bold text-indigo-900">Eğilimlerin Temel Rolü</h4>
+                            <p className="text-sm text-slate-700 leading-relaxed mt-1">
+                              Öğrencilerin akademik başarılarının ötesinde, karakter inşası ve sosyal-duygusal becerilerini hayata geçirmelerini sağlayan içsel itici güçlerdir.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {egilimRehberiData.map((category, idx) => (
+                          <div key={idx} className="space-y-4">
+                            <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-indigo-100 shadow-sm">
+                              <div className="p-2 bg-indigo-50 rounded-lg">
+                                <category.icon className="w-5 h-5 text-indigo-600" />
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-slate-850 text-xs md:text-sm">{category.category}</h4>
+                                <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">{category.subtitle}</p>
+                              </div>
+                            </div>
+                            <p className="text-[11px] text-slate-500 px-2 italic">{category.desc}</p>
+                            <div className="space-y-2">
+                              {category.items.map((item, i) => (
+                                <ErdemCard key={i} name={item.name} desc={item.content} />
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="p-4 bg-teal-50 border border-teal-100 rounded-xl flex items-center gap-3 shadow-sm">
+                          <Zap className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                          <span className="text-xs font-bold text-teal-900">Becerilerin Tetikleyicisi</span>
+                        </div>
+                        <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-3 shadow-sm">
+                          <Heart className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                          <span className="text-xs font-bold text-amber-900">Değerlerin Besleyicisi</span>
+                        </div>
+                        <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center gap-3 shadow-sm">
+                          <Anchor className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+                          <span className="text-xs font-bold text-indigo-900">Bütüncül Gelişim Köprüsü</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 4: ALAN BECERİLERİ REHBERİ */}
+                  {currentView === 'm4' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 4: Alan Becerileri Rehberi</h2>
+                      
+                      <div className={styles.card}>
+                        <h3 className="font-bold text-xl mb-6 text-indigo-900 flex items-center gap-2.5"><Puzzle className="w-6 h-6 text-indigo-600"/> Alan Becerisi Nedir?</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="flex gap-4 items-start bg-blue-50/40 p-4 rounded-xl border border-blue-100">
+                            <Settings className="w-8 h-8 text-blue-600 flex-shrink-0 mt-1" />
+                            <div>
+                              <h4 className="font-bold text-blue-900">Yapısal Bütünlük</h4>
+                              <p className="text-sm text-slate-700 leading-relaxed mt-1">
+                                Becerilerin süreç boyunca kullanılması için gereken, bağlama dayalı bilgi kümelerini içeren yapısal bir bütündür.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-4 items-start bg-teal-50/40 p-4 rounded-xl border border-teal-100">
+                            <Layers className="w-8 h-8 text-teal-600 flex-shrink-0 mt-1" />
+                            <div>
+                              <h4 className="font-bold text-teal-900">Kavramsal ve Bütünleşik Yapı</h4>
+                              <p className="text-sm text-slate-700 leading-relaxed mt-1">
+                                Alan becerileri, kavramsal becerileri ve alana özgü bütünleşik becerileri süreç bileşenleriyle birlikte kapsar.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-6">
+                        {alanBecerileriData.map((cat, idx) => (
+                          <div key={idx} className={styles.card}>
+                            <h3 className="font-bold text-lg mb-4 text-indigo-900 border-b border-indigo-50 pb-3">{cat.category}</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {cat.items.map((item, i) => (
+                                <div key={i} className="h-full">
+                                   <ErdemCard name={item.name} desc={item.desc} icon={item.icon} />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 5: ÖĞRENME ÇIKTILARI VE İÇERİK ÇERÇEVESİ */}
+                  {currentView === 'm5' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 5: Öğrenme Çıktıları ve İçerik Çerçevesi</h2>
+                      
+                      <div className={styles.card}>
+                        <h3 className="font-bold text-xl mb-6 text-indigo-900 flex items-center gap-2.5"><Database className="w-6 h-6 text-indigo-600"/> Öğrenme Çıktılarının Formülü</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {ogrenmeCiktisiFormulu.map((item, i) => (
+                            <ErdemCard key={i} name={item.title} desc={item.desc} icon={item.icon} />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className={styles.card}>
+                        <h3 className="font-bold text-xl mb-4 text-indigo-900 flex items-center gap-2.5"><Network className="w-6 h-6 text-indigo-600"/> Bilginin Dinamik Yapısı ve İçerik Çerçevesi</h3>
+                        <div className="mb-6 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 flex items-center gap-3">
+                          <Brain className="w-6 h-6 text-indigo-600 flex-shrink-0" />
+                          <span className="font-bold text-indigo-950 text-sm">ÖĞRENCİ NE BİLMELİ? Aşağıdaki 4 temel bilgi alanı bu soruyu yanıtlar:</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {bilgininDinamikYapisi.map((item, i) => (
+                            <div key={i} className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-indigo-300 transition-colors">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><item.icon className="w-5 h-5"/></div>
+                                <h4 className="font-bold text-indigo-900 text-sm">{item.title}</h4>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed">{item.desc}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className={`${styles.card} bg-gradient-to-br from-white to-slate-50`}>
+                        <h3 className="font-bold text-xl mb-6 text-indigo-900 flex items-center gap-2.5"><Layers3 className="w-6 h-6 text-indigo-600"/> Organizasyon ve İlişkisel Yapı</h3>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-indigo-800 font-bold border-b border-indigo-100 pb-2">
+                              <Layers className="w-5 h-5"/> Sınıflar Arası Dikey Birikimlilik
+                            </div>
+                            <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-600 shadow-sm relative">
+                              <span className="block font-bold text-slate-800 mb-1">Önceki Öğrenmeler (Temel Kabuller)</span>
+                              Birikimli ve ön koşullu düzen üzerine inşa edilerek <span className="font-semibold text-indigo-600">Yeni Bilgiler</span>'e ulaşılır.
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-indigo-800 font-bold border-b border-indigo-100 pb-2">
+                              <Waypoints className="w-5 h-5"/> Dersler Arası Yatay İlişkilendirme
+                            </div>
+                            <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-600 shadow-sm flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md">Matematik</span>
+                              <span className="px-2 py-1 bg-teal-50 text-teal-700 rounded-md">Fen Bilimleri</span>
+                              <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded-md">Sosyal Bilimler</span>
+                              <span className="px-2 py-1 bg-rose-50 text-rose-700 rounded-md">Dil Bilimleri</span>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-indigo-800 font-bold border-b border-indigo-100 pb-2">
+                              <RefreshCw className="w-5 h-5"/> Sarmal ve Esnek Yapı
+                            </div>
+                            <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-600 shadow-sm">
+                              Hiyerarşik baskı yerine sarmal ve genişleyen bir düzende sunulur, öğrencilerin gelişimine uygun olarak esneklik ve derinleşme sağlar.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* MODÜL 6: PROGRAMLAR ARASI BİLEŞENLER */}
+                  {currentView === 'm6' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 6: Programlar Arası Bileşenler</h2>
+
+                      <div className={styles.card}>
+                        <div className="flex gap-4 items-start bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                          <Component className="w-10 h-10 text-indigo-600 flex-shrink-0 mt-1" />
+                          <div>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                              <span className="font-bold text-indigo-900">Programlar Arası Bileşenler</span>, öğretim programlarını tamamlayan ve öğrencinin kişisel, sosyal, entelektüel ve ahlaki açıdan bütüncül gelişimini hedefleyen temel yapıdır. Bu bileşenler, toplumsal hayatın ihtiyaç duyduğu bilgi ve becerileri kapsayan öğretim programlarının özünü oluşturur ve eğitimin "örtük hedeflerini" özetler.
+                              <br/><br/>
+                              Programlar arası bileşenler herhangi bir ünite veya kademeyle sınırlı kalmayıp, okul öncesinden lise mezuniyetine kadar sarmal bir yapıda tüm sürece yayılır. Modelde bu yapı üç ana bileşene ayrılmaktadır:
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-6">
+                        <div className={`${styles.card} border-t-4 border-t-blue-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-blue-900 flex items-center gap-2"><HeartHandshake className="w-6 h-6 text-blue-600"/> 1. Sosyal-Duygusal Öğrenme Becerileri</h3>
+                          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                            Bu bileşen, öğrencilerin sadece zihinsel değil, sosyal ve duygusal yönden de gelişerek karşılaştıkları zorluklarla baş edebilmelerini ve geleceğin koşullarına uyum sağlamalarını amaçlar. Ayrı bir içerik veya öğrenme çıktısı olarak değil, öğretim programlarının tamamına nüfuz eden bir beceri seti olarak tasarlanmıştır. Kendi içinde üç alt kategoriye ayrılır:
+                          </p>
+                          <div className="space-y-3">
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm">Benlik Becerileri (SDB1):</span> <span className="text-sm text-slate-700">Kişinin kendi kaynaklarını geliştirip kullanmasını sağlar; kendini tanıma (öz farkındalık), kendini düzenleme (öz düzenleme) ve kendine uyarlama (öz yansıtma) becerilerini içerir.</span>
+                            </div>
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm">Sosyal Yaşam Becerileri (SDB2):</span> <span className="text-sm text-slate-700">Bireyin toplumsal hayata etkin katılımını ve günlük sorunları çözmesini hedefler; iletişim, iş birliği ve sosyal farkındalık becerilerinden oluşur.</span>
+                            </div>
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm">Ortak/Birleşik Beceriler (SDB3):</span> <span className="text-sm text-slate-700">Benlik ve sosyal yaşam becerilerinin kesişim noktasında yer alır; uyum, esneklik ve sorumlu karar verme becerilerini kapsar.</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`${styles.card} border-t-4 border-t-amber-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-amber-900 flex items-center gap-2"><Leaf className="w-6 h-6 text-amber-600"/> 2. Erdem-Değer-Eylem Çerçevesi</h3>
+                          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                            Bu bileşen, toplumun millî ve manevi değerlerinin öğrenciler tarafından içselleştirilmesini sağlayan bir "ahlaki pusula" görevi görür. Değerlerin sadece bilgi düzeyinde kalmayıp eyleme dönüşmesi hedeflenir. Çerçeve şu dört ana odak etrafında yapılandırılmıştır:
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                              <span className="font-bold text-amber-800 text-sm block mb-1">Huzurlu İnsan:</span> <span className="text-sm text-slate-700">Sabır, sağlıklı yaşam, tasarruf, çalışkanlık, mahremiyet ve mütevazılık.</span>
+                            </div>
+                            <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                              <span className="font-bold text-amber-800 text-sm block mb-1">Huzurlu Aile ve Toplum:</span> <span className="text-sm text-slate-700">Aile bütünlüğü, dostluk, dürüstlük, özgürlük, sevgi, vatanseverlik ve yardımseverlik.</span>
+                            </div>
+                            <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                              <span className="font-bold text-amber-800 text-sm block mb-1">Yaşanabilir Çevre:</span> <span className="text-sm text-slate-700">Duyarlılık, estetik, merhamet ve temizlik.</span>
+                            </div>
+                            <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                              <span className="font-bold text-amber-800 text-sm block mb-1">Üst Temalar:</span> <span className="text-sm text-slate-700">Saygı, sorumluluk ve adalet.</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`${styles.card} border-t-4 border-t-teal-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-teal-900 flex items-center gap-2"><Network className="w-6 h-6 text-teal-600"/> 3. Sistem Düşüncesi ve Okuryazarlık Becerileri</h3>
+                          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                            Öğrencilerin karmaşık dünyayı anlamlandırmalarına yardımcı olacak sistemli bir bakış açısı kazanmalarını ve farklı alanlarda yetkinleşmelerini hedefler. Bu bileşen iki temel yapıdan oluşur:
+                          </p>
+                          <div className="space-y-3">
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm block mb-1">Okuryazarlık Becerileri:</span> <span className="text-sm text-slate-700">Toplam 9 farklı okuryazarlık alanını kapsar: Bilgi, dijital, finansal, görsel, kültür, vatandaşlık, veri, sürdürülebilirlik ve sanat okuryazarlığı. Bu beceriler; farkındalık, işlevsellik ve eylemsellik olmak üzere üç aşamalı ve sarmal bir düzeyde kazandırılır.</span>
+                            </div>
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm block mb-1">Sistem Düşüncesi:</span> <span className="text-sm text-slate-700">Karmaşık sistemleri ve bileşenlerini çözümleme, problemleri çözme, sistemi yapılandırma ve sistemin davranışlarını tahmin etme yeteneğini geliştirir.</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 7: ÖĞRENME-ÖĞRETME YAŞANTILARI */}
+                  {currentView === 'm7' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 7: Öğrenme-Öğretme Yaşantıları</h2>
+
+                      {/* Intro */}
+                      <div className={styles.card}>
+                        <div className="flex gap-4 items-start bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                          <GraduationCap className="w-10 h-10 text-indigo-600 flex-shrink-0 mt-1" />
+                          <div>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                              Türkiye Yüzyılı Maarif Modeli'nde öğrenme-öğretme yaşantıları, bilgi, beceri, eğilim ve değerler arasında kurulan anlamlı ağlara dayanan dinamik ve öğrenci merkezli bir süreci ifade eder. Bu yapı, her öğrencinin bütüncül gelişimini merkeze alarak esnek ve aktif bir öğrenme ortamı sunmayı amaçlar.
+                              <br/><br/>
+                              Öğrenme-öğretme yaşantılarının detayları şu temel başlıklar altında yapılandırılmıştır:
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 1. Temel İlkeler */}
+                      <div className={`${styles.card} border-t-4 border-t-blue-500`}>
+                          <h3 className="font-bold text-xl mb-4 text-blue-900 flex items-center gap-2"><Target className="w-6 h-6 text-blue-600"/> 1. Temel İlkeler ve Yaklaşım</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Öğrenci Merkezlilik:</span> <span className="text-sm text-slate-700">Öğrencinin aktif katılımı sağlanır ve kendi öğrenme süreci üzerinde söz sahibi olması desteklenir.</span>
+                            </div>
+                             <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Derin ve Anlamlı Öğrenme:</span> <span className="text-sm text-slate-700">Bilgi ve beceriler, araştırma ve sorgulamayı merkeze alan gerçek yaşam bağlamları içinde kazandırılır.</span>
+                            </div>
+                             <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Bütüncül Gelişim:</span> <span className="text-sm text-slate-700">Bilgi, beceri, eğilim ve değerlerin birlikte kullanıldığı bir öğrenme ekosistemi oluşturulur.</span>
+                            </div>
+                             <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Yaparak ve Düşünerek Öğrenme:</span> <span className="text-sm text-slate-700">Öğrencilerin yaparak ve yaptıkları üzerinde düşünerek öğrenmeleri (yansıtma) temel alınır.</span>
+                            </div>
+                          </div>
+                      </div>
+
+                      {/* 2. Bileşenler */}
+                      <div className={`${styles.card} border-t-4 border-t-teal-500`}>
+                          <h3 className="font-bold text-xl mb-4 text-teal-900 flex items-center gap-2"><Layers className="w-6 h-6 text-teal-600"/> 2. Öğrenme Yaşantılarının Bileşenleri (1.4.8.1 - 1.4.8.4)</h3>
+                          <div className="space-y-3">
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm">Temel Kabuller:</span> <span className="text-sm text-slate-700">Öğrencilerin yeni bir ünite veya öğrenme alanı için ihtiyaç duyacağı ön öğrenmeleri (kavram, ilke, teorem vb.) temsil eder.</span>
+                            </div>
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm">Ön Değerlendirme Süreci:</span> <span className="text-sm text-slate-700">Öğrencilerin temel kabullere sahip olup olmadığının belirlendiği, ilgi ve ihtiyaçlarının analiz edildiği aşamadır.</span>
+                            </div>
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm">Köprü Kurma:</span> <span className="text-sm text-slate-700">Mevcut bilgi ve beceriler ile yeni edinilecek olanlar arasında bağlantı kurulmasıdır. Bu süreçte metaforlar, benzerlikler ve günlük hayat örnekleri kullanılır.</span>
+                            </div>
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm">Öğrenme-Öğretme Uygulamaları:</span> <span className="text-sm text-slate-700">Öğretmenin rehber, öğrencinin ise aktif katılımcı olduğu; sorgulama, problem çözme ve iş birliğine dayalı uygulamalardır.</span>
+                            </div>
+                          </div>
+                      </div>
+                      
+                      {/* 3. Öğrenme Yaklaşımları */}
+                      <div className={`${styles.card} border-t-4 border-t-amber-500`}>
+                          <h3 className="font-bold text-xl mb-4 text-amber-900 flex items-center gap-2"><Lightbulb className="w-6 h-6 text-amber-600"/> 3. Dayanak Alınan Öğrenme Yaklaşımları</h3>
+                          <p className="text-sm text-slate-600 mb-5">Model, öğrenci özerkliğini vurgulayan şu beş temel yaklaşımı benimser:</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                             <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                                <span className="font-bold text-amber-800 text-sm block mb-1">Yaşantı Temelli Öğrenme:</span> <span className="text-xs text-slate-700">Deneyimlerin kavramsallaştırılması ve dönüştürülmesi süreci.</span>
+                             </div>
+                             <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                                <span className="font-bold text-amber-800 text-sm block mb-1">Bağlam Temelli Öğrenme:</span> <span className="text-xs text-slate-700">Bilginin gerçek yaşam senaryoları içinde anlamlandırılması.</span>
+                             </div>
+                             <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                                <span className="font-bold text-amber-800 text-sm block mb-1">Sorgulamaya Dayalı Öğrenme:</span> <span className="text-xs text-slate-700">Bilimsel yöntemle bilgiye ulaşma ve öğrenci sorumluluğu.</span>
+                             </div>
+                             <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                                <span className="font-bold text-amber-800 text-sm block mb-1">Proje Temelli Öğrenme:</span> <span className="text-xs text-slate-700">Disiplinler ötesi yaklaşımlarla ürün geliştirme.</span>
+                             </div>
+                             <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100 lg:col-span-2 xl:col-span-1">
+                                <span className="font-bold text-amber-800 text-sm block mb-1">İş Birlikli Öğrenme:</span> <span className="text-xs text-slate-700">Ortak amaçlar doğrultusunda küçük takımlarla çalışma.</span>
+                             </div>
+                          </div>
+                      </div>
+
+                      {/* 4. Yöntem ve Teknikler */}
+                       <div className={`${styles.card} border-t-4 border-t-indigo-500`}>
+                          <h3 className="font-bold text-xl mb-4 text-indigo-900 flex items-center gap-2"><Workflow className="w-6 h-6 text-indigo-600"/> 4. Öğretim Yöntem ve Teknikleri</h3>
+                          <p className="text-sm text-slate-700 leading-relaxed bg-indigo-50/50 p-5 rounded-xl border border-indigo-100">
+                            Süreçte; tartışma, soru-cevap, örnek olay, deney, drama, altı şapkalı düşünme gibi aktif öğrenme teknikleri ile kavram haritaları ve akış diyagramları gibi örgütsel düzenleyiciler kullanılır. Ayrıca dijital öyküleme ve karma öğretim gibi teknoloji temelli yaklaşımlar ile sanal/artırılmış gerçeklik ortamlarından yararlanılması önerilir.
+                          </p>
+                      </div>
+
+                      {/* Outro */}
+                      <div className="p-5 bg-gradient-to-r from-indigo-900 to-indigo-700 text-white rounded-2xl shadow-lg flex items-center gap-4">
+                          <Sparkles className="w-8 h-8 flex-shrink-0 text-indigo-200" />
+                          <p className="text-sm font-medium leading-relaxed">
+                             Bu yaşantılar, öğrencilere zengin bir öğrenme ortamı sağlayarak, becerilerin eğilimlerle tetiklendiği ve değerlerle karakterize olduğu bir gelişim süreci sunar.
+                          </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 8: UYGULAMA VE FARKLILAŞTIRMA */}
+                  {currentView === 'm8' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 8: Uygulama ve Farklılaştırma</h2>
+
+                      <div className={styles.card}>
+                        <div className="flex gap-4 items-start bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                          <Rocket className="w-10 h-10 text-indigo-600 flex-shrink-0 mt-1" />
+                          <div>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                              Türkiye Yüzyılı Maarif Modeli'nin uygulama aşamasını ve kapsayıcı yapısını yansıtan bu bölümler, eğitimin sadece bir bilgi aktarımı değil, bir şahsiyet inşası ve beceri geliştirme süreci olduğunu vurgulamaktadır. Modelin sunduğu derinlemesine detaylar ve sizin de belirttiğiniz aktif öğrenme felsefesi çerçevesinde bu yapılar şu şekilde detaylandırılmaktadır:
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 1. Aktif Uygulama Safhası */}
+                      <div className={`${styles.card} border-t-4 border-t-blue-500`}>
+                          <h3 className="font-bold text-xl mb-4 text-blue-900 flex items-center gap-2"><Workflow className="w-6 h-6 text-blue-600"/> 1. 1.4.8.4. Öğrenme-Öğretme Uygulamaları: Aktif Uygulama Safhası</h3>
+                          <p className="text-sm text-slate-600 mb-5">Bu aşama, hazırlık ve köprü kurma süreçlerinin ardından gelen, öğrencinin bilgiyi bizzat işlediği aktif uygulama dönemidir.</p>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Öğretmen ve Öğrenci Rolü:</span> <span className="text-sm text-slate-700">Süreçte öğretmen, bilgi aktaran pasif bir figür değil; öğrenciyi yönlendiren, ona yol gösteren bir rehber ve tasarım uzmanı rolündedir. Öğrenci ise sürecin merkezinde, kendi öğrenme sorumluluğunu alan bir aktif katılımcı konumundadır.</span>
+                            </div>
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Yöntemsel Derinlik:</span> <span className="text-sm text-slate-700">Eğitim süreci; sorgulama, problem çözme ve iş birliğine dayalı uygulamalarla kurgulanır. Bilgi, kuru bir aktarım yerine gerçek yaşam bağlamları içinde sunularak anlamlı ve derin öğrenme hedeflenir.</span>
+                            </div>
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                              <span className="font-bold text-blue-800 text-sm block mb-1">Beceri Örgüsü:</span> <span className="text-sm text-slate-700">Kavramsal beceriler ile alana özgü beceriler, sosyal-duygusal öğrenme becerileri (SDB) ve değerlerle harmanlanarak bir bütün hâlinde işlenir. Öğrenci, yaparak ve yaşayarak öğrenirken, sürece dair yansıtma yaparak zihinsel süreçlerini somutlaştırır.</span>
+                            </div>
+                          </div>
+                      </div>
+
+                      {/* 2. Farklılaştırma (İç Modül) */}
+                      <div className="p-6 bg-slate-100/80 rounded-3xl border border-slate-200">
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-slate-200 shadow-sm"><SplitSquareHorizontal className="w-6 h-6 text-indigo-700"/></div>
+                          <div>
+                            <h3 className="font-bold text-2xl text-slate-800">2. 1.4.9. Farklılaştırma</h3>
+                            <p className="text-sm text-slate-500">Kapsayıcı ve Esnek Yapı (İç Modül)</p>
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm text-slate-700 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                          Farklılaştırılmış öğretim, her öğrencinin benzersiz öğrenme ihtiyaçlarını karşılamayı amaçlayan esnek ve kapsayıcı bir çatı kavramdır.
+                          <br/><br/>
+                          <span className="font-bold text-indigo-900">Temel Vizyon:</span> Model, bireysel farklılıkları bir zenginlik olarak görür ve her öğrencinin potansiyelini en üst düzeye çıkarabileceği bir ortam tasarlar. Bu doğrultuda içerik, süreç, ürün ve fiziksel ortam üzerinde öğrencinin hazırbulunuşluk düzeyine göre uyarlamalar yapılır.
+                        </p>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {/* Zenginleştirme */}
+                          <div className="bg-white p-5 rounded-2xl border-t-4 border-t-emerald-500 shadow-sm">
+                            <h4 className="font-bold text-lg text-emerald-900 mb-3 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-emerald-600"/> 1.4.9.1. Zenginleştirme (İleri Düzey Öğrenciler İçin)</h4>
+                            <p className="text-xs text-slate-500 mb-4">Akranlarından daha hızlı ilerleyen öğrenciler için öğretim programının sınırlarını aşan derinlemesine öğrenme imkânları sunulur.</p>
+                            <ul className="space-y-3">
+                              <li className="text-sm text-slate-700 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span className="font-bold text-emerald-800 block mb-1">İçerik ve Süreç:</span> Veriden ziyade soyut kavramlara, teorilere ve disiplinler arası bağlantılara odaklanılır. Öğrenciler gerçek hayat problemleri üzerinde çalışarak projelerini gerçek hedef kitlelere sunarlar.
+                              </li>
+                              <li className="text-sm text-slate-700 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span className="font-bold text-emerald-800 block mb-1">Üretim ve Ortam:</span> Profesyonel kriterlere göre değerlendirilen yaratıcı ve özgün ürünler beklenir. Öğrenme ortamı, birden fazla duyuya hitap eden ve etkileşimi teşvik eden görsel materyallerle zenginleştirilir.
+                              </li>
+                            </ul>
+                          </div>
+
+                          {/* Destekleme */}
+                          <div className="bg-white p-5 rounded-2xl border-t-4 border-t-amber-500 shadow-sm">
+                            <h4 className="font-bold text-lg text-amber-900 mb-3 flex items-center gap-2"><LifeBuoy className="w-5 h-5 text-amber-600"/> 1.4.9.2. Destekleme (Ek Zaman ve Tekrara İhtiyaç Duyanlar İçin)</h4>
+                            <p className="text-xs text-slate-500 mb-4">Öğrenme sürecinde daha fazla zamana veya basitleştirilmiş adımlara ihtiyaç duyan öğrenciler için kişiselleştirilmiş stratejiler devreye sokulur.</p>
+                            <ul className="space-y-3">
+                              <li className="text-sm text-slate-700 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                                <span className="font-bold text-amber-800 block mb-1">Zihinsel Yaklaşım:</span> Destekleme ihtiyacı olan öğrencilerin öğrenme becerisinin düşük olduğu varsayılmaz; aksine bu öğrencilerin de derin düşünme ve problem çözme yeteneklerinin yüksek olabileceği kabul edilir.
+                              </li>
+                              <li className="text-sm text-slate-700 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                                <span className="font-bold text-amber-800 block mb-1">Uygulama Stratejisi:</span> İçerik ve süreç, öğrencinin mevcut bilgi temeline uygun olarak parçalara ayrılır ve öğrencinin kendi hızında ilerlemesine imkân tanınır.
+                              </li>
+                              <li className="text-sm text-slate-700 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                                <span className="font-bold text-amber-800 block mb-1">Duygusal ve Süreç Odaklı Destek:</span> Öz farkındalık ve öz düzenleme becerileri üzerinden öğrencinin öz güveni inşa edilir. Süreç temelli ölçme ve değerlendirme ile öğrencinin gelişimi yakından takip edilerek geri bildirimler sağlanır.
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sonuç */}
+                      <div className="p-6 bg-gradient-to-r from-indigo-900 to-indigo-700 text-white rounded-2xl shadow-lg">
+                          <div className="flex items-center gap-3 mb-3">
+                            <Scale className="w-8 h-8 text-indigo-200 flex-shrink-0" />
+                            <h3 className="text-xl font-bold">Sonuç: Eğitimde Fırsat Adaleti</h3>
+                          </div>
+                          <p className="text-sm font-medium leading-relaxed text-indigo-50">
+                            Türkiye Yüzyılı Maarif Modeli, öğrenciyi pasif bir alıcı olmaktan çıkarıp sürecin merkezine koyan aktif bir öğrenme felsefesi üzerine inşa edilmiştir. Bu modelde eğitim, bilginin kuru bir aktarımı yerine sorgulama ve problem çözme gibi becerilerin sosyal değerlerle harmanlandığı bir uygulama safhası olarak kurgulanır. Sistemin en dikkat çekici yönü olan farklılaştırma stratejisi, her bireyin kendine özgü potansiyelini gözeterek içeriği ve yöntemi esnek bir yapıda sunmayı amaçlar. Bu bağlamda, ileri düzey öğrenciler için zenginleştirilmiş derinlemesine öğrenme imkânları sağlanırken, ek desteğe ihtiyaç duyanlar için öz güveni ve gelişimi önceleyen kişiselleştirilmiş adımlar devreye sokulur. Nihayetinde bu yaklaşım, hiçbir bireyin eğitim sürecinde geride bırakılmadığı bir fırsat adaleti ve kapsayıcılık vizyonu taşımaktadır.
+                          </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODÜL 9: TAMAMLAYICI BİLEŞENLER VE PROGRAM YAPISI */}
+                  {currentView === 'm9' && (
+                    <div className="space-y-8 animate-in slide-in-from-right-4">
+                      <h2 className="text-3xl font-black text-slate-800 tracking-tight">Modül 9: Tamamlayıcı Bileşenler ve Program Yapısı</h2>
+
+                      {/* 1.4.10 */}
+                      <div className={`${styles.card} border-t-4 border-t-blue-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-blue-900 flex items-center gap-2"><Building className="w-6 h-6 text-blue-600"/> 1.4.10. Okul Temelli Planlama</h3>
+                          <p className="text-sm text-slate-700 leading-relaxed">
+                            Okul temelli planlama, Maarif Modeli'nin program geliştirme tasarımında yer alan ve öğretim programlarının yerel ihtiyaçlar ile okulun şartlarına göre somutlaştırılmasını sağlayan bileşendir. Bu süreç, öğretim programlarının genel çerçevesini bozmadan, okulun fiziksel imkânları ve öğrenci profili göz önünde bulundurularak eğitim faaliyetlerinin planlanmasını ifade eder.
+                          </p>
+                      </div>
+
+                      {/* 1.4.11 */}
+                      <div className={`${styles.card} border-t-4 border-t-teal-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-teal-900 flex items-center gap-2"><CalendarDays className="w-6 h-6 text-teal-600"/> 1.4.11. Program Dışı Etkinlikler</h3>
+                          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                            Öğrencinin bütüncül gelişimini okulun akademik sınırlarının ötesine taşıyan bu bölüm iki ana koldan oluşur:
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm block mb-1">1.4.11.1. Sosyal Sorumluluk Programı:</span> <span className="text-sm text-slate-700">Öğrencilerin toplumsal sorunlara duyarlılık geliştirmesini, yardımlaşma ve gönüllülük gibi değerleri eyleme dönüştürmesini amaçlar. Bu programlar aracılığıyla öğrenci, toplumsal fayda üretme sürecinde aktif rol alır.</span>
+                            </div>
+                            <div className="p-4 bg-teal-50/50 rounded-xl border border-teal-100">
+                              <span className="font-bold text-teal-800 text-sm block mb-1">1.4.11.2. Hayat Boyu Öğrenme:</span> <span className="text-sm text-slate-700">Öğrenmenin sadece okul yıllarıyla sınırlı kalmayıp bireyin tüm yaşamına yayılmasını ve değişen teknolojik/sosyal şartlara uyum sağlama becerisini kazanmasını hedefler.</span>
+                            </div>
+                          </div>
+                      </div>
+
+                      {/* 1.4.12 */}
+                      <div className={`${styles.card} border-t-4 border-t-amber-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-amber-900 flex items-center gap-2"><HeartHandshake className="w-6 h-6 text-amber-600"/> 1.4.12. Kapsamlı Gelişimsel Rehberlik Programı</h3>
+                          <p className="text-sm text-slate-700 leading-relaxed">
+                            Öğrencilerin duygularını yönetme, empati kurma ve destekleyici ilişkiler geliştirme gibi ihtiyaçlarını merkeze alan bir programdır. Sağlıklı bir benlik geliştirilmesi için gerekli bilgi, beceri ve eğilimleri kapsar ve rehberlik faaliyetlerinin öğretim süreciyle bütünleşik bir şekilde yürütülmesini sağlar.
+                          </p>
+                      </div>
+
+                      {/* 1.4.13 */}
+                      <div className={`${styles.card} border-t-4 border-t-rose-500`}>
+                          <h3 className="font-bold text-xl mb-3 text-rose-900 flex items-center gap-2"><BarChart className="w-6 h-6 text-rose-600"/> 1.4.13. Öğretmen Yansıtmaları</h3>
+                          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                            Modelin en dinamik öğelerinden biridir ve öğretim sürecinin sürekli iyileştirilmesini amaçlar:
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 bg-rose-50/50 rounded-xl border border-rose-100">
+                              <span className="font-bold text-rose-800 text-sm block mb-1">Tanım:</span> <span className="text-sm text-slate-700">Öğretmenlerin, hem kendi mesleki performanslarını hem de uygulanan öğretim programının güçlü ve iyileştirilmesi gereken yönlerini değerlendirmesini ifade eder.</span>
+                            </div>
+                            <div className="p-4 bg-rose-50/50 rounded-xl border border-rose-100">
+                              <span className="font-bold text-rose-800 text-sm block mb-1">İşlev:</span> <span className="text-sm text-slate-700">Öğretmen yansıtmaları, program geliştirme tasarımının ilişkisel ve döngüsel yapısının bir parçasıdır. Bu geri bildirimler, programın bir sonraki uygulama aşamaları için temel bir veri kaynağı oluşturur.</span>
+                            </div>
+                          </div>
+                      </div>
+
+                      {/* 1.4.14 */}
+                      <div className={`${styles.card} border-t-4 border-t-indigo-500`}>
+                          <h3 className="font-bold text-xl mb-4 text-indigo-900 flex items-center gap-2"><Layout className="w-6 h-6 text-indigo-600"/> 1.4.14. Öğretim Programlarının Yapısı</h3>
+                          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                            Bu bölüm, Maarif Modeli'nin teknik ve kurumsal çerçevesini belirler:
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                              <span className="font-bold text-indigo-800 text-sm block mb-1">Esneklik ve Değişkenlik:</span> <span className="text-sm text-slate-700">Model; bilgi, beceri, eğilim ve değerlerin örüntülü yapısını korumak kaydıyla okul türü, eğitim kademesi ve dersin özelliğine göre farklı tasarımlara izin verir.</span>
+                            </div>
+                            <div className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                              <span className="font-bold text-indigo-800 text-sm block mb-1">Süreç Detaylı Yapı:</span> <span className="text-sm text-slate-700">Tutarlılığın ve uygulama birliğinin kritik olduğu dersler için "süreç detaylı" bir yapı kullanılır. Bu yapı; öğrenme çıktıları, içerik çerçevesi, öğrenme-öğretme yaşantıları ve ölçme-değerlendirme yaklaşımlarını bir bütün olarak tanımlar.</span>
+                            </div>
+                            <div className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                              <span className="font-bold text-indigo-800 text-sm block mb-1">Bileşenlerin Entegrasyonu:</span> <span className="text-sm text-slate-700">Program yapısı; kavramsal beceriler, alan becerileri, sosyal-duygusal beceriler ve değerlerin anlamlı ilişkiler üzerine kurulduğu "örgü" (web) temelindeki bir sistemi temsil eder.</span>
+                            </div>
+                          </div>
+                      </div>
+
+                      {/* Conclusion Banner */}
+                      <div className="p-5 bg-gradient-to-r from-indigo-900 to-indigo-700 text-white rounded-2xl shadow-lg flex items-center gap-4">
+                          <Sparkles className="w-10 h-10 flex-shrink-0 text-indigo-200" />
+                          <p className="text-sm font-medium leading-relaxed">
+                             Bu yapılar, modelin sadece teorik bir çerçeve sunmakla kalmayıp okul içi ve dışı tüm süreçleri kapsayan, öğretmen geri bildirimleriyle kendini güncelleyen esnek ve bütüncül bir eğitim ekosistemi kurduğunu göstermektedir.
+                          </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Navigasyon Tuşları */}
+                  <div className="flex justify-between pt-10 border-t border-slate-200">
+                    <button 
+                      onClick={() => navigate('prev')} 
+                      disabled={currentView === 'm1' || currentView === 'dashboard'} 
+                      className="flex items-center gap-2 px-6 py-2.5 bg-white rounded-xl border border-slate-300 shadow-sm disabled:opacity-50 transition-all active:scale-95"
+                    >
+                      <ArrowLeft className="w-4 h-4"/> Geri
+                    </button>
+                    <button 
+                      onClick={() => navigate('next')} 
+                      disabled={currentView === 'm9' || currentView === 'dashboard'} 
+                      className="flex items-center gap-2 px-6 py-2.5 bg-indigo-900 text-white rounded-xl shadow-lg disabled:opacity-50 transition-all active:scale-95"
+                    >
+                      İleri <ArrowRight className="w-4 h-4"/>
+                    </button>
+                  </div>
+                </div>
+              </main>
+            </div>
+          );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

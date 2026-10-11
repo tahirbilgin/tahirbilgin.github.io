@@ -1,0 +1,1 @@
+Bu ZIP dosyasını açın. İçindeki maarif-modeli.html, maarif-galeri.html, maarif-uygulama.html ve maarif-gorseller klasörünü (11 JPG ile) GitHub deponuzun ana dizinine yükleyin. Klasör yapısını değiştirmeyin. Sonra ChatGPT’ye "Yükledim" yazın; altıncı kartın bağlantısı ayarlanacak.
