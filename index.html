@@ -230,6 +230,22 @@ html[data-tb-theme="dark"] :is(.prompt,.stat,.future-card) h3{color:#f0f5ff}
 html[data-tb-theme="dark"] :is(.prompt,.stat,.future-card) p{color:#c9d6e7}
 html[data-tb-theme="dark"] :is(.pill,.hub-see-all,.hub-back){border-color:#536b8b}
 @media(max-width:650px){html[data-tb-theme="dark"] header .brand{padding:4px 6px;border-radius:10px}}
+</style><style id="tb-mobile-night-specific-fixes">
+/* The mobile dropdown stays white in the original stylesheet; keep every item legible. */
+@media(max-width:650px){
+ html[data-tb-theme="dark"] .mobile-nav .links{background:#16243a!important;border-color:#425875!important;box-shadow:0 20px 50px #0007}
+ html[data-tb-theme="dark"] .mobile-nav .links :is(a,label.navlink){background:transparent!important;color:#f1f6ff!important;opacity:1!important}
+ html[data-tb-theme="dark"] .mobile-nav .links :is(a,label.navlink):hover,
+ html[data-tb-theme="dark"] .mobile-nav .links :is(a,label.navlink):active{background:#2a4160!important;color:#fff!important}
+ html[data-tb-theme="dark"] .mobile-nav .links .pill{background:#243954!important;color:#f1f6ff!important}
+ html[data-tb-theme="dark"] .mobile-nav .nav-toggle{background:#eaf0fc!important;color:#1f426c!important;border-color:#d4dfef!important}
+}
+/* A pale app launch surface needs dark text; do not inherit generic link blue. */
+html[data-tb-theme="dark"] .tile .app-launch{color:#f1f6ff!important}
+html[data-tb-theme="dark"] .tile .app-launch:not(.btn){background:transparent!important}
+html[data-tb-theme="dark"] .tile .app-launch:is(.btn,.primary){background:#345fa8!important;color:#fff!important;border-color:#668ed0!important}
+html[data-tb-theme="dark"] .tile .app-launch[style*="background"]{color:#102b4d!important}
+html[data-tb-theme="dark"] .tile .app-launch:focus-visible{outline:3px solid #a4c7ff;outline-offset:3px}
 </style><style id="tb-accessibility-controls">
 #tb-scroll-control{position:fixed;right:17px;bottom:22px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:9px}
 #tb-scroll-track{width:44px;height:112px;border:1px solid rgba(116,139,176,.28);border-radius:25px;background:rgba(255,255,255,.85);box-shadow:0 12px 34px #183e6826;backdrop-filter:blur(16px);position:relative;overflow:hidden}
