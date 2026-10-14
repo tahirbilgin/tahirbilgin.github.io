@@ -52,33 +52,35 @@
 .hub-entry{cursor:pointer}.hub-entry:focus-visible{outline:3px solid #4779e9;outline-offset:3px}.app-launch{display:inline-flex;align-items:center;align-self:flex-start;min-height:35px;padding:6px 10px;margin-left:-10px;border-radius:9px;background:#eef4ff}.app-launch:hover{background:#dceaff}.hub-entry:hover .tile-link{color:#234da4}
 .arabic-hub{z-index:10010}
 </style><style id="premium-page-backgrounds">
-/* Soft animated mist backgrounds; preserve all page content and existing panel layout. */
+/* Premium pastel page backgrounds: change only page surfaces. */
 #anasayfa{background:radial-gradient(ellipse at 80% 12%,#dcecff 0%,transparent 45%),radial-gradient(ellipse at 10% 90%,#e3f3ff 0%,transparent 42%),#eff6ff}
-#uygulamalar,#panel-uygulamalar,#panel-arapca{--mist-base:#e8f7f1;--mist-one:#bcece0;--mist-two:#d7edff;--mist-three:#fff6e4}
-#videolar,#panel-videolar{--mist-base:#f3ecff;--mist-one:#d9cbff;--mist-two:#f8ddef;--mist-three:#dcefff}
-#galeri,#panel-galeri,#panel-infografikler{--mist-base:#fff0e8;--mist-one:#ffd9cf;--mist-two:#ffecc6;--mist-three:#f0e3ff}
-#ai-lab,#panel-ai-lab,#panel-prompt-kutuphanesi{--mist-base:#e9f4fa;--mist-one:#c8e7ff;--mist-two:#c9f2e8;--mist-three:#e4dcff}
-#uygulamalar,#videolar,#galeri,#ai-lab,
-#panel-uygulamalar,#panel-arapca,#panel-videolar,#panel-galeri,#panel-infografikler,#panel-ai-lab,#panel-prompt-kutuphanesi{
-background-color:var(--mist-base);
-background-image:radial-gradient(ellipse 75% 70% at 12% 15%,var(--mist-one) 0%,transparent 75%),radial-gradient(ellipse 72% 75% at 92% 78%,var(--mist-two) 0%,transparent 77%),radial-gradient(ellipse 65% 60% at 50% 48%,var(--mist-three) 0%,transparent 78%);
-background-size:145% 145%,150% 150%,140% 140%;
-background-position:0% 0%,100% 100%,50% 50%;
-background-repeat:no-repeat;
-animation:mist-drift 19s ease-in-out infinite alternate;
-}
-@keyframes mist-drift{
-0%{background-position:0% 0%,100% 100%,48% 52%}
-50%{background-position:28% 18%,75% 72%,55% 40%}
-100%{background-position:50% 38%,50% 45%,35% 65%}
-}
-/* Keep existing panel entrance while letting the soft mist move afterward. */
-.hub-chk:checked+.hub-panel{animation:hub-in .22s ease-out,mist-drift 19s ease-in-out .22s infinite alternate}
-@media(prefers-reduced-motion:reduce){
-#uygulamalar,#videolar,#galeri,#ai-lab,
-#panel-uygulamalar,#panel-arapca,#panel-videolar,#panel-galeri,#panel-infografikler,#panel-ai-lab,#panel-prompt-kutuphanesi,
-.hub-chk:checked+.hub-panel{animation:none}
-}
+#uygulamalar,#panel-uygulamalar,#panel-arapca{background:#e8f7f1}
+#videolar,#panel-videolar{background:#f3ecff}
+#galeri,#panel-galeri,#panel-infografikler{background:#fff0e8}
+#ai-lab,#panel-ai-lab,#panel-prompt-kutuphanesi{background:#e9f4fa}
+/* Reveal the new page color smoothly while preserving existing panel motion. */
+#panel-uygulamalar,#panel-arapca{--premium-page-color:#e8f7f1}
+#panel-videolar{--premium-page-color:#f3ecff}
+#panel-galeri,#panel-infografikler{--premium-page-color:#fff0e8}
+#panel-ai-lab,#panel-prompt-kutuphanesi{--premium-page-color:#e9f4fa}
+@keyframes premium-page-color-reveal{from{background-color:#eff6ff}to{background-color:var(--premium-page-color,#eff6ff)}}
+.hub-chk:checked+.hub-panel{animation:hub-in .22s ease-out,premium-page-color-reveal .5s ease-out}
+@media(prefers-reduced-motion:reduce){.hub-chk:checked+.hub-panel{animation:none}}
+
+/* Continuously blend each section's original color through nearby pastel shades. */
+@keyframes emerald-cycle{0%,100%{background-color:#e8f7f1}33%{background-color:#c8f0e1}66%{background-color:#dcfaed}}
+@keyframes lavender-cycle{0%,100%{background-color:#f3ecff}33%{background-color:#e4d7ff}66%{background-color:#f9e8fa}}
+@keyframes peach-cycle{0%,100%{background-color:#fff0e8}33%{background-color:#ffe1d4}66%{background-color:#fff4db}}
+@keyframes turquoise-cycle{0%,100%{background-color:#e9f4fa}33%{background-color:#d0eff5}66%{background-color:#e0eaff}}
+#uygulamalar{animation:emerald-cycle 12s ease-in-out infinite}
+#videolar{animation:lavender-cycle 12s ease-in-out infinite}
+#galeri{animation:peach-cycle 12s ease-in-out infinite}
+#ai-lab{animation:turquoise-cycle 12s ease-in-out infinite}
+.hub-chk:checked+#panel-uygulamalar,.hub-chk:checked+#panel-arapca{animation:hub-in .22s ease-out,emerald-cycle 12s ease-in-out infinite}
+.hub-chk:checked+#panel-videolar{animation:hub-in .22s ease-out,lavender-cycle 12s ease-in-out infinite}
+.hub-chk:checked+#panel-galeri,.hub-chk:checked+#panel-infografikler{animation:hub-in .22s ease-out,peach-cycle 12s ease-in-out infinite}
+.hub-chk:checked+#panel-ai-lab,.hub-chk:checked+#panel-prompt-kutuphanesi{animation:hub-in .22s ease-out,turquoise-cycle 12s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){#uygulamalar,#videolar,#galeri,#ai-lab,.hub-chk:checked+.hub-panel{animation:none}}
 </style><style id="no-js-nav">
 /* ===== JavaScript GEREKTİRMEYEN menü ve sayfa geçişleri ===== */
 .nav-chk,.hub-chk{position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;margin:0;pointer-events:none;overflow:hidden;clip:rect(0 0 0 0)}
