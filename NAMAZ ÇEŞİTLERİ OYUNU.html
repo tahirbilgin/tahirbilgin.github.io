@@ -49,7 +49,37 @@
         .pop-in {
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-    </style>
+    
+/* Namaz Çeşitleri: görselden ilham alan premium ana menü; oyun mantığı korunur */
+body{background:radial-gradient(ellipse at 50% 0%,#183d59 0%,#07182c 56%,#040c1b 100%);color:#f9f0df}
+body>header{max-width:1400px!important;background:#071629dc!important;border:1px solid #bd99597a!important;color:#fff!important}
+body>header h1{color:#f8e2b5!important}body>header p{color:#e4bd77!important}
+body>main{max-width:1400px!important}
+.namaz-home{font-family:'Inter',sans-serif;color:#f7ebd6}
+.namaz-hero{position:relative;isolation:isolate;overflow:hidden;min-height:700px;padding:34px 28px 44px;border:1px solid #d9aa6480;border-radius:25px;background:linear-gradient(180deg,#0612244d 0%,#07152c12 30%,#041020ee 73%,#040c1af7 100%),url('https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1800&q=85') center 39%/cover no-repeat,#071629;box-shadow:0 24px 85px #0008}
+.namaz-hero:before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 50% 31%,#dba86250,transparent 44%),linear-gradient(90deg,#06132691,transparent 25%,transparent 75%,#06132691);pointer-events:none}
+.namaz-hero-heading{text-align:center;text-shadow:0 3px 15px #000;position:relative;z-index:1;margin:0 auto 210px}
+.namaz-kicker{display:inline-block;color:#f0c87d;letter-spacing:.35em;font-size:11px;font-weight:800;margin-bottom:12px}
+.namaz-hero-heading h2{font-family:Georgia,serif;font-size:clamp(35px,5.3vw,70px);font-weight:500;letter-spacing:.035em;line-height:1.15;color:#edc77c;margin:0}
+.namaz-hero-heading h2 em{font-style:normal;color:#fff}
+.namaz-hero-heading p{color:#f4e5d0;font-size:14px;margin:12px 0 0}
+.namaz-category-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:stretch}
+.namaz-category{--accent:#f5bf68;--shade:#35200e;min-width:0;min-height:315px;display:flex;align-items:center;flex-direction:column;text-align:center;padding:24px 12px 14px;color:#fff;border:2px solid var(--accent);border-radius:65px 65px 18px 18px;background:linear-gradient(160deg,#081528f2 0%,var(--shade) 100%);box-shadow:inset 0 0 30px #0006,0 10px 25px #0008;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.namaz-category:hover,.namaz-category:focus-visible{transform:translateY(-7px);box-shadow:0 0 25px color-mix(in srgb,var(--accent),transparent 65%)}
+.namaz-category.nafile{--accent:#49d7c4;--shade:#003f40}.namaz-category.vacip{--accent:#4a9cff;--shade:#061e58}.namaz-category.sunnet{--accent:#bd78ed;--shade:#301244}.namaz-category.kaza{--accent:#eeb26a;--shade:#48210d}
+.namaz-symbol{color:var(--accent);font-size:52px;line-height:1.2;text-shadow:0 0 18px var(--accent);margin-bottom:13px}
+.namaz-category strong{font:700 clamp(21px,2.4vw,31px) Georgia,serif;color:#f5d59c;text-shadow:0 0 13px #f4b85555}
+.namaz-type{font:500 clamp(15px,1.7vw,22px) Georgia,serif;letter-spacing:.02em}
+.namaz-category small{font-size:12px;line-height:1.55;color:#d5d8e2;flex:1;margin:15px 0}
+.namaz-discover{width:100%;padding:12px 6px;border-radius:18px;background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent),#000 33%));color:#081426;font-weight:800;font-size:14px;box-shadow:0 5px 16px #0007}
+.namaz-actions{margin:16px 0 26px;padding:24px;border:1px solid #c9a15f65;border-radius:22px;background:linear-gradient(135deg,#0a1d36,#061123);box-shadow:0 14px 30px #0005}
+.namaz-actions-intro{text-align:center;margin-bottom:18px}.namaz-actions-intro>span{font-size:10px;letter-spacing:.2em;color:#eac47c;font-weight:800}.namaz-actions-intro h3{font:32px Georgia,serif;color:#fff;margin:5px 0}.namaz-actions-intro p{font-size:13px;color:#b9c7da}
+.namaz-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.namaz-mode-button{display:flex;align-items:center;gap:14px;text-align:left;border:1px solid #c89b587a;background:#122943;color:#fff;padding:18px;border-radius:15px;cursor:pointer;transition:.2s}
+.namaz-mode-button:hover{background:#234360;transform:translateY(-3px)}.namaz-mode-button i{font-size:23px;color:#f1c77d}.namaz-mode-button span:nth-child(2){display:flex;flex-direction:column;flex:1}.namaz-mode-button b{font-size:14px}.namaz-mode-button small{font-size:11px;color:#b7c7db}
+@media(max-width:850px){.namaz-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.namaz-hero-heading{margin-bottom:135px}.namaz-category{min-height:285px}.namaz-mode-grid{grid-template-columns:1fr}}
+@media(max-width:550px){.namaz-hero{padding:25px 12px 24px;min-height:0;background-position:center top}.namaz-hero-heading{margin-bottom:110px}.namaz-kicker{font-size:9px;letter-spacing:.2em}.namaz-hero-heading p{font-size:12px}.namaz-category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.namaz-category{min-height:250px;padding:19px 9px 10px;border-radius:45px 45px 15px 15px}.namaz-category:last-child{grid-column:1/-1;max-width:230px;width:100%;justify-self:center}.namaz-symbol{font-size:39px;margin-bottom:7px}.namaz-category strong{font-size:23px}.namaz-type{font-size:16px}.namaz-category small{font-size:11px;margin:12px 0}.namaz-actions{padding:17px 12px}.namaz-mode-button{padding:15px}}
+</style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 overflow-x-hidden selection:bg-indigo-200">
 
@@ -82,70 +112,20 @@
 
     <main class="w-full max-w-5xl flex-grow flex flex-col justify-center items-center my-2">
         
-        <!-- 1. ANA MENÜ EKRANI -->
-        <div id="screenMainMenu" class="w-full max-w-2xl bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 text-center space-y-8 pop-in">
-            <div class="space-y-3">
-                <div class="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full font-extrabold text-sm tracking-widest uppercase">
-                    Eğlenceli Din Kültürü Serisi
-                </div>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-800 title-font leading-tight">
-                    Namaz Çeşitlerini Keşfetmeye <br><span class="text-indigo-600">Hazır mısın?</span>
-                </h2>
-                <p class="text-slate-500 max-w-md mx-auto text-sm md:text-base">
-                    Farz, Vacip ve Nafile namazları sepetlerine doğru şekilde ulaştır. Puanları topla ve sınıfının şampiyonu ol!
-                </p>
+        <!-- 1. ANA MENÜ EKRANI: Namaz Çeşitleri Atlası -->
+        <section id="screenMainMenu" class="namaz-home w-full pop-in" aria-label="Namaz çeşitleri ana menüsü">
+          <div class="namaz-hero">
+            <div class="namaz-hero-heading"><span class="namaz-kicker">ÖĞREN · KEŞFET · PEKİŞTİR</span><h2>NAMAZ <em>ÇEŞİTLERİ</em></h2><p>Namazları tanı, bilgini geliştir ve eğlenerek öğren.</p></div>
+            <div class="namaz-category-grid">
+              <button class="namaz-category farz" onclick="showTutorial()" aria-label="Farz namazları keşfet"><span class="namaz-symbol">♜</span><strong>FARZ</strong><span class="namaz-type">NAMAZLAR</span><small>Yerine getirilmesi kesin olarak emredilen namazlar</small><span class="namaz-discover">Keşfet →</span></button>
+              <button class="namaz-category nafile" onclick="showTutorial()" aria-label="Nafile namazları keşfet"><span class="namaz-symbol">◉</span><strong>NAFİLE</strong><span class="namaz-type">NAMAZLAR</span><small>Farz ve vacip dışında, sevap için kılınan namazlar</small><span class="namaz-discover">Keşfet →</span></button>
+              <button class="namaz-category vacip" onclick="showTutorial()" aria-label="Vacip namazları keşfet"><span class="namaz-symbol">☾</span><strong>VACİP</strong><span class="namaz-type">NAMAZLAR</span><small>Yerine getirilmesi güçlü biçimde istenen namazlar</small><span class="namaz-discover">Keşfet →</span></button>
+              <button class="namaz-category sunnet" onclick="showTutorial()" aria-label="Sünnet namazları keşfet"><span class="namaz-symbol">☆</span><strong>SÜNNET</strong><span class="namaz-type">NAMAZLAR</span><small>Peygamberimizin kıldığı ve tavsiye ettiği namazlar</small><span class="namaz-discover">Keşfet →</span></button>
+              <button class="namaz-category kaza" onclick="showTutorial()" aria-label="Kaza namazlarını keşfet"><span class="namaz-symbol">▤</span><strong>KAZA</strong><span class="namaz-type">NAMAZLAR</span><small>Vaktinde kılınamayan namazların sonradan kılınması</small><span class="namaz-discover">Keşfet →</span></button>
             </div>
-
-            <!-- Menü İllüstrasyonu -->
-            <div class="grid grid-cols-3 gap-3 max-w-md mx-auto py-2">
-                <div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-100 flex flex-col items-center">
-                    <span class="text-3xl">🍲</span>
-                    <span class="text-xs font-bold text-emerald-800 mt-1">FARZ</span>
-                    <span class="text-[10px] text-emerald-600">Ana Yemek</span>
-                </div>
-                <div class="p-3 bg-amber-50 rounded-2xl border border-amber-100 flex flex-col items-center">
-                    <span class="text-3xl">🍜</span>
-                    <span class="text-xs font-bold text-amber-800 mt-1">VACİP</span>
-                    <span class="text-[10px] text-amber-600">Çorba / Ara</span>
-                </div>
-                <div class="p-3 bg-sky-50 rounded-2xl border border-sky-100 flex flex-col items-center">
-                    <span class="text-3xl">🧁</span>
-                    <span class="text-xs font-bold text-sky-800 mt-1">NAFİLE</span>
-                    <span class="text-[10px] text-sky-600">Nefis Tatlı</span>
-                </div>
-            </div>
-
-            <!-- Mod Seçimleri -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-stretch max-w-lg mx-auto">
-                <!-- Bireysel Mod Butonu -->
-                <button onclick="startMode('solo')" class="flex-1 bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white p-5 rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 text-left flex flex-col justify-between group">
-                    <div class="bg-indigo-400/30 w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg title-font">Bireysel Macera</h3>
-                        <p class="text-indigo-100 text-xs mt-1">Kendi rekorunu kır, namaz çeşitlerini zamana karşı öğren.</p>
-                    </div>
-                </button>
-
-                <!-- Takım Modu Butonu -->
-                <button onclick="startMode('team')" class="flex-1 bg-gradient-to-br from-violet-500 to-violet-700 hover:from-violet-600 hover:to-violet-800 text-white p-5 rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 text-left flex flex-col justify-between group">
-                    <div class="bg-violet-400/30 w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg title-font">Sınıf Yarışı (Takım)</h3>
-                        <p class="text-violet-100 text-xs mt-1">Sınıfı 3 takıma böl! Sırayla yarışın, en yüksek skora ulaşın.</p>
-                    </div>
-                </button>
-            </div>
-            
-            <div class="pt-4 border-t border-slate-100">
-                <button onclick="showTutorial()" class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-bold transition">
-                    <i class="fa-solid fa-chalkboard-user"></i> Önce Kavramları Hatırlayalım (Isınma Turu)
-                </button>
-            </div>
-        </div>
+          </div>
+          <div class="namaz-actions"><div class="namaz-actions-intro"><span>✦ BİLGİNİ SINAMAYA HAZIR MISIN?</span><h3>Oyun modunu seç</h3><p>Mevcut farz, vacip ve nafile sınıflandırma oyunuyla devam et.</p></div><div class="namaz-mode-grid"><button onclick="startMode('solo')" class="namaz-mode-button"><i class="fa-solid fa-user"></i><span><b>Bireysel Macera</b><small>Kendi rekorunu kır</small></span><span>→</span></button><button onclick="startMode('team')" class="namaz-mode-button"><i class="fa-solid fa-users"></i><span><b>Sınıf Yarışı</b><small>Takım olarak yarış</small></span><span>→</span></button><button onclick="showTutorial()" class="namaz-mode-button"><i class="fa-solid fa-book-open"></i><span><b>Kavramları Öğren</b><small>Farz · Vacip · Nafile</small></span><span>→</span></button></div></div>
+        </section>
 
         <!-- 2. KAVRAMSAL ISINMA (TUTORIAL) EKRANI -->
         <div id="screenTutorial" class="w-full max-w-3xl bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-100 space-y-6 hidden pop-in">
