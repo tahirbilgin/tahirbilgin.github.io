@@ -58,7 +58,14 @@
 #videolar,#panel-videolar{background:#f3ecff}
 #galeri,#panel-galeri,#panel-infografikler{background:#fff0e8}
 #ai-lab,#panel-ai-lab,#panel-prompt-kutuphanesi{background:#e9f4fa}
-.hub-panel{transition:background-color .5s ease}
+/* Reveal the new page color smoothly while preserving existing panel motion. */
+#panel-uygulamalar,#panel-arapca{--premium-page-color:#e8f7f1}
+#panel-videolar{--premium-page-color:#f3ecff}
+#panel-galeri,#panel-infografikler{--premium-page-color:#fff0e8}
+#panel-ai-lab,#panel-prompt-kutuphanesi{--premium-page-color:#e9f4fa}
+@keyframes premium-page-color-reveal{from{background-color:#eff6ff}to{background-color:var(--premium-page-color,#eff6ff)}}
+.hub-chk:checked+.hub-panel{animation:hub-in .22s ease-out,premium-page-color-reveal .5s ease-out}
+@media(prefers-reduced-motion:reduce){.hub-chk:checked+.hub-panel{animation:none}}
 </style><style id="no-js-nav">
 /* ===== JavaScript GEREKTİRMEYEN menü ve sayfa geçişleri ===== */
 .nav-chk,.hub-chk{position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;margin:0;pointer-events:none;overflow:hidden;clip:rect(0 0 0 0)}
