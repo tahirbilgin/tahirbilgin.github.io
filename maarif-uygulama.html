@@ -193,6 +193,8 @@
 
         function App() {
           const [currentView, setCurrentView] = useState('m1');
+          const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+          const selectView = (view) => { setCurrentView(view); setMobileMenuOpen(false); };
 
           const navigate = (direction) => {
             if (direction === 'next') {
@@ -217,24 +219,27 @@
           };
 
           return (
-            <div className={styles.container}>
-              <aside className={styles.sidebar}>
-                <div className="p-6 font-bold text-xl text-indigo-900 border-b border-slate-100">Maarif Platformu</div>
+            <div className={`${styles.container} relative min-w-0`}>
+              {mobileMenuOpen && <button type="button" aria-label="Menüyü kapat" className="md:hidden fixed inset-0 bg-slate-950/60 z-40" onClick={() => setMobileMenuOpen(false)} />}
+              <aside className={`${styles.sidebar} fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] shadow-2xl transform transition-transform duration-200 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:static md:translate-x-0 md:shadow-none md:w-64 md:shrink-0`}>
+
+                <div className="p-5 font-bold text-xl text-indigo-900 border-b border-slate-100 flex items-center justify-between gap-2"><span>Maarif Platformu</span><button type="button" className="md:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-700" onClick={() => setMobileMenuOpen(false)} aria-label="Menüyü kapat">✕</button></div>
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                  <button onClick={() => setCurrentView('dashboard')} className={`${styles.navButton} ${currentView === 'dashboard' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <LayoutDashboard className="w-5 h-5"/> Ana Ekran</button>
-                  <button onClick={() => setCurrentView('m1')} className={`${styles.navButton} ${currentView === 'm1' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <BookOpenText className="w-5 h-5"/> Modül 1</button>
-                  <button onClick={() => setCurrentView('m2')} className={`${styles.navButton} ${currentView === 'm2' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <BrainCircuit className="w-5 h-5"/> Modül 2</button>
-                  <button onClick={() => setCurrentView('m3')} className={`${styles.navButton} ${currentView === 'm3' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Compass className="w-5 h-5"/> Modül 3</button>
-                  <button onClick={() => setCurrentView('m4')} className={`${styles.navButton} ${currentView === 'm4' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Puzzle className="w-5 h-5"/> Modül 4</button>
-                  <button onClick={() => setCurrentView('m5')} className={`${styles.navButton} ${currentView === 'm5' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Database className="w-5 h-5"/> Modül 5</button>
-                  <button onClick={() => setCurrentView('m6')} className={`${styles.navButton} ${currentView === 'm6' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Component className="w-5 h-5"/> Modül 6</button>
-                  <button onClick={() => setCurrentView('m7')} className={`${styles.navButton} ${currentView === 'm7' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <GraduationCap className="w-5 h-5"/> Modül 7</button>
-                  <button onClick={() => setCurrentView('m8')} className={`${styles.navButton} ${currentView === 'm8' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Rocket className="w-5 h-5"/> Modül 8</button>
-                  <button onClick={() => setCurrentView('m9')} className={`${styles.navButton} ${currentView === 'm9' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Layout className="w-5 h-5"/> Modül 9</button>
+                  <button onClick={() => selectView('dashboard')} className={`${styles.navButton} ${currentView === 'dashboard' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <LayoutDashboard className="w-5 h-5"/> Ana Ekran</button>
+                  <button onClick={() => selectView('m1')} className={`${styles.navButton} ${currentView === 'm1' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <BookOpenText className="w-5 h-5"/> Modül 1</button>
+                  <button onClick={() => selectView('m2')} className={`${styles.navButton} ${currentView === 'm2' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <BrainCircuit className="w-5 h-5"/> Modül 2</button>
+                  <button onClick={() => selectView('m3')} className={`${styles.navButton} ${currentView === 'm3' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Compass className="w-5 h-5"/> Modül 3</button>
+                  <button onClick={() => selectView('m4')} className={`${styles.navButton} ${currentView === 'm4' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Puzzle className="w-5 h-5"/> Modül 4</button>
+                  <button onClick={() => selectView('m5')} className={`${styles.navButton} ${currentView === 'm5' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Database className="w-5 h-5"/> Modül 5</button>
+                  <button onClick={() => selectView('m6')} className={`${styles.navButton} ${currentView === 'm6' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Component className="w-5 h-5"/> Modül 6</button>
+                  <button onClick={() => selectView('m7')} className={`${styles.navButton} ${currentView === 'm7' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <GraduationCap className="w-5 h-5"/> Modül 7</button>
+                  <button onClick={() => selectView('m8')} className={`${styles.navButton} ${currentView === 'm8' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Rocket className="w-5 h-5"/> Modül 8</button>
+                  <button onClick={() => selectView('m9')} className={`${styles.navButton} ${currentView === 'm9' ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}> <Layout className="w-5 h-5"/> Modül 9</button>
                 </nav>
               </aside>
 
-              <main className="flex-1 overflow-y-auto p-10">
+              <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-4 sm:p-6 md:p-10">
+                <div className="md:hidden sticky top-0 z-30 mb-4 flex items-center gap-3 rounded-2xl border border-indigo-100 bg-white/95 backdrop-blur px-3 py-2 shadow-sm"><button type="button" onClick={() => setMobileMenuOpen(true)} className="flex items-center gap-2 rounded-xl bg-indigo-900 text-white px-4 py-2.5 text-sm font-semibold" aria-label="Ana ekran ve modüller menüsünü aç"><List className="w-5 h-5"/> Modüller</button><span className="text-sm font-semibold text-slate-700">{currentView === 'dashboard' ? 'Ana Ekran' : 'Modül ' + currentView.slice(1)}</span></div>
                 <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto">
                   
                   {/* ANA EKRAN / DASHBOARD */}
