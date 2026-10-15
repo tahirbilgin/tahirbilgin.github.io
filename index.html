@@ -460,81 +460,86 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
 <!-- Tahir AI Lab: refined scroll + inner gallery reveal; rollback via GitHub history -->
 <style id="tb-scroll-reveal-style">
 @media (prefers-reduced-motion: no-preference) {
-  html.tb-reveal-enabled main > section.section.tb-reveal-item,
-  html.tb-reveal-enabled .tb-card-reveal {opacity:1;transform:none}
-  html.tb-reveal-enabled .tb-reveal-playing {
-    animation:tb-reveal-repeat-down 1050ms cubic-bezier(.16,1,.3,1) both;
+  /* Animate only content, never the entire section: avoids dark-mode flashing. */
+  html.tb-reveal-enabled .tb-reveal-playing-down {
+    animation:tb-reveal-soft-down 850ms cubic-bezier(.16,1,.3,1) both;
   }
-  html.tb-reveal-enabled.tb-scroll-upward .tb-reveal-playing {
-    animation-name:tb-reveal-repeat-up;
+  html.tb-reveal-enabled .tb-reveal-playing-up {
+    animation:tb-reveal-soft-up 850ms cubic-bezier(.16,1,.3,1) both;
   }
-  @keyframes tb-reveal-repeat-down {
-    from {opacity:.20;transform:translate3d(0,25px,0)}
-    to {opacity:1;transform:translate3d(0,0,0)}
+  @keyframes tb-reveal-soft-down {
+    from{opacity:.65;transform:translate3d(0,17px,0)}
+    to{opacity:1;transform:translate3d(0,0,0)}
   }
-  @keyframes tb-reveal-repeat-up {
-    from {opacity:.20;transform:translate3d(0,-25px,0)}
-    to {opacity:1;transform:translate3d(0,0,0)}
+  @keyframes tb-reveal-soft-up {
+    from{opacity:.65;transform:translate3d(0,-17px,0)}
+    to{opacity:1;transform:translate3d(0,0,0)}
   }
 }
 </style>
 <script id="tb-scroll-reveal-script">
 (function(){
-  'use strict';
-  function initReveal(){
-    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var html=document.documentElement, lastY=window.scrollY||0, ticking=false;
-    function play(el){
-      el.classList.remove('tb-reveal-playing');
-      void el.offsetWidth;
-      el.classList.add('tb-reveal-playing');
-    }
-    function watch(elements,root){
-      var obs=new IntersectionObserver(function(entries){
-        entries.filter(function(e){return e.isIntersecting;})
-          .sort(function(a,b){return a.boundingClientRect.top-b.boundingClientRect.top;})
-          .forEach(function(entry,index){
-            var el=entry.target;
-            el.style.animationDelay=(index*85)+'ms';
-            play(el);
-          });
-      },{root:root||null,threshold:0,rootMargin:'-8% 0px -8% 0px'});
-      elements.forEach(function(el){obs.observe(el)});
-    }
-    var sections=Array.from(document.querySelectorAll('main > section.section'));
-    sections.forEach(function(el){el.classList.add('tb-reveal-item')});
-    watch(sections,null);
-    function cards(container,root){
-      if(container.dataset.tbCardsReady==='1')return;
-      var items=Array.from(container.querySelectorAll('.grid > .tile, .grid > .card, .hub-items > .tile'));
-      if(!items.length)return;
-      container.dataset.tbCardsReady='1';
-      items.forEach(function(el){el.classList.add('tb-card-reveal')});
-      watch(items,root);
-    }
-    sections.forEach(function(el){cards(el,null)});
-    document.querySelectorAll('input.hub-chk').forEach(function(check){
-      check.addEventListener('change',function(){
-        if(!check.checked)return;
-        window.setTimeout(function(){
-          var panel=document.getElementById('panel-'+check.id.replace(/^chk-/,''));
-          if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)cards(panel,scroller)}
-        },100);
-      });
-    });
-    window.addEventListener('scroll',function(){
-      if(ticking)return;
-      ticking=true;
-      requestAnimationFrame(function(){
-        var y=window.scrollY||0;
-        if(Math.abs(y-lastY)>2){html.classList.toggle('tb-scroll-upward',y<lastY);lastY=y}
-        ticking=false;
-      });
-    },{passive:true});
-    html.classList.add('tb-reveal-enabled');
+ 'use strict';
+ function init(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var records=[], scheduled=false;
+  function add(container,scroller){
+   if(container.dataset.tbCardsReady==='1')return;
+   container.dataset.tbCardsReady='1';
+   var els=Array.from(container.querySelectorAll('.grid > .tile,.grid > .card,.hub-items > .tile'));
+   if(!els.length && container.matches('main > section.section')) {
+    els=Array.from(container.querySelectorAll(':scope > .section-head,:scope > .section-title'));
+   }
+   els.forEach(function(el){records.push({el:el,root:scroller||null,armed:true,active:false})});
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initReveal,{once:true});
-  else initReveal();
+  document.querySelectorAll('main > section.section').forEach(function(el){add(el,null)});
+  document.querySelectorAll('input.hub-chk').forEach(function(check){
+   check.addEventListener('change',function(){
+    if(!check.checked)return;
+    setTimeout(function(){
+     var panel=document.getElementById('panel-'+check.id.replace(/^chk-/,''));
+     if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)add(panel,scroller);tick()}
+    },100);
+   });
+  });
+  var last=new Map();
+  function tick(){
+   scheduled=false;
+   records.forEach(function(r){
+    if(!r.el.isConnected)return;
+    var viewport=r.root?r.root.getBoundingClientRect():{top:0,bottom:innerHeight};
+    var rect=r.el.getBoundingClientRect();
+    var top=Math.max(0,viewport.top),bottom=Math.min(innerHeight,viewport.bottom);
+    if(bottom<=top)return;
+    var y=r.root?r.root.scrollTop:(window.scrollY||0);
+    var prev=last.has(r.root)?last.get(r.root):y;
+    var up=y<prev;
+    // Rearm only after leaving the visible region completely.
+    if(rect.bottom<top-12 || rect.top>bottom+12){
+     r.armed=true;
+     r.active=false;
+     r.el.classList.remove('tb-reveal-playing-down','tb-reveal-playing-up');
+     return;
+    }
+    if(r.armed && rect.bottom>top+22 && rect.top<bottom-22){
+     r.armed=false;
+     r.active=true;
+     r.el.classList.remove('tb-reveal-playing-down','tb-reveal-playing-up');
+     void r.el.offsetWidth;
+     r.el.classList.add(up?'tb-reveal-playing-up':'tb-reveal-playing-down');
+    }
+   });
+   last.set(null,window.scrollY||0);
+   records.forEach(function(r){if(r.root)last.set(r.root,r.root.scrollTop)});
+  }
+  function request(){if(!scheduled){scheduled=true;requestAnimationFrame(tick)}}
+  window.addEventListener('scroll',request,{passive:true,capture:true});
+  window.addEventListener('resize',request,{passive:true});
+  document.documentElement.classList.add('tb-reveal-enabled');
+  request();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+ else init();
 })();
 </script>
 
