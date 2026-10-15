@@ -997,5 +997,18 @@
         const root = createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
+
+<!-- Tahir AI Lab: app-specific privacy guidance; no change to existing app storage or functionality -->
+<style id="tb-app-privacy-style">
+#tb-app-privacy-notice{position:fixed;z-index:2147483000;left:12px;right:12px;bottom:12px;max-width:510px;margin:0 auto;padding:15px 17px;border:1px solid #cbd8e8;border-radius:15px;background:#fff;color:#1a2a42;box-shadow:0 15px 45px #0003;font:13px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+#tb-app-privacy-notice[hidden]{display:none!important}#tb-app-privacy-notice p{margin:6px 0 10px}#tb-app-privacy-notice strong{font-size:14px}
+#tb-app-privacy-notice button,#tb-app-privacy-open{border:0;border-radius:9px;background:#2364c7;color:#fff;padding:8px 13px;font:inherit;cursor:pointer}
+#tb-app-privacy-open{position:fixed;z-index:2147482999;bottom:12px;left:12px;font:12px system-ui,-apple-system,Segoe UI,sans-serif;box-shadow:0 4px 14px #0003}
+#tb-app-privacy-notice a{color:#235eb6;text-decoration:underline}
+@media(prefers-color-scheme:dark){#tb-app-privacy-notice{background:#172337;color:#f5f7ff;border-color:#53627c}#tb-app-privacy-notice a{color:#a8caff}}
+</style>
+<button type="button" id="tb-app-privacy-open" hidden aria-controls="tb-app-privacy-notice" aria-expanded="false">Gizlilik bilgisi</button>
+<aside id="tb-app-privacy-notice" role="note" aria-label="Uygulama gizlilik bilgilendirmesi"><strong>🔒 Gizlilik ve güvenli kullanım</strong><p>Bu uygulama için incelenen kodda öğrenci listesi tutan bir kayıt alanı tespit edilmedi. Ancak sayfada kullanılan dış kaynaklar (örneğin yazı tipi veya kod kütüphaneleri) teknik bağlantı bilgilerini işleyebilir.</p><p>Öğrencilerin kişisel bilgilerini izinsiz paylaşmayın. Genel bilgi için <a href="./gizlilik.html" target="_blank" rel="noopener">Gizlilik ve Çerez Politikası</a>.</p><button type="button" id="tb-app-privacy-close">Anladım</button></aside>
+<script id="tb-app-privacy-script">(function(){var n=document.getElementById('tb-app-privacy-notice'),o=document.getElementById('tb-app-privacy-open'),c=document.getElementById('tb-app-privacy-close');if(!n||!o||!c)return;function show(){n.hidden=false;o.hidden=true;o.setAttribute('aria-expanded','true')}function hide(){n.hidden=true;o.hidden=false;o.setAttribute('aria-expanded','false');try{sessionStorage.setItem('tb-privacy-notice-v1','seen')}catch(e){}}o.addEventListener('click',show);c.addEventListener('click',hide);try{if(sessionStorage.getItem('tb-privacy-notice-v1')==='seen')hide()}catch(e){}})();</script>
 </body>
 </html>
