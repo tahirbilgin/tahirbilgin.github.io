@@ -916,6 +916,21 @@ html[data-tb-theme="dark"] .tb-infographic-welcome{background:linear-gradient(13
 @keyframes tb-resource-twinkle{0%,100%{opacity:.4}50%{opacity:1}}
 @media(max-width:720px){.tb-resource-feature .tb-resource-feature-inner{grid-template-columns:1fr;min-height:0;padding:29px 22px}.tb-resource-feature .tb-resource-feature-preview{transform:none}.tb-resource-feature .tb-resource-feature-preview>div:nth-child(2){transform:none}.tb-resource-feature .tb-resource-feature-preview>div:nth-child(2):hover{transform:translateY(-4px)}.tb-resource-feature .tb-resource-feature-inner:after{letter-spacing:10px;right:8px}}
 @media(prefers-reduced-motion:reduce){.tb-resource-feature .tb-resource-feature-inner,.tb-resource-feature .tb-resource-feature-inner:before,.tb-resource-feature .tb-resource-feature-inner:after{animation:none}.tb-resource-feature .tb-resource-feature-button,.tb-resource-feature .tb-resource-feature-preview>div{transition:none}}
+/* Mobile-only compact digital archive feature card; desktop remains unchanged. */
+@media(max-width:720px){
+ .tb-resource-feature{padding-top:10px;padding-bottom:18px}
+ .tb-resource-feature .tb-resource-feature-inner{gap:13px;padding:20px 18px;border-radius:22px}
+ .tb-resource-feature .tb-resource-eyebrow{font-size:10px;padding:6px 10px}
+ .tb-resource-feature .tb-resource-feature-inner h2{font-size:clamp(21px,5.6vw,25px);line-height:1.16;margin:9px 0}
+ .tb-resource-feature .tb-resource-feature-inner p{font-size:13px;line-height:1.5;margin-bottom:13px}
+ .tb-resource-feature .tb-resource-feature-button{padding:10px 14px;font-size:13px;border-radius:12px}
+ .tb-resource-feature .tb-resource-feature-count{margin-top:8px}
+ .tb-resource-feature .tb-resource-feature-preview{gap:7px}
+ .tb-resource-feature .tb-resource-feature-preview>div{padding:9px 11px;border-radius:11px;gap:9px}
+ .tb-resource-feature .tb-resource-feature-preview span{font-size:12px}
+ .tb-resource-feature .tb-resource-feature-preview small{font-size:10px;margin-top:2px}
+ .tb-resource-feature .tb-resource-preview-icon{font-size:20px}
+}
 </style>
 <style id="tb-hub-aurora-trial">
 /* Reversible visual trial: animated aurora and soft sparkles for hub page headers. */
