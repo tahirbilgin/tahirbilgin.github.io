@@ -488,13 +488,14 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
     var sections = Array.from(document.querySelectorAll('main > section.section'));
     var sectionObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
-        if (entry.isIntersecting) { entry.target.classList.add('tb-reveal-visible'); sectionObserver.unobserve(entry.target); }
+        if (entry.isIntersecting) entry.target.classList.add('tb-reveal-visible');
+        else entry.target.classList.remove('tb-reveal-visible');
       });
     }, {threshold: .06, rootMargin: '0px 0px -45px 0px'});
     sections.forEach(function(section) {
       section.classList.add('tb-reveal-item');
-      if (section.getBoundingClientRect().top < window.innerHeight - 25) section.classList.add('tb-reveal-visible');
-      else sectionObserver.observe(section);
+      if (section.getBoundingClientRect().top < window.innerHeight - 25 && section.getBoundingClientRect().bottom > 0) section.classList.add('tb-reveal-visible');
+      sectionObserver.observe(section);
     });
     var observers = [];
     function setupCards(container, root) {
@@ -503,23 +504,26 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
       if (!cards.length) return;
       container.dataset.tbCardsReady = '1';
       var observer = new IntersectionObserver(function(entries) {
-        entries.filter(function(e){return e.isIntersecting;}).sort(function(x,y){return cards.indexOf(x.target)-cards.indexOf(y.target);}).forEach(function(entry) {
+        entries.forEach(function(entry) {
           var card = entry.target;
-          observer.unobserve(card);
-          var index = cards.indexOf(card);
-          // Match stagger timing to the actual number of columns (2 on mobile, 4 on desktop).
-          var grid = card.parentElement;
-          var columns = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
-          var delay = (index % columns) * 215;
-          window.setTimeout(function(){card.classList.add('tb-card-visible');}, delay);
+          if (entry.isIntersecting) {
+            var index = cards.indexOf(card);
+            var grid = card.parentElement;
+            var columns = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
+            card.style.transitionDelay = ((index % columns) * 110) + 'ms';
+            card.classList.add('tb-card-visible');
+          } else {
+            card.style.transitionDelay = '0ms';
+            card.classList.remove('tb-card-visible');
+          }
         });
       }, {root: root || null, threshold: .04, rootMargin: '0px 0px -12px 0px'});
       observers.push(observer);
       cards.forEach(function(card) {
         card.classList.add('tb-card-reveal');
         var rect = card.getBoundingClientRect();
-        if (!root && rect.top < window.innerHeight - 15) card.classList.add('tb-card-visible');
-        else observer.observe(card);
+        if (!root && rect.top < window.innerHeight - 15 && rect.bottom > 0) card.classList.add('tb-card-visible');
+        observer.observe(card);
       });
     }
     sections.forEach(function(section){setupCards(section,null);});
