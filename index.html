@@ -324,6 +324,7 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
   <div class="tb-app-search-input-wrap"><span aria-hidden="true">⌕</span><input id="tb-app-query" type="search" placeholder="Uygulama veya ders adı yazın…" autocomplete="off" spellcheck="false" aria-controls="tb-app-results"/><button type="button" id="tb-app-clear" hidden aria-label="Aramayı temizle">Temizle</button></div>
   <div class="tb-app-filters" role="group" aria-label="Derse göre filtrele">
     <button type="button" class="tb-app-filter is-selected" data-category="all" aria-pressed="true">Tümü</button>
+    <button type="button" class="tb-app-filter" data-category="favorites" aria-pressed="false">★ Favorilerim</button>
     <button type="button" class="tb-app-filter" data-category="fikih" aria-pressed="false">Fıkıh</button>
     <button type="button" class="tb-app-filter" data-category="kuran" aria-pressed="false">Kur'an-ı Kerim</button>
     <button type="button" class="tb-app-filter" data-category="tecvid" aria-pressed="false">Tecvit</button>
@@ -369,6 +370,7 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
     /* Handle panel labels explicitly: nested labels and overlays can otherwise
        trigger conflicting native checkbox toggles after a parent panel closes. */
     document.addEventListener('click',function(e){
+      if(e.target.closest&&e.target.closest('.tb-fav-toggle'))return;
       var label=e.target.closest&&e.target.closest('label[for]');
       if(!label)return;
       var id=label.getAttribute('for');
@@ -655,6 +657,35 @@ html[data-tb-theme="dark"] #tb-app-search .tb-app-result-count,html[data-tb-them
  var count=document.getElementById('tb-app-result-count');
  var clear=document.getElementById('tb-app-clear');
  var selected='all';
+ var favoriteKey='tb-ai-lab:favorites:v1';
+ var favoriteIds=['fikih-atolyesi','kuran-takip','tecvid-treni','arapca-uygulamalari','namazi-ogreniyorum','namaz-cesitleri','maarif-modeli','hadis-akademisi'];
+ var favorites=[];
+ try{var stored=JSON.parse(localStorage.getItem(favoriteKey)||'[]');if(Array.isArray(stored))favorites=stored.filter(function(id){return favoriteIds.indexOf(id)!==-1;});}catch(err){}
+ function save(){try{localStorage.setItem(favoriteKey,JSON.stringify(favorites));}catch(err){}}
+ function paint(button,id){
+   var chosen=favorites.indexOf(id)!==-1;
+   button.textContent=chosen?'★':'☆';
+   button.setAttribute('aria-pressed',String(chosen));
+   button.setAttribute('aria-label',chosen?'Favorilerimden çıkar':'Favorilerime ekle');
+   button.title=chosen?'Favorilerimden çıkar':'Favorilerime ekle';
+   button.classList.toggle('is-favorite',chosen);
+ }
+ cards.forEach(function(card,i){
+   var id=favoriteIds[i];
+   var button=document.createElement('button');
+   button.type='button';
+   button.className='tb-fav-toggle';
+   button.setAttribute('data-favorite-id',id);
+   paint(button,id);
+   button.addEventListener('click',function(e){
+     e.preventDefault();e.stopPropagation();
+     var pos=favorites.indexOf(id);
+     if(pos===-1)favorites.push(id);else favorites.splice(pos,1);
+     save();paint(button,id);update();
+   });
+   button.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.stopPropagation();}});
+   card.appendChild(button);
+ });
  var empty=document.createElement('p');
  empty.id='tb-app-empty';
  empty.textContent='Aramanıza uygun uygulama bulunamadı. Başka bir kelime veya filtre deneyin.';
@@ -666,11 +697,12 @@ html[data-tb-theme="dark"] #tb-app-search .tb-app-result-count,html[data-tb-them
    var visible=0;
    cards.forEach(function(card,i){
      var searchable=normalize(card.textContent+' '+(keywords[i]||''));
-     var match=(selected==='all'||categories[i]===selected)&&words.every(function(word){return searchable.indexOf(word)!==-1;});
+     var match=(selected==='all'||(selected==='favorites'?favorites.indexOf(favoriteIds[i])!==-1:categories[i]===selected))&&words.every(function(word){return searchable.indexOf(word)!==-1;});
      card.style.display=match?'':'none';
      if(match)visible++;
    });
    empty.hidden=visible!==0;
+   empty.textContent=selected==='favorites'&&!favorites.length?'Henüz favori uygulamanız yok. Kartların üzerindeki ☆ simgesine basarak ekleyebilirsiniz.':'Aramanıza uygun uygulama bulunamadı. Başka bir kelime veya filtre deneyin.';
    count.textContent=visible+' uygulama grubu gösteriliyor.';
    clear.hidden=!input.value;
  }
@@ -735,4 +767,13 @@ html[data-tb-theme="dark"] .tb-section-count,html[data-tb-theme="dark"] .tb-sect
  });
 })();
 </script>
+<style id="tb-favorites-style">
+#tb-app-results>.tile{position:relative}
+#tb-app-results .tb-fav-toggle{position:absolute;top:11px;right:11px;z-index:30;width:42px;height:42px;border-radius:50%;border:1px solid #d4e1ef;background:#fffffff0;color:#385b83;font-size:27px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px #071d3233;cursor:pointer;touch-action:manipulation}
+#tb-app-results .tb-fav-toggle.is-favorite{color:#a96800;background:#fff6db;border-color:#f1c972}
+#tb-app-results .tb-fav-toggle:focus-visible{outline:3px solid #348ad3;outline-offset:3px}
+#tb-app-results .tile.hub-entry>.card-hit{z-index:3}
+html[data-tb-theme="dark"] #tb-app-results .tb-fav-toggle{background:#20344b;color:#e6eef9;border-color:#58708b}
+html[data-tb-theme="dark"] #tb-app-results .tb-fav-toggle.is-favorite{background:#4c381c;color:#ffda77;border-color:#b38c41}
+</style>
 </body></html>
