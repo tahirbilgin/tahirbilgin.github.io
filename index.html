@@ -352,7 +352,7 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  function show(n){current=(n+slides.length)%slides.length;slides.forEach((el,i)=>{el.classList.toggle('is-active',i===current);el.setAttribute('aria-hidden',String(i!==current));});dots.forEach((el,i)=>{el.classList.toggle('is-active',i===current);if(i===current)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current');});}
  function stop(){if(timer)clearInterval(timer);}
- function play(){stop();if(!reduced)timer=setInterval(()=>show(current+1),2000);}
+ function play(){stop();if(!reduced)timer=setInterval(()=>show(current+1),5200);}
  root.querySelector('.art-prev').addEventListener('click',()=>{show(current-1);play();});
  root.querySelector('.art-next').addEventListener('click',()=>{show(current+1);play();});
  dots.forEach((b,i)=>b.addEventListener('click',()=>{show(i);play();}));
@@ -462,4 +462,17 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
   else initReveal();
 })();
 </script>
+
+<!-- Üretim Tuvali: smooth, slower slide transitions only -->
+<style id="tb-art-slider-smooth">
+@media (prefers-reduced-motion: no-preference) {
+  .art-slider .art-slide {
+    transform: translate3d(20px,0,0) scale(.992);
+    transition: opacity 1550ms cubic-bezier(.22,1,.36,1), transform 1550ms cubic-bezier(.22,1,.36,1);
+  }
+  .art-slider .art-slide.is-active {
+    transform: translate3d(0,0,0) scale(1);
+  }
+}
+</style>
 </body></html>
