@@ -381,18 +381,18 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
 <style id="tb-scroll-reveal-style">
 @media (prefers-reduced-motion: no-preference) {
   html.tb-reveal-enabled main > section.section.tb-reveal-item {
-    transition: opacity 1050ms cubic-bezier(.16,1,.3,1), transform 1050ms cubic-bezier(.16,1,.3,1);
+    transition: opacity 1450ms cubic-bezier(.16,1,.3,1), transform 1450ms cubic-bezier(.16,1,.3,1);
   }
   html.tb-reveal-enabled main > section.section.tb-reveal-item:not(.tb-reveal-visible) {
-    opacity: .12;
-    transform: translate3d(0, 32px, 0);
+    opacity: .22;
+    transform: translate3d(0, 24px, 0);
   }
   html.tb-reveal-enabled .tb-card-reveal {
-    transition: opacity 1050ms cubic-bezier(.16,1,.3,1), transform 1050ms cubic-bezier(.16,1,.3,1);
+    transition: opacity 1450ms cubic-bezier(.16,1,.3,1), transform 1450ms cubic-bezier(.16,1,.3,1);
   }
   html.tb-reveal-enabled .tb-card-reveal:not(.tb-card-visible) {
-    opacity: .08;
-    transform: translate3d(0, 36px, 0);
+    opacity: .16;
+    transform: translate3d(0, 26px, 0);
   }
   html.tb-reveal-enabled .tb-card-reveal.tb-card-visible {
     opacity: 1;
@@ -427,7 +427,7 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
           var card = entry.target;
           observer.unobserve(card);
           var index = cards.indexOf(card);
-          var delay = (index % 3) * 135;
+          var delay = (index % 3) * 215;
           window.setTimeout(function(){card.classList.add('tb-card-visible');}, delay);
         });
       }, {root: root || null, threshold: .04, rootMargin: '0px 0px -12px 0px'});
