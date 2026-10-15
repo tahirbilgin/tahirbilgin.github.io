@@ -957,4 +957,25 @@ html[data-tb-theme="dark"] #panel-infografikler .hub-intro{background:linear-gra
 @keyframes tb-aurora-glow-drift{0%,100%{transform:translate(-7%,4%) scale(1)}50%{transform:translate(7%,-5%) scale(1.12)}}
 @media(prefers-reduced-motion:reduce){html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar) .section-head,html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar) .section-head::before,html[data-tb-theme="dark"] :is(#panel-videolar,#panel-galeri,#panel-ai-lab,#panel-prompt-kutuphanesi,#panel-arapca,#panel-maarif,#panel-infografikler) .hub-intro{animation:none}}
 </style>
+<style id="tb-home-glass-cards-trial">
+/* Reversible static glass surface on homepage content cards only. No glows or animations. */
+#uygulamalar .grid>.tile,#videolar .grid>.tile,#galeri .grid>.tile,#ai-lab .grid>.tile,#promptlar .grid>.tile{
+ background:rgba(255,255,255,.59);
+ border:1px solid rgba(255,255,255,.82);
+ box-shadow:0 7px 22px rgba(28,58,99,.09),inset 0 1px 0 rgba(255,255,255,.48);
+ -webkit-backdrop-filter:blur(13px) saturate(115%);
+ backdrop-filter:blur(13px) saturate(115%);
+}
+#uygulamalar .grid>.tile:hover,#videolar .grid>.tile:hover,#galeri .grid>.tile:hover,#ai-lab .grid>.tile:hover,#promptlar .grid>.tile:hover{
+ box-shadow:0 11px 27px rgba(28,58,99,.12),inset 0 1px 0 rgba(255,255,255,.48);
+}
+html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar) .grid>.tile{
+ background:rgba(28,44,67,.66);
+ border-color:rgba(183,208,243,.25);
+ box-shadow:0 7px 22px rgba(0,0,0,.15),inset 0 1px 0 rgba(226,240,255,.10);
+}
+html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar) .grid>.tile:hover{
+ box-shadow:0 11px 27px rgba(0,0,0,.20),inset 0 1px 0 rgba(226,240,255,.10);
+}
+</style>
 </body></html>
