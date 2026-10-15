@@ -350,6 +350,30 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
     }
     /* Preserve the existing page URL and other state properties. */
     try{if(!Object.prototype.hasOwnProperty.call(currentState(),'hub'))history.replaceState(Object.assign({},currentState(),{hub:null}),'');}catch(e){}
+    /* Handle panel labels explicitly: nested labels and overlays can otherwise
+       trigger conflicting native checkbox toggles after a parent panel closes. */
+    document.addEventListener('click',function(e){
+      var label=e.target.closest&&e.target.closest('label[for]');
+      if(!label)return;
+      var id=label.getAttribute('for');
+      var checkbox=document.getElementById(id);
+      if(!checkbox||!checkbox.classList.contains('hub-chk'))return;
+      e.preventDefault();
+      e.stopPropagation();
+      var current=activeId();
+      if(label.classList.contains('hub-back')){
+        if(currentState().hub===id){
+          try{history.back();}catch(err){render(null);}
+        }else render(null);
+        return;
+      }
+      if(current===id)return;
+      if(checkbox.nextElementSibling)checkbox.nextElementSibling.scrollTop=0;
+      closeMenu();
+      render(id);
+      try{history.pushState(Object.assign({},currentState(),{hub:id}),'');}catch(err){}
+      checkbox.dispatchEvent(new Event('tb-panel-open',{bubbles:true}));
+    },true);
     chks.forEach(function(c){
       c.addEventListener('change',function(){
         if(c.checked){
