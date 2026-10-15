@@ -266,8 +266,37 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
 @media(max-width:650px){#tb-scroll-control{right:10px;bottom:16px}#tb-scroll-track{width:39px;height:102px}#tb-scroll-up,#tb-scroll-down{width:29px;height:29px}#tb-theme-switch{top:78px;right:12px;width:39px;height:39px}}
 @media(prefers-reduced-motion:reduce){#tb-scroll-fill{transition:none}}
 </style>
-<!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BNPT2QRYN2"></script>
+<!-- Google Analytics 4: load only after optional analytics consent -->
+<script id="tb-analytics-consent-loader">
+(function(){
+  'use strict';
+  var key='tb-analytics-consent-v1', measurementId='G-BNPT2QRYN2', loaded=false;
+  function getChoice(){try{return localStorage.getItem(key)}catch(e){return null}}
+  function storeChoice(v){try{localStorage.setItem(key,v)}catch(e){}}
+  function startAnalytics(){
+    if(loaded)return;
+    loaded=true;
+    window.dataLayer=window.dataLayer||[];
+    window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};
+    window.gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+    window.gtag('js',new Date());
+    window.gtag('config',measurementId);
+    var script=document.createElement('script');script.async=true;
+    script.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(measurementId);
+    document.head.appendChild(script);
+  }
+  function stopAnalytics(){
+    if(window.gtag)window.gtag('consent','update',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+    // Existing Google Analytics cookies may remain until the visitor clears site data.
+  }
+  window.tbAnalyticsConsent={get:getChoice,set:function(choice){
+    storeChoice(choice);
+    if(choice==='accepted')startAnalytics();else stopAnalytics();
+    if(window.tbUpdateConsentUI)window.tbUpdateConsentUI();
+  }};
+  if(getChoice()==='accepted')startAnalytics();
+})();
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -292,7 +321,7 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
 <section class="section alt" id="ai-lab"><div class="wrap"><div class="section-head"><div><span class="kicker">TAHİR AI LAB</span><h2>Yapay Zekâyı Keşfet</h2><p>Öğrenme, üretim ve deney yapma süreçlerini bir araya getiren dijital laboratuvar.</p></div><label class="hub-see-all" for="chk-ai-lab" role="button" tabindex="0">Tümünü Gör →</label></div><div class="grid"><label class="tile hub-entry" for="chk-ai-lab" role="button" tabindex="0"><div class="tile-cover blue"><span class="symbol">✧</span>AI Öğren</div><div class="tile-body"><h3>Yapay Zekâyı Öğren</h3><p>Yapay zekâ eğitimleri ve kaynakları.</p><span class="tile-link">İçeri Gir →</span></div></label><label class="tile hub-entry" for="chk-prompt-kutuphanesi" role="button" tabindex="0"><div class="tile-cover violet"><span class="symbol">⌘</span>Prompt</div><div class="tile-body"><h3>Prompt Kütüphanesi</h3><p>Eğitim, görsel, video ve kod üretimi için promptlar.</p><span class="tile-link">Tümünü Gör →</span></div></label><label class="tile hub-entry" for="chk-ai-lab" role="button" tabindex="0"><div class="tile-cover teal"><span class="symbol">◈</span>Görsel</div><div class="tile-body"><h3>AI Görsel Lab</h3><p>Görsel üretim çalışmaları.</p><span class="tile-link">İçeri Gir →</span></div></label><label class="tile hub-entry" for="chk-ai-lab" role="button" tabindex="0"><div class="tile-cover coral"><span class="symbol">▷</span>Video</div><div class="tile-body"><h3>AI Video Lab</h3><p>Video üretim çalışmaları.</p><span class="tile-link">İçeri Gir →</span></div></label></div></div></section>
 <section class="section" id="promptlar"><div class="wrap"><div class="section-head"><div><span class="kicker">PROMPT KÜTÜPHANESİ</span><h2>Fikirden Sonuca: Prompt Kütüphanesi</h2><p>Farklı üretim alanları için hazırlanan içerik kategorileri.</p></div><label class="hub-see-all" for="chk-prompt-kutuphanesi" role="button" tabindex="0">Tümünü Gör →</label></div><div class="prompts"><div class="prompt"><b>01</b><h3>Eğitim Promptları</h3></div><div class="prompt"><b>02</b><h3>Kodlama ve Uygulama Promptları</h3></div><div class="prompt"><b>03</b><h3>Sunum ve İçerik Promptları</h3></div><div class="prompt"><b>04</b><h3>Video Üretim Promptları</h3></div><div class="prompt"><b>05</b><h3>Görsel Üretim Promptları</h3></div></div></div></section>
 <section class="section alt" id="hakkimda"><div class="wrap"><div class="cta"><span class="kicker">ÖĞREN • ÜRET • PAYLAŞ</span><h2>Bir Fikrin mi Var?</h2><p>Bir fikri dijital bir öğrenme deneyimine dönüştürelim.</p><div class="actions" style="justify-content:center"><a class="btn primary" href="#uygulamalar">Projeleri Keşfet ↗</a></div><p style="font-size:12px;margin-top:25px">Mehmet Tahir Bilgin (Tahir Bilgin) · Tahir AI Lab</p></div></div></section></main>
-<footer><div class="wrap footer-inner"><div><strong>Tahir AI Lab</strong> • Öğren • Üret • Paylaş<br/>© 2026 Mehmet Tahir Bilgin</div><div class="footer-links"><a href="#anasayfa">Ana Sayfa</a><a href="#uygulamalar">Uygulamalar</a><a href="#videolar">Videolar</a><a href="#galeri">Galeri</a><a href="#ai-lab">AI Lab</a><a href="#hakkimda">Hakkımda</a></div></div></footer>
+<footer><div class="wrap footer-inner"><div><strong>Tahir AI Lab</strong> • Öğren • Üret • Paylaş<br/>© 2026 Mehmet Tahir Bilgin</div><div class="footer-links"><a href="./gizlilik.html">Gizlilik ve Çerezler</a><a href="#" id="tb-open-consent">Çerez tercihleri</a><a href="#anasayfa">Ana Sayfa</a><a href="#uygulamalar">Uygulamalar</a><a href="#videolar">Videolar</a><a href="#galeri">Galeri</a><a href="#ai-lab">AI Lab</a><a href="#hakkimda">Hakkımda</a></div></div></footer>
 <input type="checkbox" id="chk-uygulamalar" class="hub-chk" aria-hidden="true" tabindex="-1"><section aria-label="Uygulama Merkezi" class="hub-panel" id="panel-uygulamalar" role="dialog"><div class="hub-top"><div class="hub-top-inner"><label class="hub-back" for="chk-uygulamalar" role="button" tabindex="0"><span aria-hidden="true">‹</span> Geri</label><span class="hub-top-name">TAHİR AI LAB</span><span class="hub-top-space"></span></div></div><div class="hub-content"><div class="hub-intro"><span class="kicker">KEŞFET / UYGULAMALAR</span><h1>Uygulama Merkezi</h1></div><div class="grid hub-items">
 <a class="tile" href="./FIKIH-AT%C3%96LYES%C4%B0.html" rel="noopener" target="_blank"><div class="tile-cover" style="background:#101e30;padding:0;overflow:hidden"><img src="./F%C4%B1k%C4%B1h%20At%C3%B6lyesi_%20Bilgelik%20ve%20Uygulama%20(1).png" alt="Fıkıh Atölyesi tanıtım görseli" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover"></div><div class="tile-body"><h3>Fıkıh Atölyesi</h3><p>Fıkıh ilkelerini, kavramları ve örnek olayları etkileşimli öğrenme deneyimleriyle keşfet.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
 <a class="tile" href="./kurantakip%20(2).html" rel="noopener" target="_blank"><div class="tile-cover kuran-cover" style="background:#0b4438;padding:0;overflow:hidden"><img src="./Kur%E2%80%99an%20Takibi_%20Huzurlu%20%C3%87al%C4%B1%C5%9Fma%20K%C3%B6%C5%9Fesi.png" alt="Kur’an-ı Kerim Takip uygulama tanıtım görseli" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover"></div><div class="tile-body"><h3>Kur’an-ı Kerim Takip</h3><p>Kur’an-ı Kerim ezberlerini, yüzüne okumaları ve öğrenci gelişimini düzenli takip et.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
@@ -497,6 +526,40 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
     if(!link) return;
     link.click();
   });
+})();
+</script>
+
+<!-- Visitor privacy controls: optional analytics are disabled until accepted -->
+<style id="tb-cookie-ui-style">
+#tb-cookie-banner{position:fixed;z-index:10001;bottom:18px;left:18px;right:18px;max-width:620px;margin:0 auto;padding:20px;background:#fff;color:#17233e;border:1px solid #dce5f5;border-radius:18px;box-shadow:0 20px 70px #0d234333;font:14px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+#tb-cookie-banner[hidden]{display:none!important}
+#tb-cookie-banner strong{font-size:16px}#tb-cookie-banner p{margin:7px 0 15px;color:#40516c}
+#tb-cookie-banner a{color:#285ec3;text-decoration:underline}
+.tb-cookie-actions{display:flex;gap:9px;flex-wrap:wrap}
+.tb-cookie-actions button{flex:1;min-width:125px;border:1px solid #a6b7d3;background:#fff;color:#17233e;border-radius:10px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}
+.tb-cookie-actions button.tb-cookie-accept{background:#4779e9;color:#fff;border-color:#4779e9}
+html[data-tb-theme="dark"] #tb-cookie-banner{background:#16243a;color:#f4f7ff;border-color:#4c6285}
+html[data-tb-theme="dark"] #tb-cookie-banner p{color:#cbd8ed}
+html[data-tb-theme="dark"] #tb-cookie-banner a{color:#b9d2ff}
+html[data-tb-theme="dark"] .tb-cookie-actions button{background:#253a59;color:#fff;border-color:#6883aa}
+html[data-tb-theme="dark"] .tb-cookie-actions button.tb-cookie-accept{background:#4779e9}
+@media(max-width:550px){#tb-cookie-banner{bottom:10px;left:10px;right:10px;padding:15px}.tb-cookie-actions button{min-width:105px}}
+</style>
+<div id="tb-cookie-banner" role="region" aria-label="Çerez ve gizlilik tercihleri" hidden>
+<strong>Gizlilik ve çerez tercihleri</strong>
+<p>İsteğe bağlı Google Analytics çerezlerini, site ziyaretlerini anlamak için kullanmak istiyoruz. Kabul etmezseniz analiz çalışmaz; siteyi kullanmaya devam edebilirsiniz. <a href="./gizlilik.html">Gizlilik ve çerez politikası</a></p>
+<div class="tb-cookie-actions"><button type="button" id="tb-cookie-reject">Reddet</button><button type="button" class="tb-cookie-accept" id="tb-cookie-accept">Kabul Et</button></div>
+</div>
+<script id="tb-cookie-ui-script">
+(function(){
+  var box=document.getElementById('tb-cookie-banner');
+  var manager=window.tbAnalyticsConsent;
+  if(!box||!manager)return;
+  window.tbUpdateConsentUI=function(){box.hidden=manager.get()==='accepted'||manager.get()==='rejected'};
+  document.getElementById('tb-cookie-accept').addEventListener('click',function(){manager.set('accepted')});
+  document.getElementById('tb-cookie-reject').addEventListener('click',function(){manager.set('rejected')});
+  document.getElementById('tb-open-consent').addEventListener('click',function(e){e.preventDefault();box.hidden=false;document.getElementById('tb-cookie-reject').focus()});
+  window.tbUpdateConsentUI();
 })();
 </script>
 </body></html>
