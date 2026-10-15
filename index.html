@@ -460,89 +460,89 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
 <!-- Tahir AI Lab: refined scroll + inner gallery reveal; rollback via GitHub history -->
 <style id="tb-scroll-reveal-style">
 @media (prefers-reduced-motion: no-preference) {
-  /* Original soft reveal motion; avoid fading the whole section/background in dark mode. */
-  html.tb-reveal-enabled .tb-card-reveal.tb-reveal-enter-down {
-    animation:tb-original-reveal-down 1450ms cubic-bezier(.16,1,.3,1) both;
+  html.tb-reveal-enabled main > section.section.tb-reveal-item {
+    transition: opacity 1450ms cubic-bezier(.16,1,.3,1), transform 1450ms cubic-bezier(.16,1,.3,1);
   }
-  html.tb-reveal-enabled .tb-card-reveal.tb-reveal-enter-up {
-    animation:tb-original-reveal-up 1450ms cubic-bezier(.16,1,.3,1) both;
+  html.tb-reveal-enabled main > section.section.tb-reveal-item:not(.tb-reveal-visible) {
+    opacity: .22;
+    transform: translate3d(0, 24px, 0);
   }
-  @keyframes tb-original-reveal-down {
-    from {opacity:.16;transform:translate3d(0,26px,0)}
-    to {opacity:1;transform:translate3d(0,0,0)}
+  html.tb-reveal-enabled .tb-card-reveal {
+    transition: opacity 1450ms cubic-bezier(.16,1,.3,1), transform 1450ms cubic-bezier(.16,1,.3,1);
   }
-  @keyframes tb-original-reveal-up {
-    from {opacity:.16;transform:translate3d(0,-26px,0)}
-    to {opacity:1;transform:translate3d(0,0,0)}
+  html.tb-reveal-enabled .tb-card-reveal:not(.tb-card-visible) {
+    opacity: .16;
+    transform: translate3d(0, 26px, 0);
+  }
+  html.tb-reveal-enabled .tb-card-reveal.tb-card-visible {
+    opacity: 1;
+    transform: translate3d(0,0,0);
   }
 }
 </style>
 <script id="tb-scroll-reveal-script">
-(function(){
- 'use strict';
- function initReveal(){
-  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  var lastWindowY=window.scrollY||0, direction='down', containers=[];
-  var lastRoots=new Map();
-  function setupCards(container,root){
-   if(container.dataset.tbCardsReady==='1')return;
-   var cards=Array.from(container.querySelectorAll('.grid > .tile,.grid > .card,.hub-items > .tile'));
-   if(!cards.length)return;
-   container.dataset.tbCardsReady='1';
-   var observer=new IntersectionObserver(function(entries){
-    var entering=entries.filter(function(e){return e.isIntersecting;});
-    var dir=root?(root.scrollTop<(lastRoots.get(root)||0)?'up':root.scrollTop>(lastRoots.get(root)||0)?'down':direction):direction;
-    entering.sort(function(a,b){return dir==='up'?b.boundingClientRect.top-a.boundingClientRect.top:a.boundingClientRect.top-b.boundingClientRect.top;});
-    entering.forEach(function(entry,index){
-     var card=entry.target;
-     if(card.dataset.tbRevealArmed!=='1')return;
-     card.dataset.tbRevealArmed='0';
-     var grid=card.parentElement;
-     var columns=Math.max(1,getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
-     var columnIndex=Array.prototype.indexOf.call(grid.children,card)%columns;
-     card.style.animationDelay=(columnIndex*150)+'ms';
-     card.classList.remove('tb-reveal-enter-down','tb-reveal-enter-up');
-     void card.offsetWidth;
-     card.classList.add(dir==='up'?'tb-reveal-enter-up':'tb-reveal-enter-down');
+(function () {
+  'use strict';
+  function initReveal() {
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var sections = Array.from(document.querySelectorAll('main > section.section'));
+    var sectionObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('tb-reveal-visible'); sectionObserver.unobserve(entry.target); }
+      });
+    }, {threshold: .06, rootMargin: '0px 0px -45px 0px'});
+    sections.forEach(function(section) {
+      section.classList.add('tb-reveal-item');
+      if (section.getBoundingClientRect().top < window.innerHeight - 25) section.classList.add('tb-reveal-visible');
+      else sectionObserver.observe(section);
     });
-    entries.filter(function(e){return !e.isIntersecting;}).forEach(function(entry){
-     var card=entry.target;
-     var rect=entry.boundingClientRect;
-     var viewport=root?root.getBoundingClientRect():{top:0,bottom:innerHeight};
-     // Reset only after leaving the viewport completely: no flashing mid-scroll.
-     if(rect.bottom<viewport.top-12||rect.top>viewport.bottom+12){
-      card.dataset.tbRevealArmed='1';
-      card.classList.remove('tb-reveal-enter-down','tb-reveal-enter-up');
-      card.style.animationDelay='0ms';
-     }
+    var observers = [];
+    function setupCards(container, root) {
+      if (container.dataset.tbCardsReady === '1') return;
+      var cards = Array.from(container.querySelectorAll('.grid > .tile, .grid > .card, .hub-items > .tile'));
+      if (!cards.length) return;
+      container.dataset.tbCardsReady = '1';
+      var observer = new IntersectionObserver(function(entries) {
+        entries.filter(function(e){return e.isIntersecting;}).sort(function(x,y){return cards.indexOf(x.target)-cards.indexOf(y.target);}).forEach(function(entry) {
+          var card = entry.target;
+          observer.unobserve(card);
+          var index = cards.indexOf(card);
+          // Match stagger timing to the actual number of columns (2 on mobile, 4 on desktop).
+          var grid = card.parentElement;
+          var columns = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
+          var delay = (index % columns) * 215;
+          window.setTimeout(function(){card.classList.add('tb-card-visible');}, delay);
+        });
+      }, {root: root || null, threshold: .04, rootMargin: '0px 0px -12px 0px'});
+      observers.push(observer);
+      cards.forEach(function(card) {
+        card.classList.add('tb-card-reveal');
+        var rect = card.getBoundingClientRect();
+        if (!root && rect.top < window.innerHeight - 15) card.classList.add('tb-card-visible');
+        else observer.observe(card);
+      });
+    }
+    sections.forEach(function(section){setupCards(section,null);});
+    function activatePanel(panel) {
+      if (!panel || panel.dataset.tbCardsReady === '1') return;
+      var scroller = panel.querySelector('.hub-content');
+      if (!scroller) return;
+      setupCards(panel,scroller);
+    }
+    // Panels are initially hidden; initialize only after their associated checkbox opens them.
+    document.querySelectorAll('input.hub-chk').forEach(function(check) {
+      check.addEventListener('change',function() {
+        if (!check.checked) return;
+        window.setTimeout(function() {
+          var panel = document.getElementById('panel-' + check.id.replace(/^chk-/,''));
+          activatePanel(panel);
+        },100);
+      });
     });
-   },{root:root||null,threshold:0,rootMargin:'0px'});
-   cards.forEach(function(card){
-    card.classList.add('tb-card-reveal');
-    card.dataset.tbRevealArmed='1';
-    observer.observe(card);
-   });
-   containers.push({root:root,observer:observer});
+    document.documentElement.classList.add('tb-reveal-enabled');
   }
-  document.querySelectorAll('main > section.section').forEach(function(section){setupCards(section,null)});
-  document.querySelectorAll('input.hub-chk').forEach(function(check){
-   check.addEventListener('change',function(){
-    if(!check.checked)return;
-    setTimeout(function(){
-     var panel=document.getElementById('panel-'+check.id.replace(/^chk-/,''));
-     if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)setupCards(panel,scroller)}
-    },100);
-   });
-  });
-  window.addEventListener('scroll',function(e){
-   var y=window.scrollY||0;
-   if(Math.abs(y-lastWindowY)>2){direction=y<lastWindowY?'up':'down';lastWindowY=y}
-   containers.forEach(function(c){if(c.root)lastRoots.set(c.root,c.root.scrollTop)});
-  },{passive:true,capture:true});
-  document.documentElement.classList.add('tb-reveal-enabled');
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initReveal,{once:true});
- else initReveal();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',initReveal,{once:true});
+  else initReveal();
 })();
 </script>
 
