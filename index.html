@@ -432,7 +432,7 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  function show(n){current=(n+slides.length)%slides.length;slides.forEach((el,i)=>{el.classList.toggle('is-active',i===current);el.setAttribute('aria-hidden',String(i!==current));});dots.forEach((el,i)=>{el.classList.toggle('is-active',i===current);if(i===current)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current');});}
  function stop(){if(timer)clearInterval(timer);}
- function play(){stop();if(!reduced)timer=setInterval(()=>show(current+1),5200);}
+ function play(){stop();if(!reduced)timer=setInterval(()=>show(current+1),3000);}
  root.querySelector('.art-prev').addEventListener('click',()=>{show(current-1);play();});
  root.querySelector('.art-next').addEventListener('click',()=>{show(current+1);play();});
  dots.forEach((b,i)=>b.addEventListener('click',()=>{show(i);play();}));
@@ -854,6 +854,7 @@ html[data-tb-theme="dark"] .tb-resource-feature-preview span{color:#e0edfc}
 .tb-resource-feature .tb-resource-feature-button{background:linear-gradient(120deg,#13477c,#237eb6);color:#fff;box-shadow:0 9px 23px #12558c38;border:1px solid #ffffff70;border-radius:15px;padding:13px 18px;transition:transform .2s ease,box-shadow .2s ease}
 .tb-resource-feature .tb-resource-feature-button:hover{transform:translateY(-3px);box-shadow:0 13px 29px #12558c4a}
 .tb-resource-feature .tb-resource-feature-count{margin-top:12px;font-size:12px;color:#2d5978;line-height:1.6}
+.tb-resource-feature .tb-resource-feature-copy .tb-resource-feature-count{width:max-content;max-width:100%;min-width:245px;text-align:center}
 .tb-resource-feature .tb-resource-feature-preview{position:relative;z-index:1;gap:10px;transform:rotate(-2deg)}
 .tb-resource-feature .tb-resource-feature-preview>div{min-height:0;display:flex;align-items:center;gap:15px;padding:12px 14px;background:#ffffffc9;border:1px solid #ffffffeb;border-radius:20px;box-shadow:0 13px 29px #28648b20;backdrop-filter:blur(12px);transition:transform .25s ease}
 .tb-resource-feature .tb-resource-feature-preview>div:nth-child(2){transform:translateX(15px)}
