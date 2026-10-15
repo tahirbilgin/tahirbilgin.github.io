@@ -460,113 +460,80 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
 <!-- Tahir AI Lab: refined scroll + inner gallery reveal; rollback via GitHub history -->
 <style id="tb-scroll-reveal-style">
 @media (prefers-reduced-motion: no-preference) {
-  html.tb-reveal-enabled main > section.section.tb-reveal-item {
-    transition: opacity 1450ms cubic-bezier(.16,1,.3,1), transform 1450ms cubic-bezier(.16,1,.3,1);
+  html.tb-reveal-enabled main > section.section.tb-reveal-item,
+  html.tb-reveal-enabled .tb-card-reveal {opacity:1;transform:none}
+  html.tb-reveal-enabled .tb-reveal-playing {
+    animation:tb-reveal-repeat-down 1050ms cubic-bezier(.16,1,.3,1) both;
   }
-  html.tb-reveal-enabled main > section.section.tb-reveal-item:not(.tb-reveal-visible) {
-    opacity: .12;
-    transform: translate3d(0, 34px, 0);
+  html.tb-reveal-enabled.tb-scroll-upward .tb-reveal-playing {
+    animation-name:tb-reveal-repeat-up;
   }
-  html.tb-reveal-enabled .tb-card-reveal {
-    transition: opacity 1450ms cubic-bezier(.16,1,.3,1), transform 1450ms cubic-bezier(.16,1,.3,1);
+  @keyframes tb-reveal-repeat-down {
+    from {opacity:.20;transform:translate3d(0,25px,0)}
+    to {opacity:1;transform:translate3d(0,0,0)}
   }
-  html.tb-reveal-enabled .tb-card-reveal:not(.tb-card-visible) {
-    opacity: .10;
-    transform: translate3d(0, 32px, 0);
-  }
-  html.tb-reveal-enabled .tb-card-reveal.tb-card-visible {
-    opacity: 1;
-    transform: translate3d(0,0,0);
+  @keyframes tb-reveal-repeat-up {
+    from {opacity:.20;transform:translate3d(0,-25px,0)}
+    to {opacity:1;transform:translate3d(0,0,0)}
   }
 }
-
-  html.tb-reveal-enabled.tb-scroll-upward main > section.section.tb-reveal-item:not(.tb-reveal-visible) {transform:translate3d(0,-34px,0)}
-  html.tb-reveal-enabled.tb-scroll-upward .tb-card-reveal:not(.tb-card-visible) {transform:translate3d(0,-32px,0)}
 </style>
 <script id="tb-scroll-reveal-script">
-(function () {
+(function(){
   'use strict';
-  function initReveal() {
+  function initReveal(){
     if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var sections = Array.from(document.querySelectorAll('main > section.section'));
-    // Direction-aware reveal: scrolling up enters from above, down from below.
-    var lastScrollY = window.scrollY || 0;
-    var scrollTicking = false;
-    function syncDirection() {
-      var y = window.scrollY || 0;
-      if (Math.abs(y - lastScrollY) > 3) {
-        document.documentElement.classList.toggle('tb-scroll-upward', y < lastScrollY);
-        lastScrollY = y;
-      }
-      scrollTicking = false;
+    var html=document.documentElement, lastY=window.scrollY||0, ticking=false;
+    function play(el){
+      el.classList.remove('tb-reveal-playing');
+      void el.offsetWidth;
+      el.classList.add('tb-reveal-playing');
     }
-    window.addEventListener('scroll',function(){
-      if (!scrollTicking) {
-        scrollTicking = true;
-        window.requestAnimationFrame(syncDirection);
-      }
-    },{passive:true});
-
-    var sectionObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) entry.target.classList.add('tb-reveal-visible');
-        else entry.target.classList.remove('tb-reveal-visible');
-      });
-    }, {threshold: 0, rootMargin: '-12% 0px -18% 0px'});
-    sections.forEach(function(section) {
-      section.classList.add('tb-reveal-item');
-      if (section.getBoundingClientRect().top < window.innerHeight - 25 && section.getBoundingClientRect().bottom > 0) section.classList.add('tb-reveal-visible');
-      sectionObserver.observe(section);
-    });
-    var observers = [];
-    function setupCards(container, root) {
-      if (container.dataset.tbCardsReady === '1') return;
-      var cards = Array.from(container.querySelectorAll('.grid > .tile, .grid > .card, .hub-items > .tile'));
-      if (!cards.length) return;
-      container.dataset.tbCardsReady = '1';
-      var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          var card = entry.target;
-          if (entry.isIntersecting) {
-            var index = cards.indexOf(card);
-            var grid = card.parentElement;
-            var columns = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
-            card.style.transitionDelay = ((index % columns) * 110) + 'ms';
-            card.classList.add('tb-card-visible');
-          } else {
-            card.style.transitionDelay = '0ms';
-            card.classList.remove('tb-card-visible');
-          }
-        });
-      }, {root: root || null, threshold: 0, rootMargin: '-5% 0px -13% 0px'});
-      observers.push(observer);
-      cards.forEach(function(card) {
-        card.classList.add('tb-card-reveal');
-        var rect = card.getBoundingClientRect();
-        if (!root && rect.top < window.innerHeight - 15 && rect.bottom > 0) card.classList.add('tb-card-visible');
-        observer.observe(card);
-      });
+    function watch(elements,root){
+      var obs=new IntersectionObserver(function(entries){
+        entries.filter(function(e){return e.isIntersecting;})
+          .sort(function(a,b){return a.boundingClientRect.top-b.boundingClientRect.top;})
+          .forEach(function(entry,index){
+            var el=entry.target;
+            el.style.animationDelay=(index*85)+'ms';
+            play(el);
+          });
+      },{root:root||null,threshold:0,rootMargin:'-8% 0px -8% 0px'});
+      elements.forEach(function(el){obs.observe(el)});
     }
-    sections.forEach(function(section){setupCards(section,null);});
-    function activatePanel(panel) {
-      if (!panel || panel.dataset.tbCardsReady === '1') return;
-      var scroller = panel.querySelector('.hub-content');
-      if (!scroller) return;
-      setupCards(panel,scroller);
+    var sections=Array.from(document.querySelectorAll('main > section.section'));
+    sections.forEach(function(el){el.classList.add('tb-reveal-item')});
+    watch(sections,null);
+    function cards(container,root){
+      if(container.dataset.tbCardsReady==='1')return;
+      var items=Array.from(container.querySelectorAll('.grid > .tile, .grid > .card, .hub-items > .tile'));
+      if(!items.length)return;
+      container.dataset.tbCardsReady='1';
+      items.forEach(function(el){el.classList.add('tb-card-reveal')});
+      watch(items,root);
     }
-    // Panels are initially hidden; initialize only after their associated checkbox opens them.
-    document.querySelectorAll('input.hub-chk').forEach(function(check) {
-      check.addEventListener('change',function() {
-        if (!check.checked) return;
-        window.setTimeout(function() {
-          var panel = document.getElementById('panel-' + check.id.replace(/^chk-/,''));
-          activatePanel(panel);
+    sections.forEach(function(el){cards(el,null)});
+    document.querySelectorAll('input.hub-chk').forEach(function(check){
+      check.addEventListener('change',function(){
+        if(!check.checked)return;
+        window.setTimeout(function(){
+          var panel=document.getElementById('panel-'+check.id.replace(/^chk-/,''));
+          if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)cards(panel,scroller)}
         },100);
       });
     });
-    document.documentElement.classList.add('tb-reveal-enabled');
+    window.addEventListener('scroll',function(){
+      if(ticking)return;
+      ticking=true;
+      requestAnimationFrame(function(){
+        var y=window.scrollY||0;
+        if(Math.abs(y-lastY)>2){html.classList.toggle('tb-scroll-upward',y<lastY);lastY=y}
+        ticking=false;
+      });
+    },{passive:true});
+    html.classList.add('tb-reveal-enabled');
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',initReveal,{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initReveal,{once:true});
   else initReveal();
 })();
 </script>
