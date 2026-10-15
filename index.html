@@ -558,4 +558,23 @@ html[data-tb-theme="dark"] .tb-cookie-actions button.tb-cookie-accept{background
   window.tbUpdateConsentUI();
 })();
 </script>
+
+<!-- Tahir AI Lab: restore parent hub when closing nested sections -->
+<script id="tb-hub-parent-navigation">
+(function(){
+  'use strict';
+  var parents={'chk-infografikler':'chk-galeri','chk-arapca':'chk-uygulamalar','chk-maarif':'chk-uygulamalar'};
+  Object.keys(parents).forEach(function(childId){
+    var child=document.getElementById(childId);
+    var parent=document.getElementById(parents[childId]);
+    if(!child||!parent)return;
+    child.addEventListener('change',function(){
+      if(child.checked && !parent.checked){
+        parent.checked=true;
+        parent.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+    });
+  });
+})();
+</script>
 </body></html>
