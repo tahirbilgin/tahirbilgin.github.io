@@ -883,4 +883,18 @@ html[data-tb-theme="dark"] .tb-infographic-welcome{background:linear-gradient(13
 @media(max-width:720px){.tb-resource-feature .tb-resource-feature-inner{grid-template-columns:1fr;min-height:0;padding:29px 22px}.tb-resource-feature .tb-resource-feature-preview{transform:none}.tb-resource-feature .tb-resource-feature-preview>div:nth-child(2){transform:none}.tb-resource-feature .tb-resource-feature-preview>div:nth-child(2):hover{transform:translateY(-4px)}.tb-resource-feature .tb-resource-feature-inner:after{letter-spacing:10px;right:8px}}
 @media(prefers-reduced-motion:reduce){.tb-resource-feature .tb-resource-feature-inner,.tb-resource-feature .tb-resource-feature-inner:before,.tb-resource-feature .tb-resource-feature-inner:after{animation:none}.tb-resource-feature .tb-resource-feature-button,.tb-resource-feature .tb-resource-feature-preview>div{transition:none}}
 </style>
+<style id="tb-hub-aurora-trial">
+/* Reversible visual trial: animated aurora and soft sparkles for hub page headers. */
+.hub-panel .hub-intro{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(115deg,#e4f8ff,#c8eafa,#e5dbff,#c7f4e9,#e7f6ff);background-size:380% 380%;border:1px solid #d2e9fa;box-shadow:0 13px 35px #185a9b16;animation:tb-resource-colors 18s ease-in-out infinite}
+.hub-panel .hub-intro::before{content:"";position:absolute;inset:-65%;z-index:-1;pointer-events:none;background:radial-gradient(circle at 25% 35%,#ffffffb0 0,transparent 22%),radial-gradient(circle at 75% 60%,#ffffff8a 0,transparent 18%),radial-gradient(circle at 53% 20%,#f5eaff88 0,transparent 20%);animation:tb-resource-shimmer 17s linear infinite}
+.hub-panel .hub-intro::after{content:"✧  ✦  ✧";position:absolute;right:19px;top:12px;font-size:15px;letter-spacing:11px;color:#ffffffd0;pointer-events:none;animation:tb-resource-twinkle 4s ease-in-out infinite}
+.hub-panel .hub-intro h1{position:relative;color:#163b65}
+.hub-panel .hub-intro p{position:relative;color:#355875}
+.hub-panel .hub-intro .kicker{position:relative}
+html[data-tb-theme="dark"] .hub-panel .hub-intro{background:linear-gradient(115deg,#102d51,#17517c,#34386f,#126c68,#173d6c);background-size:380% 380%;border-color:#496f99;box-shadow:0 13px 35px #0000002c}
+html[data-tb-theme="dark"] .hub-panel .hub-intro::before{opacity:.22}
+html[data-tb-theme="dark"] .hub-panel .hub-intro h1{color:#f0f7ff}
+html[data-tb-theme="dark"] .hub-panel .hub-intro p{color:#d5eaff}
+@media(prefers-reduced-motion:reduce){.hub-panel .hub-intro,.hub-panel .hub-intro::before,.hub-panel .hub-intro::after{animation:none}}
+</style>
 </body></html>
