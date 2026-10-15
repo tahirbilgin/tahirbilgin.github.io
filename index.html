@@ -474,6 +474,11 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
     opacity: .16;
     transform: translate3d(0, 26px, 0);
   }
+  /* Upward entrances start above the card, with the same soft 1450ms easing. */
+  html.tb-reveal-enabled .tb-card-reveal.tb-reveal-from-above:not(.tb-card-visible) {
+    opacity: .10;
+    transform: translate3d(0,-36px,0);
+  }
   html.tb-reveal-enabled .tb-card-reveal.tb-card-visible {
     opacity: 1;
     transform: translate3d(0,0,0);
@@ -541,6 +546,9 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
     // Re-arm only while fully outside the viewport, never fade a visible item.
     // Upward scrolling rearms items below; downward scrolling rearms items above.
     if(((dir==='up' && rect.top>bottom+18) || (dir==='down' && rect.bottom<top-18)) && r.seen){
+     if(r.visible==='tb-card-visible') {
+      r.el.classList.toggle('tb-reveal-from-above',dir==='down');
+     }
      r.el.classList.remove(r.visible);
      r.armed=true;
      r.seen=false;
