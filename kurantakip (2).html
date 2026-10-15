@@ -365,5 +365,36 @@ Error generating stack: `+l.message+`
 
   <body>
     <div id="root"></div>
+    <!-- Local-only privacy notice; does not access or modify student records. -->
+    <style id="tb-local-privacy-style">
+      #tb-local-privacy-notice{position:fixed;z-index:2147483000;bottom:16px;left:16px;right:16px;max-width:530px;margin:0 auto;background:#fff;color:#16382f;border:1px solid #cce4d9;border-radius:14px;box-shadow:0 12px 40px rgba(10,42,30,.18);padding:15px 17px;font:13px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+      #tb-local-privacy-notice[hidden]{display:none!important}
+      #tb-local-privacy-notice strong{font-size:14px}
+      #tb-local-privacy-notice p{margin:6px 0 10px}
+      #tb-local-privacy-notice button,#tb-local-privacy-open{font:inherit;cursor:pointer;border-radius:9px;border:1px solid #0b7a59;background:#0b7a59;color:white;padding:7px 13px}
+      #tb-local-privacy-open{position:fixed;z-index:2147482999;bottom:12px;left:12px;font:12px system-ui,-apple-system,"Segoe UI",sans-serif;padding:8px 10px;box-shadow:0 3px 12px #0002}
+      @media(prefers-color-scheme:dark){#tb-local-privacy-notice{background:#142820;color:#f1fff8;border-color:#3c765f}}
+      @media(max-width:540px){#tb-local-privacy-notice{bottom:8px;left:8px;right:8px;padding:12px}}
+    </style>
+    <button type="button" id="tb-local-privacy-open" aria-controls="tb-local-privacy-notice" aria-expanded="false" hidden>Veri güvenliği</button>
+    <aside id="tb-local-privacy-notice" role="note" aria-label="Öğrenci verilerinin güvenliği">
+      <strong>🔒 Öğrenci verileriniz hakkında</strong>
+      <p>Bu uygulamadaki kayıtlar, kullandığınız tarayıcının bu siteye ait yerel depolama alanında tutulur. Hesap veya bulut senkronizasyonu yoktur. Aynı cihaz ve tarayıcı profilini kullanan kişiler kayıtları görebilir; ortak bilgisayarlarda öğrenci bilgisi girmeyin.</p>
+      <p>Tarayıcı verileri silinirse kayıtlar kaybolabilir. Uygulamanın JSON yedekleme özelliğini kullanın ve indirdiğiniz dosyaları güvenli saklayın. Öğrenci bilgilerini izinsiz paylaşmayın; gerçek öğrenci verilerini kullanmadan önce kurumunuzun veri koruma kurallarını gözetin.</p>
+      <button type="button" id="tb-local-privacy-close">Anladım</button>
+    </aside>
+    <script id="tb-local-privacy-script">
+      (function(){
+        var notice=document.getElementById('tb-local-privacy-notice');
+        var open=document.getElementById('tb-local-privacy-open');
+        var close=document.getElementById('tb-local-privacy-close');
+        if(!notice||!open||!close)return;
+        function show(){notice.hidden=false;open.hidden=true;open.setAttribute('aria-expanded','true')}
+        function hide(){notice.hidden=true;open.hidden=false;open.setAttribute('aria-expanded','false');try{sessionStorage.setItem('tb-local-privacy-seen','1')}catch(e){}}
+        close.addEventListener('click',hide);
+        open.addEventListener('click',show);
+        try{if(sessionStorage.getItem('tb-local-privacy-seen')==='1')hide()}catch(e){}
+      })();
+    </script>
   </body>
 </html>
