@@ -978,4 +978,28 @@ html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar
  box-shadow:0 11px 27px rgba(0,0,0,.20),inset 0 1px 0 rgba(226,240,255,.10);
 }
 </style>
+<style id="tb-dark-softglow-header-trial">
+/* Reversible night-only polish: gently soften two glows and unify top controls. */
+html[data-tb-theme="dark"] .tb-resource-feature .tb-resource-feature-inner::before{opacity:.72}
+html[data-tb-theme="dark"] .tb-resource-feature .tb-resource-feature-inner::after{opacity:.7}
+html[data-tb-theme="dark"] .tb-resource-feature .tb-resource-glow{opacity:.55}
+html[data-tb-theme="dark"] #uygulamalar .section-head::before{opacity:.72}
+html[data-tb-theme="dark"] #uygulamalar .section-head::after{opacity:.72}
+html[data-tb-theme="dark"] header #tb-theme-switch{
+ background:#05080e!important;
+ color:#ffe2a0!important;
+ border:1px solid #05080e!important;
+ border-radius:12px!important;
+ box-shadow:none!important;
+ outline:0;
+}
+html[data-tb-theme="dark"] header .mobile-nav .nav-toggle{
+ background:#05080e!important;
+ color:#fff!important;
+ border:1px solid #05080e!important;
+ box-shadow:none!important;
+}
+html[data-tb-theme="dark"] header .mobile-nav .nav-toggle :is(.ic-open,.ic-close){color:#fff!important}
+html[data-tb-theme="dark"] header .nav-chk:checked~.nav-toggle{background:#05080e!important;color:#fff!important}
+</style>
 </body></html>
