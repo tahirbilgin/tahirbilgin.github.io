@@ -376,4 +376,46 @@ const smooth=matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'s
 document.getElementById('tb-scroll-up').addEventListener('click',()=>scrollTo({top:0,behavior:smooth}));
 document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo({top:document.documentElement.scrollHeight,behavior:smooth}));
 })();</script>
+
+<!-- Tahir AI Lab: scroll reveal animations (light/dark compatible) -->
+<style id="tb-scroll-reveal-style">
+@media (prefers-reduced-motion: no-preference) {
+  html.tb-reveal-enabled main > section.section.tb-reveal-item:not(.tb-reveal-visible) {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  html.tb-reveal-enabled main > section.section.tb-reveal-item {
+    transition: opacity 720ms cubic-bezier(.22,1,.36,1), transform 720ms cubic-bezier(.22,1,.36,1);
+  }
+}
+</style>
+<script id="tb-scroll-reveal-script">
+(function () {
+  'use strict';
+  function initReveal() {
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var sections = Array.from(document.querySelectorAll('main > section.section'));
+    if (!sections.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('tb-reveal-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {threshold: 0.05, rootMargin: '0px 0px -30px 0px'});
+    sections.forEach(function(section) {
+      section.classList.add('tb-reveal-item');
+      if (section.getBoundingClientRect().top < window.innerHeight - 20) {
+        section.classList.add('tb-reveal-visible');
+      } else {
+        observer.observe(section);
+      }
+    });
+    document.documentElement.classList.add('tb-reveal-enabled');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReveal, {once:true});
+  else initReveal();
+})();
+</script>
 </body></html>
