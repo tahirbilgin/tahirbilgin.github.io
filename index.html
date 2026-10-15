@@ -538,15 +538,15 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
     var top=Math.max(0,bounds.top),bottom=Math.min(innerHeight,bounds.bottom);
     if(bottom<=top)return;
     var rect=r.el.getBoundingClientRect(),dir=direction.get(r.root)||'still';
-    // Only reset fully offscreen BELOW while travelling upward.
-    // The user never sees the reset; next downward entrance uses original CSS.
-    if(dir==='up' && rect.top>bottom+18 && r.seen){
+    // Re-arm only while fully outside the viewport, never fade a visible item.
+    // Upward scrolling rearms items below; downward scrolling rearms items above.
+    if(((dir==='up' && rect.top>bottom+18) || (dir==='down' && rect.bottom<top-18)) && r.seen){
      r.el.classList.remove(r.visible);
      r.armed=true;
      r.seen=false;
      return;
     }
-    if(r.armed && rect.top<bottom-20 && rect.bottom>top+8 && dir!=='up'){
+    if(r.armed && rect.top<bottom-20 && rect.bottom>top+8 && dir!=='still'){
      r.armed=false;
      r.seen=true;
      if(r.visible==='tb-card-visible'){
