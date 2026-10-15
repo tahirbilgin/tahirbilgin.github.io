@@ -377,7 +377,7 @@ document.getElementById('tb-scroll-up').addEventListener('click',()=>scrollTo({t
 document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo({top:document.documentElement.scrollHeight,behavior:smooth}));
 })();</script>
 
-<!-- Tahir AI Lab: cinematic scroll reveal (light/dark compatible) -->
+<!-- Tahir AI Lab: sequential card reveal; previous version at commit 8de817c2e59ef7e996a97c4dcccdcdc8a470d935 -->
 <style id="tb-scroll-reveal-style">
 @media (prefers-reduced-motion: no-preference) {
   html.tb-reveal-enabled main > section.section.tb-reveal-item:not(.tb-reveal-visible) {
@@ -387,9 +387,21 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
   }
   html.tb-reveal-enabled main > section.section.tb-reveal-item {
     transition: opacity 1100ms cubic-bezier(.22,1,.36,1), transform 1100ms cubic-bezier(.22,1,.36,1), filter 1000ms ease;
-    will-change: opacity, transform, filter;
   }
   html.tb-reveal-enabled main > section.section.tb-reveal-item.tb-reveal-visible {
+    opacity: 1;
+    transform: translate3d(0,0,0);
+    filter: blur(0);
+  }
+  html.tb-reveal-enabled main > section.section .grid > .tb-card-reveal:not(.tb-card-visible) {
+    opacity: 0;
+    transform: translate3d(0, 48px, 0);
+    filter: blur(4px);
+  }
+  html.tb-reveal-enabled main > section.section .grid > .tb-card-reveal {
+    transition: opacity 850ms cubic-bezier(.22,1,.36,1), transform 850ms cubic-bezier(.22,1,.36,1), filter 850ms ease;
+  }
+  html.tb-reveal-enabled main > section.section .grid > .tb-card-reveal.tb-card-visible {
     opacity: 1;
     transform: translate3d(0,0,0);
     filter: blur(0);
@@ -403,21 +415,36 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
     if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var sections = Array.from(document.querySelectorAll('main > section.section'));
     if (!sections.length) return;
-    var observer = new IntersectionObserver(function(entries) {
+    var sectionObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('tb-reveal-visible');
-          observer.unobserve(entry.target);
+          sectionObserver.unobserve(entry.target);
         }
       });
     }, {threshold: 0.08, rootMargin: '0px 0px -65px 0px'});
     sections.forEach(function(section) {
       section.classList.add('tb-reveal-item');
-      if (section.getBoundingClientRect().top < window.innerHeight - 35) {
-        section.classList.add('tb-reveal-visible');
-      } else {
-        observer.observe(section);
-      }
+      if (section.getBoundingClientRect().top < window.innerHeight - 35) section.classList.add('tb-reveal-visible');
+      else sectionObserver.observe(section);
+    });
+    var cards = Array.from(document.querySelectorAll('main > section.section .grid > .tile, main > section.section .grid > .card'));
+    var queued = new Map();
+    var cardObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var card = entry.target;
+        cardObserver.unobserve(card);
+        var group = card.parentElement;
+        var index = queued.get(group) || 0;
+        queued.set(group, index + 1);
+        window.setTimeout(function() { card.classList.add('tb-card-visible'); }, Math.min(index * 145, 870));
+      });
+    }, {threshold: 0.05, rootMargin: '0px 0px -25px 0px'});
+    cards.forEach(function(card) {
+      card.classList.add('tb-card-reveal');
+      if (card.getBoundingClientRect().top < window.innerHeight - 20) card.classList.add('tb-card-visible');
+      else cardObserver.observe(card);
     });
     document.documentElement.classList.add('tb-reveal-enabled');
   }
