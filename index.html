@@ -475,4 +475,25 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
   }
 }
 </style>
+
+<!-- Tahir AI Lab: instant app card launch -->
+<style id="tb-instant-app-launch-style">
+/* App cards open directly; decorative card overlays no longer intercept taps. */
+.tile.hub-entry:has(> .tile-body .app-launch) > .card-hit { pointer-events:none; }
+.tile.hub-entry:has(> .tile-body .app-launch) { cursor:pointer; }
+</style>
+<script id="tb-instant-app-launch-script">
+(function(){
+  'use strict';
+  document.addEventListener('click',function(event){
+    if(event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if(event.target.closest('a,button,input,select,textarea,[role="button"]')) return;
+    var card=event.target.closest('.tile.hub-entry');
+    if(!card) return;
+    var link=card.querySelector('.tile-body a.app-launch[href]');
+    if(!link) return;
+    link.click();
+  });
+})();
+</script>
 </body></html>
