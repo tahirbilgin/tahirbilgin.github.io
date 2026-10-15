@@ -492,11 +492,13 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
       });
     }, {threshold: .06, rootMargin: '0px 0px -45px 0px'});
     sections.forEach(function(section) {
+      resetItems.push({el:section,root:null,observer:sectionObserver,visibleClass:'tb-reveal-visible'});
       section.classList.add('tb-reveal-item');
       if (section.getBoundingClientRect().top < window.innerHeight - 25) section.classList.add('tb-reveal-visible');
       else sectionObserver.observe(section);
     });
     var observers = [];
+    var resetItems = [];
     function setupCards(container, root) {
       if (container.dataset.tbCardsReady === '1') return;
       var cards = Array.from(container.querySelectorAll('.grid > .tile, .grid > .card, .hub-items > .tile'));
@@ -515,7 +517,9 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
         });
       }, {root: root || null, threshold: .04, rootMargin: '0px 0px -12px 0px'});
       observers.push(observer);
+      if (root) root.addEventListener('scroll',function(){rearm(root);},{passive:true});
       cards.forEach(function(card) {
+        resetItems.push({el:card,root:root||null,observer:observer,visibleClass:'tb-card-visible'});
         card.classList.add('tb-card-reveal');
         var rect = card.getBoundingClientRect();
         if (!root && rect.top < window.innerHeight - 15) card.classList.add('tb-card-visible');
@@ -523,6 +527,26 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
       });
     }
     sections.forEach(function(section){setupCards(section,null);});
+    // Re-arm only while scrolling UP and the element is entirely BELOW view.
+    // This preserves the original one-way entrance and never fades visible content.
+    var lastWindowY = window.scrollY || 0;
+    var lastRootY = new WeakMap();
+    function rearm(root) {
+      var y = root ? root.scrollTop : (window.scrollY || 0);
+      var previous = root ? (lastRootY.has(root) ? lastRootY.get(root) : y) : lastWindowY;
+      if (root) lastRootY.set(root,y); else lastWindowY = y;
+      if (y >= previous - 2) return;
+      var boundary = root ? root.getBoundingClientRect().bottom : window.innerHeight;
+      resetItems.forEach(function(item) {
+        if (item.root !== root || !item.el.classList.contains(item.visibleClass)) return;
+        if (item.el.getBoundingClientRect().top > boundary + 36) {
+          item.el.classList.remove(item.visibleClass);
+          item.observer.observe(item.el);
+        }
+      });
+    }
+    window.addEventListener('scroll',function(){rearm(null);},{passive:true});
+
     function activatePanel(panel) {
       if (!panel || panel.dataset.tbCardsReady === '1') return;
       var scroller = panel.querySelector('.hub-content');
