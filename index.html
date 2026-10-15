@@ -921,11 +921,40 @@ html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar
 #tb-scroll-fill::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at 28% 24%,#ffffffdb 0 1px,transparent 2px),radial-gradient(circle at 73% 52%,#ffffffc9 0 1px,transparent 2px),radial-gradient(circle at 39% 78%,#e7faffd6 0 1px,transparent 2px),linear-gradient(90deg,#ffffff40,transparent 60%);background-size:100% 45px,100% 63px,100% 57px,100% 100%;animation:tb-scroll-stars 4s linear infinite;opacity:.55}
 #tb-scroll-fill::after{content:"";position:absolute;left:5%;right:5%;top:0;height:11px;border-radius:50%;background:radial-gradient(ellipse,#ffffffdd 0%,#b1eeffb8 30%,transparent 74%);filter:blur(2px);pointer-events:none;opacity:.55}
 html[data-tb-theme="dark"] #tb-scroll-track{border-color:#4d9cffb5;box-shadow:0 0 11px #258bff6b,0 0 23px #186de73c,inset 0 0 11px #43aeff38}
-html[data-tb-theme="dark"] #tb-scroll-fill{background:linear-gradient(180deg,#c8faff 0%,#6ce7ff 30%,#249eff 64%,#1355f5 100%);background-size:100% 180%;box-shadow:0 0 10px #61dfffdf,0 0 21px #1689ff9c,0 0 32px #287dff68,inset 0 0 8px #ffffffbd;animation-duration:3.5s}
-html[data-tb-theme="dark"] #tb-scroll-fill::before{opacity:1;animation-duration:2.7s}
-html[data-tb-theme="dark"] #tb-scroll-fill::after{opacity:1;filter:blur(2.5px)}
+html[data-tb-theme="dark"] #tb-scroll-fill{background:linear-gradient(180deg,#c8faff 0%,#6ce7ff 30%,#249eff 64%,#1355f5 100%);background-size:100% 180%;box-shadow:0 0 8px #61dfff9e,0 0 16px #1689ff70,0 0 23px #287dff45,inset 0 0 5px #ffffff48;animation-duration:3.5s}
+html[data-tb-theme="dark"] #tb-scroll-fill::before{opacity:.38;animation-duration:3.4s}
+html[data-tb-theme="dark"] #tb-scroll-fill::after{opacity:.22;filter:blur(3px)}
 @keyframes tb-scroll-magic-flow{0%,100%{background-position:50% 0%}50%{background-position:50% 100%}}
 @keyframes tb-scroll-stars{from{background-position:0 0,0 0,0 0,0 0}to{background-position:0 90px,0 126px,0 114px,0 0}}
 @media(prefers-reduced-motion:reduce){#tb-scroll-fill,#tb-scroll-fill::before{animation:none}}
+</style>
+<style id="tb-aurora-individual-2026">
+/* Distinct night-mode aurora palette, glow paths and timing per homepage section. */
+html[data-tb-theme="dark"] #uygulamalar .section-head{background:linear-gradient(120deg,#102d51,#17517c,#2a4e96,#126c83,#173d6c);background-size:380% 380%;animation:tb-resource-colors 19s ease-in-out infinite}
+html[data-tb-theme="dark"] #videolar .section-head{background:linear-gradient(145deg,#24194d,#52317c,#2d417d,#6a3579,#24194d);background-size:390% 390%;animation:tb-aurora-violet 23s ease-in-out infinite}
+html[data-tb-theme="dark"] #galeri .section-head{background:linear-gradient(110deg,#0b3843,#0d6b65,#185875,#226c66,#0b3843);background-size:370% 370%;animation:tb-aurora-teal 21s ease-in-out infinite}
+html[data-tb-theme="dark"] #ai-lab .section-head{background:linear-gradient(130deg,#101e52,#1a51a0,#293c88,#136ca2,#101e52);background-size:400% 400%;animation:tb-aurora-electric 16s ease-in-out infinite}
+html[data-tb-theme="dark"] #promptlar .section-head{background:linear-gradient(135deg,#1d3152,#62513e,#273f70,#6b5a44,#1d3152);background-size:400% 400%;animation:tb-aurora-gold 26s ease-in-out infinite}
+html[data-tb-theme="dark"] #videolar .section-head::before{background:radial-gradient(circle at 15% 40%,#f0aaff75,transparent 22%),radial-gradient(circle at 75% 65%,#a5b8ff70,transparent 24%);animation:tb-resource-shimmer 21s ease-in-out infinite}
+html[data-tb-theme="dark"] #galeri .section-head::before{background:radial-gradient(circle at 72% 22%,#8bffe58c,transparent 22%),radial-gradient(circle at 22% 72%,#5ad3ff70,transparent 23%);animation:tb-aurora-glow-drift 18s ease-in-out infinite}
+html[data-tb-theme="dark"] #ai-lab .section-head::before{background:radial-gradient(circle at 25% 30%,#6dc8ff9a,transparent 19%),radial-gradient(circle at 70% 75%,#b3baff75,transparent 20%);animation:tb-aurora-glow-drift 13s ease-in-out infinite reverse}
+html[data-tb-theme="dark"] #promptlar .section-head::before{background:radial-gradient(circle at 75% 35%,#ffe4a078,transparent 21%),radial-gradient(circle at 20% 68%,#a6c9ff75,transparent 23%);animation:tb-resource-shimmer 27s ease-in-out infinite reverse}
+html[data-tb-theme="dark"] #videolar .section-head::after{color:#efc5ff;animation-duration:5.5s}
+html[data-tb-theme="dark"] #galeri .section-head::after{color:#b0fff1;animation-duration:6s}
+html[data-tb-theme="dark"] #ai-lab .section-head::after{color:#b5eaff;animation-duration:3s}
+html[data-tb-theme="dark"] #promptlar .section-head::after{color:#ffe8b3;animation-duration:7s}
+html[data-tb-theme="dark"] #panel-videolar .hub-intro{background:linear-gradient(135deg,#24194d,#52317c,#2d417d,#6a3579);background-size:380% 380%;animation:tb-aurora-violet 23s ease-in-out infinite}
+html[data-tb-theme="dark"] #panel-galeri .hub-intro{background:linear-gradient(115deg,#0b3843,#0d6b65,#185875,#226c66);background-size:380% 380%;animation:tb-aurora-teal 21s ease-in-out infinite}
+html[data-tb-theme="dark"] #panel-ai-lab .hub-intro{background:linear-gradient(135deg,#101e52,#1a51a0,#293c88,#136ca2);background-size:380% 380%;animation:tb-aurora-electric 16s ease-in-out infinite}
+html[data-tb-theme="dark"] #panel-prompt-kutuphanesi .hub-intro{background:linear-gradient(135deg,#1d3152,#62513e,#273f70,#6b5a44);background-size:380% 380%;animation:tb-aurora-gold 26s ease-in-out infinite}
+html[data-tb-theme="dark"] #panel-arapca .hub-intro{background:linear-gradient(125deg,#113d35,#187760,#244e62,#1b6950);background-size:380% 380%;animation:tb-aurora-teal 24s ease-in-out infinite}
+html[data-tb-theme="dark"] #panel-maarif .hub-intro{background:linear-gradient(125deg,#1a3652,#356d8d,#2a5979,#3e617d);background-size:380% 380%;animation:tb-aurora-electric 22s ease-in-out infinite}
+html[data-tb-theme="dark"] #panel-infografikler .hub-intro{background:linear-gradient(125deg,#302250,#604a80,#3d3d75,#4c3769);background-size:380% 380%;animation:tb-aurora-violet 25s ease-in-out infinite}
+@keyframes tb-aurora-violet{0%,100%{background-position:0% 15%}50%{background-position:100% 85%}}
+@keyframes tb-aurora-teal{0%,100%{background-position:100% 0%}50%{background-position:0% 100%}}
+@keyframes tb-aurora-electric{0%,100%{background-position:0% 100%}50%{background-position:100% 0%}}
+@keyframes tb-aurora-gold{0%,100%{background-position:15% 85%}50%{background-position:85% 15%}}
+@keyframes tb-aurora-glow-drift{0%,100%{transform:translate(-7%,4%) scale(1)}50%{transform:translate(7%,-5%) scale(1.12)}}
+@media(prefers-reduced-motion:reduce){html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar) .section-head,html[data-tb-theme="dark"] :is(#uygulamalar,#videolar,#galeri,#ai-lab,#promptlar) .section-head::before,html[data-tb-theme="dark"] :is(#panel-videolar,#panel-galeri,#panel-ai-lab,#panel-prompt-kutuphanesi,#panel-arapca,#panel-maarif,#panel-infografikler) .hub-intro{animation:none}}
 </style>
 </body></html>
