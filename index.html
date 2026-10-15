@@ -1001,5 +1001,16 @@ html[data-tb-theme="dark"] header .mobile-nav .nav-toggle{
 }
 html[data-tb-theme="dark"] header .mobile-nav .nav-toggle :is(.ic-open,.ic-close){color:#fff!important}
 html[data-tb-theme="dark"] header .nav-chk:checked~.nav-toggle{background:#05080e!important;color:#fff!important}
+
+/* Remove the differently tinted rectangle behind the two black mobile controls. */
+html[data-tb-theme="dark"] header .mobile-nav{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+ outline:0!important;
+}
+html[data-tb-theme="dark"] header .mobile-nav::before,
+html[data-tb-theme="dark"] header .mobile-nav::after{background:transparent!important;box-shadow:none!important}
 </style>
 </body></html>
