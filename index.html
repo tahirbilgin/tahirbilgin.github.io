@@ -427,7 +427,10 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
           var card = entry.target;
           observer.unobserve(card);
           var index = cards.indexOf(card);
-          var delay = (index % 3) * 215;
+          // Match stagger timing to the actual number of columns (2 on mobile, 4 on desktop).
+          var grid = card.parentElement;
+          var columns = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
+          var delay = (index % columns) * 215;
           window.setTimeout(function(){card.classList.add('tb-card-visible');}, delay);
         });
       }, {root: root || null, threshold: .04, rootMargin: '0px 0px -12px 0px'});
