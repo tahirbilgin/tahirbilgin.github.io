@@ -293,6 +293,7 @@ html[data-tb-theme="dark"] #tb-scroll-up,html[data-tb-theme="dark"] #tb-scroll-d
     storeChoice(choice);
     if(choice==='accepted')startAnalytics();else stopAnalytics();
     if(window.tbUpdateConsentUI)window.tbUpdateConsentUI();
+    if(choice==='rejected' && loaded)window.location.reload();
   }};
   if(getChoice()==='accepted')startAnalytics();
 })();
