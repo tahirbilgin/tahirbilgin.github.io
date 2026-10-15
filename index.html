@@ -460,86 +460,89 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
 <!-- Tahir AI Lab: refined scroll + inner gallery reveal; rollback via GitHub history -->
 <style id="tb-scroll-reveal-style">
 @media (prefers-reduced-motion: no-preference) {
-  /* Animate only content, never the entire section: avoids dark-mode flashing. */
-  html.tb-reveal-enabled .tb-reveal-playing-down {
-    animation:tb-reveal-soft-down 850ms cubic-bezier(.16,1,.3,1) both;
+  /* Original soft reveal motion; avoid fading the whole section/background in dark mode. */
+  html.tb-reveal-enabled .tb-card-reveal.tb-reveal-enter-down {
+    animation:tb-original-reveal-down 1450ms cubic-bezier(.16,1,.3,1) both;
   }
-  html.tb-reveal-enabled .tb-reveal-playing-up {
-    animation:tb-reveal-soft-up 850ms cubic-bezier(.16,1,.3,1) both;
+  html.tb-reveal-enabled .tb-card-reveal.tb-reveal-enter-up {
+    animation:tb-original-reveal-up 1450ms cubic-bezier(.16,1,.3,1) both;
   }
-  @keyframes tb-reveal-soft-down {
-    from{opacity:.65;transform:translate3d(0,17px,0)}
-    to{opacity:1;transform:translate3d(0,0,0)}
+  @keyframes tb-original-reveal-down {
+    from {opacity:.16;transform:translate3d(0,26px,0)}
+    to {opacity:1;transform:translate3d(0,0,0)}
   }
-  @keyframes tb-reveal-soft-up {
-    from{opacity:.65;transform:translate3d(0,-17px,0)}
-    to{opacity:1;transform:translate3d(0,0,0)}
+  @keyframes tb-original-reveal-up {
+    from {opacity:.16;transform:translate3d(0,-26px,0)}
+    to {opacity:1;transform:translate3d(0,0,0)}
   }
 }
 </style>
 <script id="tb-scroll-reveal-script">
 (function(){
  'use strict';
- function init(){
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  var records=[], scheduled=false;
-  function add(container,scroller){
+ function initReveal(){
+  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var lastWindowY=window.scrollY||0, direction='down', containers=[];
+  var lastRoots=new Map();
+  function setupCards(container,root){
    if(container.dataset.tbCardsReady==='1')return;
+   var cards=Array.from(container.querySelectorAll('.grid > .tile,.grid > .card,.hub-items > .tile'));
+   if(!cards.length)return;
    container.dataset.tbCardsReady='1';
-   var els=Array.from(container.querySelectorAll('.grid > .tile,.grid > .card,.hub-items > .tile'));
-   if(!els.length && container.matches('main > section.section')) {
-    els=Array.from(container.querySelectorAll(':scope > .section-head,:scope > .section-title'));
-   }
-   els.forEach(function(el){records.push({el:el,root:scroller||null,armed:true,active:false})});
+   var observer=new IntersectionObserver(function(entries){
+    var entering=entries.filter(function(e){return e.isIntersecting;});
+    var dir=root?(root.scrollTop<(lastRoots.get(root)||0)?'up':root.scrollTop>(lastRoots.get(root)||0)?'down':direction):direction;
+    entering.sort(function(a,b){return dir==='up'?b.boundingClientRect.top-a.boundingClientRect.top:a.boundingClientRect.top-b.boundingClientRect.top;});
+    entering.forEach(function(entry,index){
+     var card=entry.target;
+     if(card.dataset.tbRevealArmed!=='1')return;
+     card.dataset.tbRevealArmed='0';
+     var grid=card.parentElement;
+     var columns=Math.max(1,getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
+     var columnIndex=Array.prototype.indexOf.call(grid.children,card)%columns;
+     card.style.animationDelay=(columnIndex*150)+'ms';
+     card.classList.remove('tb-reveal-enter-down','tb-reveal-enter-up');
+     void card.offsetWidth;
+     card.classList.add(dir==='up'?'tb-reveal-enter-up':'tb-reveal-enter-down');
+    });
+    entries.filter(function(e){return !e.isIntersecting;}).forEach(function(entry){
+     var card=entry.target;
+     var rect=entry.boundingClientRect;
+     var viewport=root?root.getBoundingClientRect():{top:0,bottom:innerHeight};
+     // Reset only after leaving the viewport completely: no flashing mid-scroll.
+     if(rect.bottom<viewport.top-12||rect.top>viewport.bottom+12){
+      card.dataset.tbRevealArmed='1';
+      card.classList.remove('tb-reveal-enter-down','tb-reveal-enter-up');
+      card.style.animationDelay='0ms';
+     }
+    });
+   },{root:root||null,threshold:0,rootMargin:'0px'});
+   cards.forEach(function(card){
+    card.classList.add('tb-card-reveal');
+    card.dataset.tbRevealArmed='1';
+    observer.observe(card);
+   });
+   containers.push({root:root,observer:observer});
   }
-  document.querySelectorAll('main > section.section').forEach(function(el){add(el,null)});
+  document.querySelectorAll('main > section.section').forEach(function(section){setupCards(section,null)});
   document.querySelectorAll('input.hub-chk').forEach(function(check){
    check.addEventListener('change',function(){
     if(!check.checked)return;
     setTimeout(function(){
      var panel=document.getElementById('panel-'+check.id.replace(/^chk-/,''));
-     if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)add(panel,scroller);tick()}
+     if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)setupCards(panel,scroller)}
     },100);
    });
   });
-  var last=new Map();
-  function tick(){
-   scheduled=false;
-   records.forEach(function(r){
-    if(!r.el.isConnected)return;
-    var viewport=r.root?r.root.getBoundingClientRect():{top:0,bottom:innerHeight};
-    var rect=r.el.getBoundingClientRect();
-    var top=Math.max(0,viewport.top),bottom=Math.min(innerHeight,viewport.bottom);
-    if(bottom<=top)return;
-    var y=r.root?r.root.scrollTop:(window.scrollY||0);
-    var prev=last.has(r.root)?last.get(r.root):y;
-    var up=y<prev;
-    // Rearm only after leaving the visible region completely.
-    if(rect.bottom<top-12 || rect.top>bottom+12){
-     r.armed=true;
-     r.active=false;
-     r.el.classList.remove('tb-reveal-playing-down','tb-reveal-playing-up');
-     return;
-    }
-    if(r.armed && rect.bottom>top+22 && rect.top<bottom-22){
-     r.armed=false;
-     r.active=true;
-     r.el.classList.remove('tb-reveal-playing-down','tb-reveal-playing-up');
-     void r.el.offsetWidth;
-     r.el.classList.add(up?'tb-reveal-playing-up':'tb-reveal-playing-down');
-    }
-   });
-   last.set(null,window.scrollY||0);
-   records.forEach(function(r){if(r.root)last.set(r.root,r.root.scrollTop)});
-  }
-  function request(){if(!scheduled){scheduled=true;requestAnimationFrame(tick)}}
-  window.addEventListener('scroll',request,{passive:true,capture:true});
-  window.addEventListener('resize',request,{passive:true});
+  window.addEventListener('scroll',function(e){
+   var y=window.scrollY||0;
+   if(Math.abs(y-lastWindowY)>2){direction=y<lastWindowY?'up':'down';lastWindowY=y}
+   containers.forEach(function(c){if(c.root)lastRoots.set(c.root,c.root.scrollTop)});
+  },{passive:true,capture:true});
   document.documentElement.classList.add('tb-reveal-enabled');
-  request();
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
- else init();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initReveal,{once:true});
+ else initReveal();
 })();
 </script>
 
