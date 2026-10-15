@@ -481,92 +481,94 @@ document.getElementById('tb-scroll-down').addEventListener('click',()=>scrollTo(
 }
 </style>
 <script id="tb-scroll-reveal-script">
-(function () {
-  'use strict';
-  function initReveal() {
-    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var sections = Array.from(document.querySelectorAll('main > section.section'));
-    var sectionObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) { entry.target.classList.add('tb-reveal-visible'); sectionObserver.unobserve(entry.target); }
-      });
-    }, {threshold: .06, rootMargin: '0px 0px -45px 0px'});
-    sections.forEach(function(section) {
-      resetItems.push({el:section,root:null,observer:sectionObserver,visibleClass:'tb-reveal-visible'});
-      section.classList.add('tb-reveal-item');
-      if (section.getBoundingClientRect().top < window.innerHeight - 25) section.classList.add('tb-reveal-visible');
-      else sectionObserver.observe(section);
-    });
-    var observers = [];
-    var resetItems = [];
-    function setupCards(container, root) {
-      if (container.dataset.tbCardsReady === '1') return;
-      var cards = Array.from(container.querySelectorAll('.grid > .tile, .grid > .card, .hub-items > .tile'));
-      if (!cards.length) return;
-      container.dataset.tbCardsReady = '1';
-      var observer = new IntersectionObserver(function(entries) {
-        entries.filter(function(e){return e.isIntersecting;}).sort(function(x,y){return cards.indexOf(x.target)-cards.indexOf(y.target);}).forEach(function(entry) {
-          var card = entry.target;
-          observer.unobserve(card);
-          var index = cards.indexOf(card);
-          // Match stagger timing to the actual number of columns (2 on mobile, 4 on desktop).
-          var grid = card.parentElement;
-          var columns = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
-          var delay = (index % columns) * 215;
-          window.setTimeout(function(){card.classList.add('tb-card-visible');}, delay);
-        });
-      }, {root: root || null, threshold: .04, rootMargin: '0px 0px -12px 0px'});
-      observers.push(observer);
-      if (root) root.addEventListener('scroll',function(){rearm(root);},{passive:true});
-      cards.forEach(function(card) {
-        resetItems.push({el:card,root:root||null,observer:observer,visibleClass:'tb-card-visible'});
-        card.classList.add('tb-card-reveal');
-        var rect = card.getBoundingClientRect();
-        if (!root && rect.top < window.innerHeight - 15) card.classList.add('tb-card-visible');
-        else observer.observe(card);
-      });
-    }
-    sections.forEach(function(section){setupCards(section,null);});
-    // Re-arm only while scrolling UP and the element is entirely BELOW view.
-    // This preserves the original one-way entrance and never fades visible content.
-    var lastWindowY = window.scrollY || 0;
-    var lastRootY = new WeakMap();
-    function rearm(root) {
-      var y = root ? root.scrollTop : (window.scrollY || 0);
-      var previous = root ? (lastRootY.has(root) ? lastRootY.get(root) : y) : lastWindowY;
-      if (root) lastRootY.set(root,y); else lastWindowY = y;
-      if (y >= previous - 2) return;
-      var boundary = root ? root.getBoundingClientRect().bottom : window.innerHeight;
-      resetItems.forEach(function(item) {
-        if (item.root !== root || !item.el.classList.contains(item.visibleClass)) return;
-        if (item.el.getBoundingClientRect().top > boundary + 36) {
-          item.el.classList.remove(item.visibleClass);
-          item.observer.observe(item.el);
-        }
-      });
-    }
-    window.addEventListener('scroll',function(){rearm(null);},{passive:true});
-
-    function activatePanel(panel) {
-      if (!panel || panel.dataset.tbCardsReady === '1') return;
-      var scroller = panel.querySelector('.hub-content');
-      if (!scroller) return;
-      setupCards(panel,scroller);
-    }
-    // Panels are initially hidden; initialize only after their associated checkbox opens them.
-    document.querySelectorAll('input.hub-chk').forEach(function(check) {
-      check.addEventListener('change',function() {
-        if (!check.checked) return;
-        window.setTimeout(function() {
-          var panel = document.getElementById('panel-' + check.id.replace(/^chk-/,''));
-          activatePanel(panel);
-        },100);
-      });
-    });
-    document.documentElement.classList.add('tb-reveal-enabled');
+(function(){
+ 'use strict';
+ function initReveal(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var items=[],scrollAreas=new Set(),lastY=new Map(),scheduled=false;
+  function register(el,root,kind,index){
+   var visible=kind==='section'?'tb-reveal-visible':'tb-card-visible';
+   var record={el:el,root:root||null,visible:visible,armed:true,seen:false,index:index||0};
+   items.push(record);
+   el.classList.add(kind==='section'?'tb-reveal-item':'tb-card-reveal');
+   return record;
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',initReveal,{once:true});
-  else initReveal();
+  function registerCards(container,root){
+   if(container.dataset.tbCardsReady==='1')return;
+   var cards=Array.from(container.querySelectorAll('.grid > .tile,.grid > .card,.hub-items > .tile'));
+   if(!cards.length)return;
+   container.dataset.tbCardsReady='1';
+   cards.forEach(function(card,i){register(card,root,'card',i)});
+   if(root&&!scrollAreas.has(root)){
+    scrollAreas.add(root);
+    lastY.set(root,root.scrollTop);
+    root.addEventListener('scroll',schedule,{passive:true});
+   }
+  }
+  var sections=Array.from(document.querySelectorAll('main > section.section'));
+  sections.forEach(function(section,i){
+   register(section,null,'section',i);
+   registerCards(section,null);
+  });
+  document.querySelectorAll('input.hub-chk').forEach(function(check){
+   check.addEventListener('change',function(){
+    if(!check.checked)return;
+    setTimeout(function(){
+     var panel=document.getElementById('panel-'+check.id.replace(/^chk-/,''));
+     if(panel){var scroller=panel.querySelector('.hub-content');if(scroller)registerCards(panel,scroller)}
+     schedule();
+    },100);
+   });
+  });
+  lastY.set(null,window.scrollY||0);
+  function update(){
+   scheduled=false;
+   var direction=new Map();
+   var windowY=window.scrollY||0;
+   direction.set(null,windowY>(lastY.get(null)||0)+1?'down':windowY<(lastY.get(null)||0)-1?'up':'still');
+   lastY.set(null,windowY);
+   scrollAreas.forEach(function(root){
+    var y=root.scrollTop,prev=lastY.get(root)||0;
+    direction.set(root,y>prev+1?'down':y<prev-1?'up':'still');
+    lastY.set(root,y);
+   });
+   items.forEach(function(r){
+    if(!r.el.isConnected)return;
+    var bounds=r.root?r.root.getBoundingClientRect():{top:0,bottom:innerHeight};
+    var top=Math.max(0,bounds.top),bottom=Math.min(innerHeight,bounds.bottom);
+    if(bottom<=top)return;
+    var rect=r.el.getBoundingClientRect(),dir=direction.get(r.root)||'still';
+    // Only reset fully offscreen BELOW while travelling upward.
+    // The user never sees the reset; next downward entrance uses original CSS.
+    if(dir==='up' && rect.top>bottom+18 && r.seen){
+     r.el.classList.remove(r.visible);
+     r.armed=true;
+     r.seen=false;
+     return;
+    }
+    if(r.armed && rect.top<bottom-20 && rect.bottom>top+8 && dir!=='up'){
+     r.armed=false;
+     r.seen=true;
+     if(r.visible==='tb-card-visible'){
+      var grid=r.el.parentElement;
+      var columns=Math.max(1,getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
+      var delay=(Array.prototype.indexOf.call(grid.children,r.el)%columns)*215;
+      // Original stagger delay; no hidden-content animation or full-section flash.
+      r.el.style.transitionDelay=delay+'ms';
+      r.el.classList.add(r.visible);
+      setTimeout(function(){r.el.style.transitionDelay='0ms'},delay+1500);
+     } else r.el.classList.add(r.visible);
+    }
+   });
+  }
+  function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(update)}}
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  document.documentElement.classList.add('tb-reveal-enabled');
+  schedule();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initReveal,{once:true});
+ else initReveal();
 })();
 </script>
 
