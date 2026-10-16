@@ -372,12 +372,12 @@ Error generating stack: `+l.message+`
       #tb-local-privacy-notice strong{font-size:14px}
       #tb-local-privacy-notice p{margin:6px 0 10px}
       #tb-local-privacy-notice button,#tb-local-privacy-open{font:inherit;cursor:pointer;border-radius:9px;border:1px solid #0b7a59;background:#0b7a59;color:white;padding:7px 13px}
-      #tb-local-privacy-open{position:fixed;z-index:2147482999;bottom:12px;left:12px;font:12px system-ui,-apple-system,"Segoe UI",sans-serif;padding:8px 10px;box-shadow:0 3px 12px #0002}
+      #tb-local-privacy-open{position:static;display:block;margin:18px auto 12px;font:12px system-ui,-apple-system,"Segoe UI",sans-serif;padding:6px 10px;box-shadow:none;opacity:.8}
       @media(prefers-color-scheme:dark){#tb-local-privacy-notice{background:#142820;color:#f1fff8;border-color:#3c765f}}
       @media(max-width:540px){#tb-local-privacy-notice{bottom:8px;left:8px;right:8px;padding:12px}}
     </style>
     <button type="button" id="tb-local-privacy-open" aria-controls="tb-local-privacy-notice" aria-expanded="false" hidden>Veri güvenliği</button>
-    <aside id="tb-local-privacy-notice" role="note" aria-label="Öğrenci verilerinin güvenliği">
+    <aside id="tb-local-privacy-notice" role="note" aria-label="Öğrenci verilerinin güvenliği" hidden>
       <strong>🔒 Öğrenci verileriniz hakkında</strong>
       <p>Bu uygulamadaki kayıtlar, kullandığınız tarayıcının bu siteye ait yerel depolama alanında tutulur. Hesap veya bulut senkronizasyonu yoktur. Aynı cihaz ve tarayıcı profilini kullanan kişiler kayıtları görebilir; ortak bilgisayarlarda öğrenci bilgisi girmeyin.</p>
       <p>Tarayıcı verileri silinirse kayıtlar kaybolabilir. Uygulamanın JSON yedekleme özelliğini kullanın ve indirdiğiniz dosyaları güvenli saklayın. Öğrenci bilgilerini izinsiz paylaşmayın; gerçek öğrenci verilerini kullanmadan önce kurumunuzun veri koruma kurallarını gözetin.</p>
@@ -393,7 +393,7 @@ Error generating stack: `+l.message+`
         function hide(){notice.hidden=true;open.hidden=false;open.setAttribute('aria-expanded','false');try{sessionStorage.setItem('tb-local-privacy-seen','1')}catch(e){}}
         close.addEventListener('click',hide);
         open.addEventListener('click',show);
-        try{if(sessionStorage.getItem('tb-local-privacy-seen')==='1')hide()}catch(e){}
+        hide();
       })();
     </script>
   </body>
