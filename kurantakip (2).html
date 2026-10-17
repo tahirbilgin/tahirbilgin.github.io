@@ -469,5 +469,39 @@ Error generating stack: `+l.message+`
         hide();
       })();
     </script>
-  </body>
+  <style id="tb-task-css">
+#tb-task-dialog{position:fixed;right:12px;top:78px;z-index:999999;width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 150px);overflow:auto;background:var(--card,#fff);color:var(--foreground,#19392f);border:1px solid var(--border,#d8e2dc);border-radius:17px;box-shadow:0 15px 55px #1236;padding:16px;font:inherit;text-align:left}#tb-task-dialog[hidden]{display:none}#tb-task-dialog *{box-sizing:border-box}#tb-task-dialog h2{font-size:17px;margin:0}#tb-task-dialog p{font-size:12px;margin:8px 0}#tb-task-dialog .tb-flex{display:flex;gap:8px;align-items:center;justify-content:space-between}#tb-task-dialog .tb-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}#tb-task-dialog .tb-summary div{background:color-mix(in srgb,var(--primary,#087f68) 10%,transparent);text-align:center;padding:10px 4px;border-radius:10px;font-size:11px}#tb-task-dialog .tb-summary b{display:block;font-size:20px}#tb-task-dialog label{display:block;font-size:12px;margin:10px 0 4px;font-weight:650}#tb-task-dialog input:not([type=checkbox]),#tb-task-dialog textarea,#tb-task-dialog select{width:100%;border-radius:9px;border:1px solid var(--border,#d8e2dc);padding:9px;background:var(--background,#fff);color:inherit;font:inherit;font-size:13px}#tb-task-dialog textarea{min-height:58px;resize:vertical}#tb-task-dialog .tb-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}#tb-task-dialog button{font:inherit;cursor:pointer}#tb-task-dialog .tb-save{width:100%;padding:11px;background:#087f68;color:white;border:0;border-radius:10px;margin-top:12px;font-weight:700}#tb-task-dialog .tb-tabs{display:flex;gap:5px;overflow:auto;margin:12px 0}#tb-task-dialog .tb-tab{border:1px solid var(--border,#d8e2dc);border-radius:20px;padding:6px 9px;font-size:12px;background:transparent;color:inherit;white-space:nowrap}#tb-task-dialog .tb-tab[aria-pressed=true]{background:#087f68;color:white}#tb-task-dialog .tb-entry{border:1px solid var(--border,#d8e2dc);border-radius:12px;padding:10px;margin:8px 0}#tb-task-dialog .tb-entry strong{font-size:13px;overflow-wrap:anywhere}#tb-task-dialog .tb-entry small{font-size:11px;opacity:.75}#tb-task-dialog .tb-buttons{text-align:right;margin-top:7px}#tb-task-dialog .tb-buttons button{border:1px solid var(--border,#d8e2dc);border-radius:8px;padding:5px 8px;font-size:12px;color:inherit;background:transparent;margin-left:5px}#tb-task-dialog .tb-x{border:0;background:transparent;color:inherit;font-size:22px}#tb-task-dialog .tb-late{color:#ba573a}
+</style>
+<script id="tb-task-script">
+(function(){
+"use strict";
+try{
+var KEY="tb-quran-smart-tasks-v1",tasks=[],mode="pending",box=null,open=false;
+try{var stored=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(stored))tasks=stored.filter(function(t){return t&&typeof t.id==="string"&&typeof t.title==="string"&&typeof t.date==="string"}).slice(0,500)}catch(e){}
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function late(t){return !t.done&&t.date<today()}
+function el(tag,text,cls){var n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
+function a(p,n){return p.appendChild(n)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(tasks));return true}catch(e){alert("Görev kaydedilemedi. Tarayıcı depolamasını kontrol edin.");return false}}
+function field(parent,label,type,placeholder){var l=a(parent,el("label",label)),x=a(parent,el(type==="textarea"?"textarea":type==="select"?"select":"input"));x.id="tb-"+type+"-"+Math.random().toString(36).slice(2);l.htmlFor=x.id;if(type!=="textarea"&&type!=="select")x.type=type;if(placeholder)x.placeholder=placeholder;return x}
+function close(){open=false;if(box)box.hidden=true;var b=document.querySelector(".notification-button");if(b)b.setAttribute("aria-expanded","false")}
+function draw(){
+box.replaceChildren();
+var head=a(box,el("div",undefined,"tb-flex"));a(head,el("h2","Akıllı Görev ve Hatırlatma Merkezi"));var x=a(head,el("button","×","tb-x"));x.type="button";x.setAttribute("aria-label","Kapat");x.onclick=close;
+a(box,el("p","Görevlerinizi planlayın ve takip edin. Hatırlatmalar uygulamayı açtığınızda görünür."));
+var stats=a(box,el("div",undefined,"tb-summary"));[[tasks.filter(function(t){return !t.done}).length,"Bekleyen"],[tasks.filter(late).length,"Geciken"],[tasks.filter(function(t){return t.done}).length,"Tamamlanan"]].forEach(function(v){var c=a(stats,el("div"));a(c,el("b",String(v[0])));a(c,el("span",v[1]))});
+var form=a(box,el("form"));var title=field(form,"Görev başlığı","text","Örn. 9/A ezber kontrolü");title.required=true;title.maxLength=120;var cols=a(form,el("div",undefined,"tb-grid"));var date=field(cols,"Hatırlatma tarihi","date");date.value=today();date.required=true;var priority=field(cols,"Öncelik","select");[["normal","Normal"],["high","Yüksek"],["low","Düşük"]].forEach(function(v){var opt=a(priority,el("option",v[1]));opt.value=v[0]});var note=field(form,"Not (isteğe bağlı)","textarea","Kısa açıklama");note.maxLength=400;var submit=a(form,el("button","＋ Görev Ekle","tb-save"));submit.type="submit";
+form.onsubmit=function(e){e.preventDefault();var name=title.value.trim();if(!name||!date.value)return;var task={id:Date.now().toString(36)+Math.random().toString(36).slice(2),title:name,date:date.value,priority:priority.value,note:note.value.trim(),done:false};tasks.unshift(task);if(tasks.length>500)tasks.length=500;if(save()){mode="pending";draw()}else tasks.shift()};
+var tabs=a(box,el("div",undefined,"tb-tabs"));[["pending","Bekleyen"],["late","Geciken"],["done","Tamamlanan"],["all","Tümü"]].forEach(function(v){var b=a(tabs,el("button",v[1],"tb-tab"));b.type="button";b.setAttribute("aria-pressed",String(mode===v[0]));b.onclick=function(){mode=v[0];draw()}});
+var list=tasks.filter(function(t){return mode==="all"||mode==="pending"&&!t.done||mode==="late"&&late(t)||mode==="done"&&t.done}).sort(function(x,y){return Number(x.done)-Number(y.done)||x.date.localeCompare(y.date)});
+if(!list.length)a(box,el("p","Bu bölümde henüz görev bulunmuyor."));
+list.forEach(function(t){var item=a(box,el("article",undefined,"tb-entry"));var row=a(item,el("div",undefined,"tb-flex"));var check=a(row,el("input"));check.type="checkbox";check.checked=!!t.done;check.setAttribute("aria-label",t.title+" tamamlandı");check.onchange=function(){var old=t.done;t.done=check.checked;if(save())draw();else t.done=old};a(row,el("strong",t.title));a(item,el("small",(late(t)?"⚠ Gecikti · ":"")+t.date+" · "+(t.priority==="high"?"Yüksek":t.priority==="low"?"Düşük":"Normal")+" öncelik",late(t)?"tb-late":""));if(t.note)a(item,el("p",t.note));var buttons=a(item,el("div",undefined,"tb-buttons"));var edit=a(buttons,el("button","Düzenle"));edit.type="button";edit.onclick=function(){var val=prompt("Görev başlığı",t.title);if(val===null||!val.trim())return;var old=t.title;t.title=val.trim().slice(0,120);if(save())draw();else t.title=old};var del=a(buttons,el("button","Sil"));del.type="button";del.onclick=function(){if(!confirm("Bu görevi silmek istiyor musunuz?"))return;var old=tasks;tasks=tasks.filter(function(v){return v.id!==t.id});if(save())draw();else tasks=old}});
+}
+function toggle(){if(!box){box=a(document.body,el("section"));box.id="tb-task-dialog";box.setAttribute("role","dialog");box.setAttribute("aria-label","Akıllı Görev ve Hatırlatma Merkezi")}open=!open;box.hidden=!open;var b=document.querySelector(".notification-button");if(b)b.setAttribute("aria-expanded",String(open));if(open)draw()}
+document.addEventListener("click",function(e){var t=e.target;if(t.closest&&t.closest(".notification-button")){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();toggle();return}if(open&&box&&!box.contains(t))close()},true);
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&open)close()});
+}catch(e){console.error("Görev merkezi yüklenemedi:",e)}
+})();
+</script>
+</body>
 </html>
