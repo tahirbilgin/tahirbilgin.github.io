@@ -375,7 +375,37 @@ Error generating stack: `+l.message+`
 <style id="tb-filter-notification">.advanced-filters .filter-select,.advanced-filters .date-range input{min-height:54px;font-size:14px;border-radius:11px;padding:0 12px;color:var(--foreground);background:var(--card-soft)}.advanced-filters{gap:10px}.advanced-filters .date-range{gap:8px}.advanced-filters .date-range input{min-width:0;max-width:none}.topbar-right{position:relative}.tb-notice-panel{position:absolute;right:0;top:calc(100% + 12px);z-index:90;width:min(360px,calc(100vw - 24px));max-height:65vh;overflow:auto;padding:16px;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:16px;box-shadow:0 16px 48px #0004}.tb-notice-heading{display:flex;align-items:center;justify-content:space-between;font-size:16px}.tb-notice-heading button{background:transparent;border:0;color:var(--foreground);font-size:19px;padding:8px}.tb-notice-panel>p{font-size:12px;opacity:.8;margin:8px 0 12px}.tb-notice-entry{display:grid;gap:5px;padding:12px 0;border-top:1px solid var(--border)}.tb-notice-entry b{font-size:13px}.tb-notice-entry span{font-size:12px;line-height:1.5;opacity:.85}@media(max-width:700px){.advanced-filters .filter-select{flex:1 1 calc(50% - 5px);min-width:0}.advanced-filters .filter-select:nth-of-type(3){flex-basis:100%}.advanced-filters .date-range{width:100%}.advanced-filters .date-range input{flex:1;width:0;min-width:0;font-size:12px;padding:0 7px}.tb-notice-panel{right:-50px}}</style>
 <style id="tb-mobile-nav-contrast">.mobile-nav button{color:#080D0A;font-weight:650}.mobile-nav button.active{color:#075B43;background:#D2EBDD;font-weight:750}.mobile-nav button.active:before{background:#087F68}.dark .mobile-nav button{color:#F5F5F0;font-weight:650}.dark .mobile-nav button.active{color:#C5FFE0;background:#376A50;font-weight:750}.dark .mobile-nav button.active:before{background:#7DE0B7}</style>
 <style id="tb-student-illustration-style">.tb-student-identity{display:inline-flex;align-items:center;gap:6px;flex-shrink:0}.tb-animated-student{width:39px;height:39px;border-radius:12px;background:#e2f2e9;display:inline-grid;place-items:center;overflow:hidden;flex-shrink:0}.tb-avatar-girl{background:#f8e8f1}.tb-animated-student img{display:block;width:100%;height:100%;object-fit:cover;animation:tb-student-bob 3s ease-in-out infinite;transform-origin:50% 80%}@keyframes tb-student-bob{0%,100%{transform:translateY(1px) rotate(-1deg)}50%{transform:translateY(-2px) rotate(1deg)}}@media(prefers-reduced-motion:reduce){.tb-animated-student img{animation:none}}@media(max-width:520px){.tb-student-identity{gap:4px}.tb-animated-student{width:34px;height:34px}} .student-card-row .tb-student-identity .tb-animated-student{width:47px;height:47px;border-radius:13px}.student-card-row .student-row-main-button{align-items:center}.student-card-row .tb-student-identity{gap:9px}@media(max-width:520px){.student-card-row .tb-student-identity .tb-animated-student{width:41px;height:41px}} .tb-record-student{display:inline-flex;align-items:center;gap:7px}.tb-record-student .tb-animated-student{width:30px;height:30px;border-radius:9px}.tb-hero-identity .tb-animated-student{width:52px;height:52px}.report-select-label .tb-animated-student{width:32px;height:32px;margin-left:9px;vertical-align:middle} </style>
-  </head>
+  
+<style id="tb-readability-preview-20261018">
+/* Accessibility typography trial: visual-only CSS. Original student data and application logic unchanged. */
+:root{--tb-readable-muted:#576b61;--tb-readable-subtle:#65776d}
+.dark{--tb-readable-muted:#dfebe3;--tb-readable-subtle:#d1dfd6}
+.modal-sheet .field-label{color:var(--tb-readable-muted)!important;font-size:13px!important;font-weight:600!important;letter-spacing:.01em;opacity:1!important}
+.modal-sheet .field-label b{color:#d88a75!important;opacity:1!important}
+.modal-sheet .field-hint,.modal-sheet .eyebrow{color:var(--tb-readable-subtle)!important;font-size:11px!important;opacity:1!important;letter-spacing:.08em}
+.modal-sheet .control,.modal-sheet input.control,.modal-sheet select.control,.modal-sheet textarea.control{font-size:14px!important;line-height:1.45;color:var(--foreground)!important;opacity:1!important}
+.modal-sheet .control::placeholder,.modal-sheet input::placeholder,.modal-sheet textarea::placeholder{color:var(--tb-readable-subtle)!important;opacity:1!important}
+.modal-sheet .section-heading,.modal-sheet .modal-subtitle,.modal-sheet .field>small{color:var(--tb-readable-muted)!important;opacity:1!important}
+.stat-label,.stat-kicker{color:var(--tb-readable-muted)!important;font-size:12px!important;font-weight:550!important;opacity:1!important;line-height:1.4}
+.dark .stat-label,.dark .stat-kicker{color:var(--tb-readable-muted)!important}
+.page-subtitle,.quick-intro p:last-child{color:var(--tb-readable-muted)!important;font-size:12px!important;line-height:1.45;opacity:1!important}
+.filter-strip .filter-chip{font-size:12px!important;font-weight:550!important;line-height:1.35;min-height:38px!important;opacity:1!important}
+.filter-strip .filter-chip.active{font-weight:650!important}
+.advanced-filters .advanced-label,.record-result-count,.record-result-count span{color:var(--tb-readable-muted)!important;font-size:12px!important;opacity:1!important}
+.advanced-filters .filter-select,.advanced-filters .date-range input{font-size:13px!important;opacity:1!important}
+.eyebrow{color:var(--tb-readable-muted);opacity:1!important}
+.record-row .record-meta,.record-row .record-class,.record-row .record-date,.record-row small{color:var(--tb-readable-muted);opacity:1!important}
+@media(max-width:700px){
+ .modal-sheet .field-label{font-size:13px!important}
+ .modal-sheet .control{font-size:15px!important}
+ .stat-label{font-size:12px!important}
+ .filter-strip .filter-chip{font-size:12px!important;min-height:38px!important;padding-inline:12px!important}
+ .filter-strip{gap:7px!important}
+ .advanced-filters .advanced-label{font-size:12px!important}
+ .record-row .record-meta,.record-row .record-class{font-size:11px!important}
+}
+</style>
+</head>
 
   <body>
     <div id="root"></div>
