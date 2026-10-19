@@ -512,6 +512,16 @@ body.tb-academy-home #view-sermons,
 body.tb-academy-home #view-ai{display:none!important}
 body.tb-academy-home nav:has(#btn-sim) button.tab-active{background:transparent!important;box-shadow:none!important;color:inherit!important}
 </style>
+<style id="tb-academy-welcome-20261019">
+#tb-academy-welcome{display:none;padding:clamp(24px,5vw,50px) clamp(20px,5vw,50px) clamp(36px,7vw,85px);background:linear-gradient(145deg,#f3f8f3 0%,#f5f7ed 100%);color:#193e30;min-height:210px}
+body.tb-academy-home #tb-academy-welcome{display:block}
+body.tb-academy-subpage #tb-academy-welcome{display:none!important}
+#tb-academy-welcome .tb-welcome-eyebrow{font-size:12px;font-weight:850;letter-spacing:.22em;color:#0b8568;margin:0 0 13px}
+#tb-academy-welcome .tb-welcome-eyebrow span{color:#c8a25d;margin-right:10px}
+#tb-academy-welcome h2{font-weight:900;font-size:clamp(27px,4.6vw,43px);line-height:1.2;letter-spacing:-.035em;margin:0 0 20px}
+#tb-academy-welcome>p:last-child{max-width:630px;font-size:clamp(14px,2vw,17px);line-height:1.85;color:#6c7c72;margin:0}
+@media(max-width:767px){#tb-academy-welcome{padding:25px 22px 65px;min-height:250px}#tb-academy-welcome h2{font-size:clamp(27px,6.7vw,34px)}#tb-academy-welcome .tb-welcome-eyebrow{font-size:11px}}
+</style>
 </head>
 <body class="antialiased select-none">
 <div class="max-w-5xl mx-auto min-h-screen flex flex-col bg-white shadow-2xl">
@@ -525,6 +535,11 @@ body.tb-academy-home nav:has(#btn-sim) button.tab-active{background:transparent!
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm text-slate-400 hover:text-white transition-colors shrink-0" id="btn-sermons" onclick="setTab('sermons')">TÜRKÇE HUTBELER</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm text-[#fbbf24] hover:text-white transition-colors shrink-0 bg-slate-800 border-l border-slate-700" id="btn-ai" onclick="setTab('ai')">✨ YZ ASİSTAN</button>
 </nav>
+<section id="tb-academy-welcome" aria-label="Dijital Hitabet Akademisi hoş geldiniz">
+  <p class="tb-welcome-eyebrow"><span aria-hidden="true">●</span> ÖĞREN · HAZIRLAN · SUN</p>
+  <h2>Dijital Hitabet Akademisine<br class="tb-welcome-break"/> Hoş Geldiniz</h2>
+  <p>Hutbe hazırlamayı ve minber adabını adım adım keşfedin. Başlamak için üstteki menüden bir öğrenme alanı seçin.</p>
+</section>
 <!-- SİMÜLASYON MODÜLÜ -->
 <div class="flex flex-col lg:flex-row h-full" id="view-sim">
 <div class="w-full lg:w-2/5 bg-slate-900 flex flex-col">
