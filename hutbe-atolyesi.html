@@ -510,7 +510,23 @@ body.tb-academy-home #view-book,
 body.tb-academy-home #view-videos,
 body.tb-academy-home #view-sermons,
 body.tb-academy-home #view-ai{display:none!important}
-body.tb-academy-home nav:has(#btn-sim) button.tab-active{background:transparent!important;box-shadow:none!important;color:inherit!important}
+/* Ana Sayfa, Simülasyon Modu'nun yanında gerçek menü sekmesidir. */
+nav:has(#btn-home) #btn-home{background:transparent;color:#426457;border-radius:12px}
+body.tb-academy-home nav:has(#btn-home) #btn-home.tab-active{background:#176c53!important;color:white!important;box-shadow:0 7px 20px #0c5f4730!important}
+body.tb-academy-home nav:has(#btn-home) #btn-sim:not(.tab-active){background:transparent!important;color:#426457!important;box-shadow:none!important}
+#tb-academy-welcome .tb-home-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-top:28px}
+#tb-academy-welcome .tb-home-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:12px;min-width:0;min-height:195px;background:#fff;color:#173d30;border:1px solid #d3e4d8;border-radius:24px;padding:23px 24px;box-shadow:0 10px 27px #1556410b;cursor:pointer;transition:transform .2s,box-shadow .2s}
+#tb-academy-welcome .tb-home-card:hover{transform:translateY(-3px);box-shadow:0 16px 36px #1556411f}
+#tb-academy-welcome .tb-home-card:focus-visible{outline:3px solid #b99451;outline-offset:3px}
+#tb-academy-welcome .tb-home-card-featured{background:linear-gradient(145deg,#185543,#0c4033);color:white;border-color:#215b49}
+#tb-academy-welcome .tb-home-card-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:17px;background:#e9f3ed;font-size:24px}
+#tb-academy-welcome .tb-home-card-featured .tb-home-card-icon{background:#ffffff25}
+#tb-academy-welcome .tb-home-card strong{font-size:19px;line-height:1.25;font-weight:850}
+#tb-academy-welcome .tb-home-card>span:nth-child(3){font-size:14px;line-height:1.7;opacity:.8}
+#tb-academy-welcome .tb-home-card b{font-size:14px;color:#137455;margin-top:auto}
+#tb-academy-welcome .tb-home-card-featured b{color:#fff}
+@media(max-width:767px){#tb-academy-welcome .tb-home-cards{gap:10px;margin-top:22px}#tb-academy-welcome .tb-home-card{padding:16px 14px;min-height:180px;border-radius:19px;gap:10px}#tb-academy-welcome .tb-home-card-icon{width:44px;height:44px;font-size:21px}#tb-academy-welcome .tb-home-card strong{font-size:16px}#tb-academy-welcome .tb-home-card>span:nth-child(3){font-size:12px;line-height:1.5}}
+
 </style>
 <style id="tb-academy-welcome-20261019">
 #tb-academy-welcome{display:none;padding:clamp(24px,5vw,50px) clamp(20px,5vw,50px) clamp(36px,7vw,85px);background:linear-gradient(145deg,#f3f8f3 0%,#f5f7ed 100%);color:#193e30;min-height:210px}
@@ -528,7 +544,7 @@ body.tb-academy-subpage #tb-academy-welcome{display:none!important}
 <!-- Üst Menü -->
 <header class="ms-head" aria-label="Modern Medrese Studio tanıtımı"><div class="ms-brandline"><span class="ms-mark">✦</span><span>TAHİR AI LAB <span class="ms-sep">/</span> EĞİTİM ATÖLYESİ</span><span class="ms-edition">ARAYÜZ ÖNİZLEMESİ · 02</span></div><div class="ms-hero"><div class="ms-intro"><div class="ms-eyebrow"><span class="ms-pulse"></span> DİJİTAL HİTABET AKADEMİSİ</div><h1>Hutbe <em>Atölyesi</em></h1><p>Geleneğin bilgisini modern öğrenme deneyimiyle buluşturan etkileşimli hutbe akademisi.</p><div class="ms-chips"><span>◈ Minber Simülasyonu</span><span>▤ Ders Kitabı</span><span>◉ Örnek Hutbeler</span><span>✧ YZ Rehberi</span></div></div><div class="ms-art" aria-hidden="true"><div class="ms-arch"><span>۞</span><div class="ms-mihrab"></div><div class="ms-lines"></div></div><div class="ms-art-label">İLİM · HİTABET · İRŞAD</div></div></div></header>
 <nav class="bg-slate-900 text-white flex sticky top-0 z-[200] overflow-x-auto whitespace-nowrap scrollbar-hide">
-<button type="button" class="tb-return-home" onclick="tbShowAcademyHome()">⌂ Ana Sayfa</button>
+<button type="button" id="btn-home" class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm shrink-0" onclick="tbShowAcademyHome()" aria-current="page">ANA SAYFA</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm tab-active shrink-0" id="btn-sim" onclick="setTab('sim')">SİMÜLASYON MODU</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm text-slate-400 hover:text-white transition-colors shrink-0" id="btn-book" onclick="setTab('book')">DERS KİTABI</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm text-slate-400 hover:text-white transition-colors shrink-0" id="btn-videos" onclick="setTab('videos')">ÖRNEK VİDEOLAR</button>
@@ -538,7 +554,14 @@ body.tb-academy-subpage #tb-academy-welcome{display:none!important}
 <section id="tb-academy-welcome" aria-label="Dijital Hitabet Akademisi hoş geldiniz">
   <p class="tb-welcome-eyebrow"><span aria-hidden="true">●</span> ÖĞREN · HAZIRLAN · SUN</p>
   <h2>Dijital Hitabet Akademisine<br class="tb-welcome-break"/> Hoş Geldiniz</h2>
-  <p>Hutbe hazırlamayı ve minber adabını adım adım keşfedin. Başlamak için üstteki menüden bir öğrenme alanı seçin.</p>
+  <p>Hutbe hazırlamayı ve minber adabını adım adım keşfedin. Başlamak için aşağıdaki öğrenme alanlarından birini veya üstteki menüyü seçin.</p>
+  <div class="tb-home-cards" aria-label="Hutbe Atölyesi öğrenme alanları">
+    <button type="button" class="tb-home-card tb-home-card-featured" onclick="setTab('sim')"><span class="tb-home-card-icon">🕌</span><strong>Minber Simülasyonu</strong><span>15 aşamada hutbe ve hareketli imam animasyonu</span><b>Keşfet →</b></button>
+    <button type="button" class="tb-home-card" onclick="setTab('book')"><span class="tb-home-card-icon">📖</span><strong>Ders Kitabı</strong><span>Orijinal sayfalar ve yeşil dua kartları</span><b>Keşfet →</b></button>
+    <button type="button" class="tb-home-card" onclick="setTab('videos')"><span class="tb-home-card-icon">🎬</span><strong>Örnek Videolar</strong><span>Hutbe okuma ve hitabet örnekleri</span><b>Keşfet →</b></button>
+    <button type="button" class="tb-home-card" onclick="setTab('sermons')"><span class="tb-home-card-icon">📝</span><strong>Türkçe Hutbeler</strong><span>Örnek metinleri oku ve incele</span><b>Keşfet →</b></button>
+    <button type="button" class="tb-home-card" onclick="setTab('ai')"><span class="tb-home-card-icon">✨</span><strong>YZ Asistanı</strong><span>Hutbe hazırlama rehberi ve konu taslakları</span><b>Keşfet →</b></button>
+  </div>
 </section>
 <!-- SİMÜLASYON MODÜLÜ -->
 <div class="flex flex-col lg:flex-row h-full" id="view-sim">
@@ -1398,17 +1421,24 @@ window.tbCopyDraft=async function(){if(!current)return;var t='HUTBE TASLAĞI —
       var view=document.getElementById('view-'+t);
       var btn=document.getElementById('btn-'+t);
       if(view)view.classList.add('hidden');
-      if(btn)btn.classList.remove('tab-active');
+      if(btn){btn.classList.remove('tab-active');btn.removeAttribute('aria-current');}
     });
+    var homeBtn=document.getElementById('btn-home');
+    if(homeBtn){homeBtn.classList.add('tab-active');homeBtn.setAttribute('aria-current','page');}
     window.scrollTo(0,0);
   }
   window.tbShowAcademyHome=showAcademyHome;
   var original=window.setTab;
   if(typeof original!=='function')return;
   window.setTab=function(tab){
+    if(tab==='home'){showAcademyHome();return;}
     document.body.classList.remove('tb-academy-home');
     document.body.classList.add('tb-academy-subpage');
+    var homeBtn=document.getElementById('btn-home');
+    if(homeBtn){homeBtn.classList.remove('tab-active');homeBtn.removeAttribute('aria-current');}
     original(tab);
+    var btn=document.getElementById('btn-'+tab);
+    if(btn)btn.setAttribute('aria-current','page');
     window.scrollTo(0,0);
   };
   showAcademyHome();
