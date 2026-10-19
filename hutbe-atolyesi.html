@@ -164,6 +164,25 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
 @media(max-width:780px){.ms-brandline{height:42px;padding:0 19px;font-size:9px}.ms-edition{display:none}.ms-hero{grid-template-columns:1fr 95px;gap:12px;min-height:207px;padding:22px 18px}.ms-hero h1{font-size:35px;margin:8px 0}.ms-intro>p{font-size:11px;line-height:1.55;margin-bottom:9px}.ms-eyebrow{font-size:8px}.ms-chips{gap:5px}.ms-chips span{padding:5px 7px;font-size:8px}.ms-arch{width:86px;height:113px;border-radius:50px 50px 5px 5px}.ms-arch>span{font-size:35px}.ms-mihrab{inset:13px 12px 0}.ms-lines{display:none}.ms-art-label{font-size:6px;letter-spacing:.04em;text-align:center}.ms-preview-label{font-size:9px;bottom:8px;right:8px;padding:7px 10px}body nav:has(#btn-sim){padding:8px 10px!important;gap:4px}body nav:has(#btn-sim)>button{padding:9px 10px!important;font-size:10px!important;min-height:38px!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
+
+<style id="tb-maker-style">
+#tb-hutbe-maker{border:1px solid #cdded2!important;border-radius:24px!important;background:linear-gradient(155deg,#fffefa,#f3f8f3)!important;box-shadow:0 14px 30px rgba(12,60,46,.07)!important}
+.tb-maker-top,.tb-maker-result-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tb-maker-mark{color:#087f68;font-size:11px;letter-spacing:.12em;font-weight:850}.tb-maker-status{color:#2f6956;background:#e8f3ea;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:750}
+#tb-maker-title{font-size:clamp(22px,3vw,29px);font-weight:900;color:#163c30;margin:12px 0 6px}.tb-maker-description{font-size:14px;line-height:1.7;color:#51675a;margin-bottom:20px}
+.tb-maker-topics{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+.tb-maker-topics button{border-radius:14px;border:1px solid #cddfd1;background:#fff;padding:11px 15px;font-weight:800;font-size:13px;color:#214b3d;transition:background .2s,transform .2s}
+.tb-maker-topics button:hover,.tb-maker-topics button:focus-visible{background:#e5f3eb;transform:translateY(-1px)}
+.tb-maker-label{display:block;font-size:12px;font-weight:800;color:#294e40;margin-bottom:7px}
+.tb-maker-inputrow{display:flex;gap:10px}.tb-maker-inputrow input{flex:1;min-width:0;border:1px solid #b9cebf;background:#fff;border-radius:14px;padding:12px 14px;font-size:14px;color:#17392d;outline:0}.tb-maker-inputrow input:focus{border-color:#087f68;box-shadow:0 0 0 3px #087f6820}
+.tb-maker-inputrow button{border-radius:14px;background:#0c6752;color:white;padding:12px 18px;font-weight:850;font-size:13px;white-space:nowrap}
+.tb-maker-inputrow button:hover{background:#075441}
+.tb-maker-result{margin-top:23px;border:1px solid #cddfd1;border-radius:18px;background:#fff;overflow:hidden}
+.tb-maker-result[hidden]{display:none}
+.tb-maker-result-bar{padding:18px 20px;background:#f0f7f1;border-bottom:1px solid #d8e4d7}.tb-maker-result-bar h4{font-size:20px;font-weight:850;color:#173e31;margin-top:5px}.tb-maker-actions{display:flex;flex-wrap:wrap;gap:7px}.tb-maker-actions button{font-size:12px;font-weight:800;background:#fff;border:1px solid #c6d9c9;color:#1e5845;border-radius:10px;padding:9px 11px}.tb-maker-actions button:hover{background:#e8f4e9}
+.tb-maker-text{padding:22px;color:#26392f;font-size:15px;line-height:1.9;user-select:text}.tb-maker-text h5{font-size:14px;font-weight:850;color:#087f68;margin:18px 0 6px;letter-spacing:.05em}.tb-maker-text h5:first-child{margin-top:0}.tb-maker-text p{margin:0 0 10px}.tb-maker-footnote{border-top:1px solid #edf0ea;background:#fafbf8;color:#68776d;font-size:11px;line-height:1.6;padding:13px 20px}.tb-maker-feedback{font-size:12px;color:#25664e;margin-top:9px;min-height:16px}
+@media(max-width:620px){.tb-maker-inputrow{flex-direction:column}.tb-maker-inputrow button{width:100%}.tb-maker-result-bar{align-items:flex-start}.tb-maker-text{padding:17px}.tb-maker-topics button{padding:10px 12px}.tb-maker-actions{width:100%}}
+</style>
 </head>
 <body class="antialiased select-none">
 <div class="max-w-5xl mx-auto min-h-screen flex flex-col bg-white shadow-2xl">
@@ -335,6 +354,29 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
       <label for="ai-topic-input" class="block text-sm font-bold text-[#283618] mb-2">Hutbenin konusu</label>
       <div class="flex flex-col md:flex-row gap-3 mb-4"><input id="ai-topic-input" maxlength="120" type="text" placeholder="Örn. Komşuluk, doğruluk, merhamet…" class="flex-1 p-3 rounded-xl border border-[#d6d9bd] focus:outline-none focus:ring-2 focus:ring-[#606c38]"/><select id="guide-audience" aria-label="Hedef kitle" class="p-3 rounded-xl border border-[#d6d9bd] bg-white"><option value="lise">Lise öğrencileri</option><option value="genel">Genel cemaat</option></select><button onclick="buildHutbeWorkshop()" class="bg-[#283618] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#46552b]">Planı Oluştur →</button></div>
       <div id="offline-output" class="hidden text-sm leading-7 rounded-xl border border-[#dfe5c5] bg-[#f8faef] p-5" aria-live="polite"></div>
+    </section>
+
+    <section class="tb-maker source-card !p-5 md:!p-7" id="tb-hutbe-maker" aria-labelledby="tb-maker-title">
+      <div class="tb-maker-top"><span class="tb-maker-mark">✧ HUTBE TASLAK ATÖLYESİ</span><span class="tb-maker-status">Anahtarsız · Anında</span></div>
+      <h3 id="tb-maker-title">Konunu seç, hutbeni oluştur</h3>
+      <p class="tb-maker-description">Hazır bir konuya dokun veya kendi konunu yaz. Giriş, gelişme ve sonuç bölümleri olan bir hutbe taslağı oluşturulsun. Mevcut hutbe hazırlama rehberi aynen kalır.</p>
+      <div class="tb-maker-topics" aria-label="Hazır hutbe konuları">
+        <button type="button" onclick="tbMakeTopic('Kardeşlik')">🤝 Kardeşlik</button>
+        <button type="button" onclick="tbMakeTopic('İsraf')">🌿 İsraf</button>
+        <button type="button" onclick="tbMakeTopic('Adalet')">⚖️ Adalet</button>
+        <button type="button" onclick="tbMakeTopic('Çevre bilinci')">🌳 Çevre bilinci</button>
+        <button type="button" onclick="tbMakeTopic('Kul hakkı')">🤲 Kul hakkı</button>
+      </div>
+      <form class="tb-maker-search" onsubmit="event.preventDefault();tbCreateDraft()">
+        <label class="tb-maker-label" for="tb-maker-query">Başka bir konu arayın</label>
+        <div class="tb-maker-inputrow"><input id="tb-maker-query" type="search" maxlength="100" autocomplete="off" placeholder="Örn. Güzel ahlak, merhamet, sabır…" aria-label="Hutbe konusu"/><button type="submit">Hutbe Oluştur <span aria-hidden="true">→</span></button></div>
+      </form>
+      <div class="tb-maker-result" id="tb-maker-result" hidden aria-live="polite">
+        <div class="tb-maker-result-bar"><div><span class="tb-maker-mark">OLUŞTURULAN HUTBE TASLAĞI</span><h4 id="tb-maker-result-title"></h4></div><div class="tb-maker-actions"><button type="button" onclick="tbCopyDraft()">Kopyala</button><button type="button" onclick="tbTransferDraft()">Rehbere Aktar</button></div></div>
+        <div id="tb-maker-result-text" class="tb-maker-text"></div>
+        <p class="tb-maker-footnote">Bu metin, önceden hazırlanmış eğitim şablonlarıyla cihazınızda oluşturulur; canlı yapay zekâ yanıtı değildir. Ayet/hadis kaynaklarını kontrol edin ve hutbeyi dinleyici kitlenize göre gözden geçirin.</p>
+      </div>
+      <div id="tb-maker-feedback" class="tb-maker-feedback" role="status" aria-live="polite"></div>
     </section>
     <section class="source-card !p-5 md:!p-7">
       <h3 class="text-xl font-black text-[#283618] mb-2">02 · Kendi hutbe taslağını yaz</h3><p class="text-sm text-slate-600 mb-4">Üç aşamalı taslağı kendi cümlelerinle tamamla. Metin bu cihazda hazırlanır; otomatik olarak sunucuya gönderilmez.</p>
@@ -949,6 +991,41 @@ function populateBookCards(){
   });
 }
 document.addEventListener('DOMContentLoaded',populateBookCards);
+</script>
+
+<script id="tb-maker-script">
+(function(){
+'use strict';
+var current=null;
+var topics={
+'kardeşlik':{intro:'İman kardeşliğinin yalnızca bir söz değil; dayanışma, yardımlaşma ve birbirinin sevincini ve sıkıntısını paylaşma sorumluluğu olduğunu hatırlayalım.',body:'Kardeşlik, farklılıklarımızı düşmanlığa dönüştürmek yerine birbirimizi anlamaya çalışmaktır. Komşumuzun ihtiyacını gözetmek, kırgın olduğumuz biriyle barışmak, okulda veya iş yerinde dışlanan birinin yanında durmak kardeşliğin günlük hayattaki karşılıklarıdır.',call:'Bugün bir yakınımızın hâlini soralım, aramızdaki kırgınlıkları gidermek için ilk adımı atalım.'},
+'israf':{intro:'Bize emanet edilen nimetleri ölçüsüz kullanmamak, hem şükür hem de sorumluluk gereğidir. İsraf yalnızca yiyecekleri değil, zamanı, suyu, enerjiyi ve imkânları da kapsar.',body:'Soframızdaki ekmek kırıntısı, gereksiz yere açık bıraktığımız musluk, ihtiyacımız olmadığı hâlde aldığımız eşyalar bize ölçülü yaşamayı hatırlatır. İsraftan kaçınmak, başkalarının hakkını ve gelecek nesillerin ihtiyaçlarını da düşünmektir.',call:'Bugünden itibaren tüketirken ihtiyacımızı sorgulayalım; yiyeceği, suyu ve zamanı daha bilinçli kullanalım.'},
+'adalet':{intro:'Adalet, yalnızca mahkemelerde değil; ailede, okulda, işte ve günlük kararlarımızda yaşatmamız gereken bir değerdir.',body:'Bir konuda hüküm verirken yakınlık veya çıkar değil, hak ve doğruluk ölçü olmalıdır. Arkadaşlarımız arasında ayrımcılık yapmamak, bir tartışmada iki tarafı da dinlemek, güçlü olanın değil haklı olanın yanında durmak adaletin günlük örnekleridir.',call:'Kararlarımızda hakkaniyeti gözetelim ve başkasına yapılmasını istemediğimiz bir haksızlığı kimseye yapmayalım.'},
+'çevre bilinci':{intro:'Yeryüzü hepimizin ortak evi ve bize emanet edilmiş bir nimettir. Çevreyi korumak bir tercih olmanın ötesinde ahlaki bir sorumluluktur.',body:'Suyu kirletmemek, çöplerimizi uygun yere atmak, ağaçları korumak, gereksiz tüketimden kaçınmak ve canlılara merhamet göstermek bu sorumluluğun parçalarıdır. Doğaya verdiğimiz zarar sonunda insanın kendisine ve diğer canlılara döner.',call:'Bulunduğumuz çevreyi temiz tutalım, bir fidanı koruyalım ve her gün küçük de olsa çevreye yararlı bir davranışta bulunalım.'},
+'kul hakkı':{intro:'İnsanların emeğine, malına, zamanına ve onuruna saygı göstermek kulluk bilincimizin ayrılmaz bir parçasıdır.',body:'Kul hakkı yalnızca bir eşya almakla sınırlı değildir. Birinin emeğini sahiplenmek, sıra bekleyenlerin önüne geçmek, sosyal medyada iftira yaymak, bir kimsenin arkasından kırıcı konuşmak da hak ihlaline yol açabilir. Hakkı gözetmek güvenli bir toplumun temelidir.',call:'Üzerimizde birinin hakkı varsa telafi etmeye gayret edelim; sözümüzde, davranışımızda ve dijital ortamda daha dikkatli olalım.'},
+'güzel ahlak':{intro:'Güzel ahlak, inancın günlük hayattaki en görünür meyvelerindendir. İnsanlarla ilişkilerimizde doğruluk, nezaket ve merhamet bizi olgunlaştırır.',body:'Güzel söz söylemek, verdiğimiz sözde durmak, öfkeliyken kendimizi kontrol etmek ve insanları küçük düşürmemek ahlakımızı ortaya koyar. Ahlak yalnızca bizi sevenlere karşı değil, anlaşamadığımız kişilere karşı da adil ve saygılı olabilmektir.',call:'Bugün en az bir kişiyi güzel bir sözle sevindirelim ve zor bir durumda öfke yerine anlayışı tercih edelim.'}
+};
+function norm(s){return String(s).trim().toLocaleLowerCase('tr-TR')}
+function escape(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function getTopic(t){var n=norm(t);return topics[n]||{
+intro:t+' konusu, insanın kendisiyle, çevresiyle ve toplumla ilişkisini yeniden düşünmesini gerektiren önemli bir ahlaki sorumluluğu hatırlatır.',
+body:'Bu konuda yalnızca doğruyu bilmek yeterli değildir; bildiklerimizi davranışlarımıza da yansıtmalıyız. Evde, okulda, iş yerinde ve dijital ortamda sözlerimizin ve seçimlerimizin başkalarını nasıl etkilediğini düşünmeliyiz. Küçük ama kararlı iyilikler, zamanla hem kişisel alışkanlıklarımızı hem de toplumsal hayatı güzelleştirir.',
+call:t+' konusunda bugünden başlayarak uygulayabileceğimiz somut bir iyiliği seçelim ve bunu günlük hayatımızın bir parçası hâline getirelim.'
+}}
+function prepare(topic){
+var t=String(topic||'').trim().slice(0,100),result=document.getElementById('tb-maker-result'),feedback=document.getElementById('tb-maker-feedback');
+if(!t){feedback.textContent='Lütfen bir hutbe konusu yazın veya seçin.';document.getElementById('tb-maker-query').focus();return}
+var p=getTopic(t),intro='Muhterem Müslümanlar!\n\n'+p.intro,body='Aziz Müminler!\n\n'+p.body+'\n\nUnutmayalım ki inancımızın güzelliği, günlük hayatımızdaki tutum ve davranışlarımızla anlam kazanır. Yaptığımız her işte iyiliği, ölçüyü ve sorumluluğu gözetelim.',end='Kıymetli Kardeşlerim!\n\n'+p.call+'\n\nYüce Allah bizleri doğruyu bilen ve bildiği güzellikleri hayatına taşıyan kullarından eylesin. Âmin.';
+current={topic:t,intro:intro,body:body,end:end};document.getElementById('tb-maker-result-title').textContent=t;
+var bodyEl=document.getElementById('tb-maker-result-text');bodyEl.textContent='';
+[['Giriş',intro],['Gelişme',body],['Sonuç ve dua',end]].forEach(function(part){var h=document.createElement('h5'),paragraph=document.createElement('p');h.textContent=part[0];paragraph.textContent=part[1];paragraph.style.whiteSpace='pre-line';bodyEl.append(h,paragraph)});
+result.hidden=false;feedback.textContent='✓ '+t+' konulu hutbe taslağı oluşturuldu.';result.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+window.tbMakeTopic=function(t){document.getElementById('tb-maker-query').value=t;prepare(t)};
+window.tbCreateDraft=function(){prepare(document.getElementById('tb-maker-query').value)};
+window.tbTransferDraft=function(){if(!current)return;[['workshop-intro',current.intro],['workshop-body',current.body],['workshop-end',current.end]].forEach(function(v){var el=document.getElementById(v[0]);if(el)el.value=v[1]});var topic=document.getElementById('ai-topic-input');if(topic)topic.value=current.topic;document.getElementById('tb-maker-feedback').textContent='✓ Taslak aşağıdaki “Kendi hutbe taslağını yaz” alanına aktarıldı.'};
+window.tbCopyDraft=async function(){if(!current)return;var t='HUTBE TASLAĞI — '+current.topic+'\n\nGİRİŞ\n'+current.intro+'\n\nGELİŞME\n'+current.body+'\n\nSONUÇ\n'+current.end+'\n\nNot: Kaynak atıflarını ve içeriği kontrol edin.';try{await navigator.clipboard.writeText(t);document.getElementById('tb-maker-feedback').textContent='✓ Hutbe metni kopyalandı.'}catch(e){document.getElementById('tb-maker-feedback').textContent='Kopyalama izni verilemedi. Metni seçerek kopyalayabilirsiniz.'}};
+})();
 </script>
 </body>
 </html>
