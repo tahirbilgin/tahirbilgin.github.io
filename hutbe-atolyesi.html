@@ -183,7 +183,13 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
 .tb-maker-text{padding:22px;color:#26392f;font-size:15px;line-height:1.9;user-select:text}.tb-maker-text h5{font-size:14px;font-weight:850;color:#087f68;margin:18px 0 6px;letter-spacing:.05em}.tb-maker-text h5:first-child{margin-top:0}.tb-maker-text p{margin:0 0 10px}.tb-maker-footnote{border-top:1px solid #edf0ea;background:#fafbf8;color:#68776d;font-size:11px;line-height:1.6;padding:13px 20px}.tb-maker-feedback{font-size:12px;color:#25664e;margin-top:9px;min-height:16px}
 @media(max-width:620px){.tb-maker-inputrow{flex-direction:column}.tb-maker-inputrow button{width:100%}.tb-maker-result-bar{align-items:flex-start}.tb-maker-text{padding:17px}.tb-maker-topics button{padding:10px 12px}.tb-maker-actions{width:100%}}
 </style>
-</head>
+<style id="tb-minber-motion-css">
+#view-sim .tb-motion-stage{height:auto!important;aspect-ratio:860/490;min-height:195px;background:linear-gradient(135deg,#153e33,#0c2b24)!important;display:block!important;overflow:hidden;position:relative}
+#view-sim .tb-stairs-svg{display:block;width:100%;height:100%;overflow:visible}
+#tb-imam-walker{transition:transform .72s cubic-bezier(.24,.75,.23,1);transform-box:view-box;transform-origin:0 0;will-change:transform}
+@media(prefers-reduced-motion:reduce){#tb-imam-walker{transition-duration:.01ms}}
+#view-sim .tb-motion-stage svg{max-width:none}
+</style></head>
 <body class="antialiased select-none">
 <div class="max-w-5xl mx-auto min-h-screen flex flex-col bg-white shadow-2xl">
 <!-- Üst Menü -->
@@ -198,11 +204,25 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
 <!-- SİMÜLASYON MODÜLÜ -->
 <div class="flex flex-col lg:flex-row h-full" id="view-sim">
 <div class="w-full lg:w-2/5 bg-slate-900 flex flex-col">
-<div class="minber-view">
-<div class="stair-container" id="stairs-ui"></div>
-<div class="hatip-avatar" id="hatip-ui">
-<div class="hatip-figure"></div>
-</div>
+<div class="minber-view tb-motion-stage" aria-label="Cübbeli imamın hutbenin her aşamasında bir basamak ilerlediği minber simülasyonu">
+<svg class="tb-stairs-svg" viewBox="0 0 860 490" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hareketli imam ve numaralı minber basamakları">
+<defs><linearGradient id="tb-stair-wood"><stop stop-color="#a78151"/><stop offset=".72" stop-color="#765332"/><stop offset="1" stop-color="#51351d"/></linearGradient><linearGradient id="tb-imam-robe"><stop stop-color="#0c2923"/><stop offset=".55" stop-color="#416b58"/><stop offset="1" stop-color="#183d31"/></linearGradient></defs>
+<g fill="none" stroke="#c0d5bd" stroke-width="2" opacity=".14"><path d="M-20 470V135Q45 45 110 135V470M125 470V125Q190 25 255 125V470M270 470V135Q335 45 400 135V470M415 470V125Q480 25 545 125V470M560 470V135Q625 45 690 135V470M705 470V125Q770 25 835 125V470"/></g>
+<path d="M60 424 H112 V402 H164 V380 H216 V358 H268 V336 H320 V314 H372 V292 H424 V270 H476 V248 H528 V226 H580 V204 H632 V182 H684 V160 H736 V138 H788 V116 H840 V469 H60 Z" fill="url(#tb-stair-wood)" stroke="#dbb475" stroke-width="3" stroke-linejoin="round"/>
+<g id="tb-stair-step-numbers" fill="#fff2c9" font-size="13" text-anchor="middle" font-weight="800"></g>
+<path d="M790 132V88Q818 34 846 88V470H790Z" fill="#6c4d29" stroke="#d5ad68" stroke-width="3"/><path d="M783 102Q818 16 853 102Z" fill="#a97c43" stroke="#e4bd80" stroke-width="3"/>
+<g id="tb-imam-walker" style="transform:translate(86px,424px)">
+<ellipse cx="0" cy="1" rx="24" ry="6" fill="#071c16" opacity=".55"/>
+<path d="M-17 -12L-17 -2L-4 0L0 -17M6 -17L7 -1L19 0L18 -13" fill="#182923"/>
+<path d="M-11 -68Q-26 -54 -24 -35L-18 -29L-10 -44" fill="#284639" stroke="#b9b28d" stroke-width="2"/>
+<path d="M-13 -71Q-23 -44 -23 -10Q0 -3 23 -10Q24 -46 13 -71L2 -80Z" fill="url(#tb-imam-robe)" stroke="#d4b879" stroke-width="2"/>
+<path d="M0 -73V-13" stroke="#e4c886" stroke-width="2"/><path d="M12 -69Q26 -56 24 -36L18 -30L14 -46" fill="#284639" stroke="#b9b28d" stroke-width="2"/>
+<circle cx="-19" cy="-29" r="5" fill="#bd8a64"/><circle cx="19" cy="-29" r="5" fill="#bd8a64"/>
+<rect x="-12" y="-106" width="24" height="28" rx="11" fill="#bc8b64"/><path d="M-10 -91Q0 -83 10 -91Q7 -77 0 -76Q-8 -80 -10 -91" fill="#49372b"/>
+<circle cx="-5" cy="-97" r="1.4" fill="#221c18"/><circle cx="5" cy="-97" r="1.4" fill="#221c18"/>
+<ellipse cx="0" cy="-106" rx="20" ry="10" fill="#f9f8ec" stroke="#ccd4c8" stroke-width="2"/><path d="M-17 -108Q0 -119 17 -108" fill="none" stroke="#c2cdc1" stroke-width="3"/><path d="M-7 -114Q-9 -123 0 -125Q9 -123 7 -114" fill="#f8f7ef" stroke="#c2cdc1" stroke-width="2"/>
+</g><text x="25" y="36" fill="#efd7a5" font-size="15" font-weight="800">MİNBER YOLCULUĞU</text><text id="tb-motion-counter" x="24" y="65" fill="#f5f8ec" font-size="14">1 / 15 · Hutbe aşaması</text>
+</svg>
 </div>
 <div class="p-6 bg-slate-800 text-center border-t border-slate-700">
 <div class="text-yellow-500 font-bold text-sm uppercase mb-1 tracking-widest" id="sim-info">Hutbe Başlıyor</div>
@@ -842,14 +862,15 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
 
     // --- SİMÜLASYON & TAB KONTROLLERİ ---
     function init() {
-        const stairs = document.getElementById('stairs-ui');
-        stairs.innerHTML = '';
-        for(let i=0; i<10; i++) {
-            const s = document.createElement('div');
-            s.className = 'step-3d';
-            s.id = `step-${i}`;
-            s.style.transform = `translateX(${i * 6}px)`;
-            stairs.appendChild(s);
+        const numbers = document.getElementById('tb-stair-step-numbers');
+        if (numbers && !numbers.children.length) {
+            for (let i = 0; i < 15; i++) {
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', String(86 + i * 52));
+                label.setAttribute('y', String(449 - i * 22));
+                label.textContent = String(i + 1);
+                numbers.appendChild(label);
+            }
         }
         update();
     }
@@ -903,13 +924,12 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
         document.getElementById('main-arabic').classList.add('blur-text');
         document.getElementById('main-arabic').classList.remove('reveal');
 
-        document.querySelectorAll('.step-3d').forEach(s => s.classList.remove('active'));
-        const activeS = document.getElementById(`step-${d.pos}`);
-        if(activeS) activeS.classList.add('active');
-
-        const avatar = document.getElementById('hatip-ui');
-        avatar.style.bottom = `${d.pos * 29 + 15}px`;
-        avatar.style.transform = `translateX(calc(-50% + ${d.pos * 6}px))`;
+        // Her hutbe aşamasında imam bir basamak ilerler; geri gidince aynı yolun tersini izler.
+        const stepIndex = Math.min(14, Math.round(currentStep * 14 / Math.max(stepsData.length - 1, 1)));
+        const imam = document.getElementById('tb-imam-walker');
+        if (imam) imam.style.transform = `translate(${86 + stepIndex * 52}px, ${424 - stepIndex * 22}px)`;
+        const motionCounter = document.getElementById('tb-motion-counter');
+        if (motionCounter) motionCounter.textContent = `${currentStep + 1} / ${stepsData.length} · Hutbe aşaması`;
     }
 
 
