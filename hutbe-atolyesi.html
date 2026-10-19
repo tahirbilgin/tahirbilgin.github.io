@@ -497,12 +497,28 @@ body nav:has(#btn-sim)>#btn-ai.tab-active{color:#fff!important;background:#98713
   }
 }
 </style>
+
+<style id="tb-live-simple-academy-home-20261019">
+/* Ana sayfa: mevcut akademi tanıtımı + menü. Modül seçiminde yalnızca seçilen içerik. */
+.tb-return-home{display:none;white-space:nowrap;flex:0 0 auto!important;font-weight:800!important;border-radius:11px!important;padding:10px 13px!important;font-size:11px!important;background:#e7f3ec!important;color:#195742!important;border:1px solid #a9ceb6!important}
+body.tb-academy-subpage .tb-return-home{display:block!important}
+body.tb-academy-subpage .ms-head{display:none!important}
+body.tb-academy-home .ms-head{display:block!important}
+body.tb-academy-home nav:has(#btn-sim){position:relative!important;top:auto!important}
+body.tb-academy-home #view-sim,
+body.tb-academy-home #view-book,
+body.tb-academy-home #view-videos,
+body.tb-academy-home #view-sermons,
+body.tb-academy-home #view-ai{display:none!important}
+body.tb-academy-home nav:has(#btn-sim) button.tab-active{background:transparent!important;box-shadow:none!important;color:inherit!important}
+</style>
 </head>
 <body class="antialiased select-none">
 <div class="max-w-5xl mx-auto min-h-screen flex flex-col bg-white shadow-2xl">
 <!-- Üst Menü -->
 <header class="ms-head" aria-label="Modern Medrese Studio tanıtımı"><div class="ms-brandline"><span class="ms-mark">✦</span><span>TAHİR AI LAB <span class="ms-sep">/</span> EĞİTİM ATÖLYESİ</span><span class="ms-edition">ARAYÜZ ÖNİZLEMESİ · 02</span></div><div class="ms-hero"><div class="ms-intro"><div class="ms-eyebrow"><span class="ms-pulse"></span> DİJİTAL HİTABET AKADEMİSİ</div><h1>Hutbe <em>Atölyesi</em></h1><p>Geleneğin bilgisini modern öğrenme deneyimiyle buluşturan etkileşimli hutbe akademisi.</p><div class="ms-chips"><span>◈ Minber Simülasyonu</span><span>▤ Ders Kitabı</span><span>◉ Örnek Hutbeler</span><span>✧ YZ Rehberi</span></div></div><div class="ms-art" aria-hidden="true"><div class="ms-arch"><span>۞</span><div class="ms-mihrab"></div><div class="ms-lines"></div></div><div class="ms-art-label">İLİM · HİTABET · İRŞAD</div></div></div></header>
 <nav class="bg-slate-900 text-white flex sticky top-0 z-[200] overflow-x-auto whitespace-nowrap scrollbar-hide">
+<button type="button" class="tb-return-home" onclick="tbShowAcademyHome()">⌂ Ana Sayfa</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm tab-active shrink-0" id="btn-sim" onclick="setTab('sim')">SİMÜLASYON MODU</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm text-slate-400 hover:text-white transition-colors shrink-0" id="btn-book" onclick="setTab('book')">DERS KİTABI</button>
 <button class="flex-1 py-4 px-3 md:py-5 font-bold text-[10px] md:text-sm text-slate-400 hover:text-white transition-colors shrink-0" id="btn-videos" onclick="setTab('videos')">ÖRNEK VİDEOLAR</button>
@@ -1353,6 +1369,34 @@ window.tbMakeTopic=function(t){document.getElementById('tb-maker-query').value=t
 window.tbCreateDraft=function(){prepare(document.getElementById('tb-maker-query').value)};
 window.tbTransferDraft=function(){if(!current)return;[['workshop-intro',current.intro],['workshop-body',current.body],['workshop-end',current.end]].forEach(function(v){var el=document.getElementById(v[0]);if(el)el.value=v[1]});var topic=document.getElementById('ai-topic-input');if(topic)topic.value=current.topic;document.getElementById('tb-maker-feedback').textContent='✓ Taslak aşağıdaki “Kendi hutbe taslağını yaz” alanına aktarıldı.'};
 window.tbCopyDraft=async function(){if(!current)return;var t='HUTBE TASLAĞI — '+current.topic+'\n\nGİRİŞ\n'+current.intro+'\n\nGELİŞME\n'+current.body+'\n\nSONUÇ\n'+current.end+'\n\nNot: Kaynak atıflarını ve içeriği kontrol edin.';try{await navigator.clipboard.writeText(t);document.getElementById('tb-maker-feedback').textContent='✓ Hutbe metni kopyalandı.'}catch(e){document.getElementById('tb-maker-feedback').textContent='Kopyalama izni verilemedi. Metni seçerek kopyalayabilirsiniz.'}};
+})();
+</script>
+
+<script id="tb-live-simple-academy-home-script">
+(function(){
+  'use strict';
+  var tabs=['sim','book','videos','sermons','ai'];
+  function showAcademyHome(){
+    document.body.classList.remove('tb-academy-subpage');
+    document.body.classList.add('tb-academy-home');
+    tabs.forEach(function(t){
+      var view=document.getElementById('view-'+t);
+      var btn=document.getElementById('btn-'+t);
+      if(view)view.classList.add('hidden');
+      if(btn)btn.classList.remove('tab-active');
+    });
+    window.scrollTo(0,0);
+  }
+  window.tbShowAcademyHome=showAcademyHome;
+  var original=window.setTab;
+  if(typeof original!=='function')return;
+  window.setTab=function(tab){
+    document.body.classList.remove('tb-academy-home');
+    document.body.classList.add('tb-academy-subpage');
+    original(tab);
+    window.scrollTo(0,0);
+  };
+  showAcademyHome();
 })();
 </script>
 </body>
