@@ -817,28 +817,50 @@ html.night-mode .matching-verse-text {color:#f2f7f3}
 html.night-mode .matching-verse-card,html.night-mode .matching-card {border-color:#4b686a}
 html.night-mode .app-shell {--muted:#cad8d0}
 /* Keep Qur'anic diacritics and readable type sizing unchanged. */
-#tahir-theme-toggle {position:fixed;right:20px;bottom:20px;z-index:2147483000;display:flex;align-items:center;justify-content:center;gap:9px;min-height:46px;min-width:150px;padding:9px 15px;border:2px solid #adc5b3;border-radius:999px;background:#fffdf8;color:#173f34;box-shadow:0 8px 25px #102c2630;font:700 14px 'DM Sans',system-ui,sans-serif;cursor:pointer;white-space:nowrap}
-#tahir-theme-toggle:hover {transform:translateY(-1px)}
-#tahir-theme-toggle:focus-visible {outline:3px solid #c4a365;outline-offset:3px}
-html.night-mode #tahir-theme-toggle {background:#2a4a42;color:#fff;border-color:#7be0b7;box-shadow:0 8px 25px #0007}
-@media(max-width:600px){#tahir-theme-toggle {right:12px;bottom:12px;min-width:0;padding:10px 12px;min-height:44px;font-size:13px}}
+/* Theme switch lives in the application top bar, never over the bottom navigation. */
+#tahir-theme-toggle{position:static;inset:auto;z-index:auto;display:inline-grid;place-items:center;flex:0 0 37px;width:37px;height:37px;min-width:37px;min-height:37px;padding:0;border:1px solid #d7c9ac;border-radius:11px;background:#fffcf5;color:#176b55;box-shadow:none;font:700 19px/1 system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+#tahir-theme-toggle:hover{background:#e7f0e7}
+#tahir-theme-toggle:focus-visible{outline:3px solid #b99b55;outline-offset:2px}
+html.night-mode #tahir-theme-toggle{background:#20343d;color:#f1d58d;border-color:#68827c;box-shadow:none}
+@media(max-width:980px){
+  .topbar-actions{gap:6px!important;min-width:0}
+  .topbar-actions>.mobile-menu-trigger{order:1;flex:0 0 35px}
+  .topbar-actions>#tahir-theme-toggle{order:2;flex:0 0 35px;width:35px;height:35px;min-width:35px;min-height:35px}
+  .topbar-actions>.text-size-controls{order:3;flex-shrink:0}
+  .topbar-actions>.search-trigger,.topbar-actions>.presentation-trigger,.topbar-actions>.local-profile{order:4}
+  .mobile-bottom-nav{z-index:30}
+}
+@media(max-width:420px){.topbar{padding-left:10px!important;padding-right:10px!important}.topbar-actions{gap:4px!important}.topbar-actions>.text-size-controls{padding:1px}.topbar-actions>.text-size-controls button{min-width:31px;min-height:32px}}
 </style>
   <script id="tahir-theme-script">(function(){
   'use strict';
   var key='tahir-ai-lab-tecvid-theme';
   var root=document.documentElement;
   try{if(localStorage.getItem(key)==='dark')root.classList.add('night-mode')}catch(e){}
-  function applyTheme(){
+  var button=null;
+  function update(){
     var dark=root.classList.contains('night-mode');
-    var button=document.getElementById('tahir-theme-toggle');
-    if(button){button.textContent=dark?'☀️  Gündüz modu':'🌙  Gece modu';button.setAttribute('aria-label',dark?'Gündüz moduna geç':'Gece moduna geç');button.setAttribute('aria-pressed',dark?'true':'false')}
+    if(button){button.textContent=dark?'☀️':'🌙';button.title=dark?'Gündüz moduna geç':'Gece moduna geç';button.setAttribute('aria-label',button.title);button.setAttribute('aria-pressed',String(dark))}
     var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=dark?'#101f29':'#F8F4EA';
   }
+  function place(){
+    var actions=document.querySelector('.topbar-actions');
+    if(!actions)return;
+    if(!button){
+      button=document.createElement('button');button.id='tahir-theme-toggle';button.type='button';
+      button.addEventListener('click',function(){root.classList.toggle('night-mode');try{localStorage.setItem(key,root.classList.contains('night-mode')?'dark':'light')}catch(e){}update()});
+    }
+    var textControls=actions.querySelector('.text-size-controls');
+    if(textControls){if(button.parentElement!==actions||button.nextElementSibling!==textControls)actions.insertBefore(button,textControls)}
+    else if(button.parentElement!==actions)actions.appendChild(button);
+    update();
+  }
   function init(){
-    if(document.getElementById('tahir-theme-toggle'))return;
-    var btn=document.createElement('button');btn.id='tahir-theme-toggle';btn.type='button';
-    btn.addEventListener('click',function(){root.classList.toggle('night-mode');try{localStorage.setItem(key,root.classList.contains('night-mode')?'dark':'light')}catch(e){}applyTheme()});
-    document.body.appendChild(btn);applyTheme();
+    place();
+    var rootNode=document.getElementById('root');
+    if(rootNode){var observer=new MutationObserver(function(){
+      if(!button||!button.isConnected||!button.closest('.topbar-actions'))place();
+    });observer.observe(rootNode,{childList:true,subtree:true})}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();</script>
