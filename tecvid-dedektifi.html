@@ -832,6 +832,26 @@ html.night-mode #tahir-theme-toggle{background:#20343d;color:#f1d58d;border-colo
 }
 @media(max-width:420px){.topbar{padding-left:10px!important;padding-right:10px!important}.topbar-actions{gap:4px!important}.topbar-actions>.text-size-controls{padding:1px}.topbar-actions>.text-size-controls button{min-width:31px;min-height:32px}}
 </style>
+  <style id="tahir-navigation-contrast-fix">
+/* 2026-10-21: night-mode mobile bottom navigation contrast fix */
+@media(max-width:980px){
+html.night-mode .mobile-bottom-nav{display:flex!important;background:#142630!important;border-top:1px solid #49616a!important;opacity:1!important;visibility:visible!important;z-index:70!important}
+html.night-mode .mobile-bottom-nav button{color:#dce9e2!important;opacity:1!important;visibility:visible!important;background:transparent}
+html.night-mode .mobile-bottom-nav button svg,html.night-mode .mobile-bottom-nav button svg *{color:#dce9e2!important;stroke:#dce9e2!important;opacity:1!important}
+html.night-mode .mobile-bottom-nav button span{color:#dce9e2!important;opacity:1!important}
+html.night-mode .mobile-bottom-nav button.is-active{background:#294b40!important;color:#98e2bc!important}
+html.night-mode .mobile-bottom-nav button.is-active svg,html.night-mode .mobile-bottom-nav button.is-active svg *{color:#98e2bc!important;stroke:#98e2bc!important}
+html.night-mode .mobile-bottom-nav button.is-active span{color:#98e2bc!important}
+}
+/* Desktop: Sınıf ekranı → güneş/ay → A− / A+ */
+@media(min-width:981px){
+.topbar-actions>.presentation-trigger{order:1}
+.topbar-actions>#tahir-theme-toggle{order:2}
+.topbar-actions>.text-size-controls{order:3}
+.topbar-actions>.search-trigger{order:4}
+.topbar-actions>.local-profile{order:5}
+}
+</style>
   <script id="tahir-theme-script">(function(){
   'use strict';
   var key='tahir-ai-lab-tecvid-theme';
