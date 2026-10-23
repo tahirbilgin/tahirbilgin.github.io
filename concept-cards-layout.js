@@ -1,24 +1,26 @@
 'use strict';
 (()=>{
  const data=JSON.parse(document.getElementById('card-data').textContent),get=id=>document.getElementById(id);
- const cover=get('cover-screen'),map=get('map-screen'),reader=get('reader-screen'),entries=[...document.querySelectorAll('[data-lesson]')];
- let selected=0,page=0,lastTrigger=null,restoreKeyboard=false;const visited=new Set();
- const make=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=text;return n;};
- function changeScreen(which){cover.hidden=which!=='cover';map.hidden=which!=='map';reader.hidden=which!=='reader';window.scrollTo({top:0,behavior:'instant'});}
- function lessonPages(d){const pages=d.paragraphs.map((text,i)=>({kind:'KAVRAMI KEŞFET',title:i===0?d.title:d.name,text}));if(d.quote)pages.push({kind:'AYET',title:'Kaynakla ilişkilendir',text:d.quote,cite:d.reference});for(const q of d.quotes||[])pages.push({kind:'AYET / HADİS',title:'Kaynakla ilişkilendir',text:q.text,cite:q.ref});if(d.key)pages.push({kind:'ANA FİKİR',title:'Aklında kalsın',text:d.key});if(d.question||d.example)pages.push({kind:d.choices?'SEN KARAR VER':'DÜŞÜNME SORUSU',title:'Düşün ve uygula',text:d.question||d.example,choices:d.choices});if(d.answer&&!d.choices)pages.push({kind:'GERİ BİLDİRİM',title:'Açıklama',text:d.answer});return pages;}
- function render(){const d=data.lessons[selected],pages=lessonPages(d),p=pages[page];get('lesson-heading').textContent=d.name;get('reader-location').textContent=(selected+1)+' / 4 bölüm';get('page-kicker').textContent=p.kind;get('page-title').textContent=p.title;get('page-text').textContent=p.text;get('page-cite').textContent=p.cite||'';get('page-cite').hidden=!p.cite;
-  const flow=get('page-flow');flow.replaceChildren();if(page===0)for(const [i,text] of (d.flow||[]).entries()){if(i){const a=make('b','', '→');a.setAttribute('aria-hidden','true');flow.append(a);}flow.append(make('span','',text));}flow.hidden=flow.children.length===0;
-  const answers=get('page-answers');answers.replaceChildren();get('page-feedback').textContent='';if(p.choices)for(const choice of p.choices){const b=make('button','answer',choice.text);b.type='button';b.addEventListener('click',()=>{get('page-feedback').textContent=choice.feedback;});answers.append(b);}answers.hidden=!p.choices;
-  get('page-number').textContent=(page+1)+' / '+pages.length;get('previous-page').disabled=page===0;get('next-page').disabled=page===pages.length-1;
-  const source=get('lesson-source');source.replaceChildren();if(d.url){source.append(make('span','', 'Kaynak bağlantısı: '));const a=make('a','',d.source||'Kaynağı aç ↗');a.href=d.url;a.target='_blank';a.rel='noopener noreferrer';source.append(a);}source.hidden=!d.url;
+ const cover=get('cover-screen'),map=get('map-screen'),reader=get('reader-screen'),entries=[...document.querySelectorAll('[data-lesson]')];let selected=0,lastTrigger=null;const visited=new Set();
+ const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+ function changeScreen(which){cover.hidden=which!=='cover';map.hidden=which!=='map';reader.hidden=which!=='reader';document.body.classList.toggle('lesson-open',which==='reader');window.scrollTo({top:0,behavior:'instant'});}
+ function render(){const d=data.lessons[selected];get('lesson-heading').textContent=d.title;get('reader-location').textContent=d.name+' · '+(selected+1)+' / 4';const container=get('lesson-content');container.replaceChildren();
+  const flow=make('div','flow');flow.setAttribute('aria-label','Kavram bağlantıları');for(const [i,text] of (d.flow||[]).entries()){if(i){const a=make('b','','→');a.setAttribute('aria-hidden','true');flow.append(a);}flow.append(make('span','',text));}if(flow.children.length)container.append(flow);
+  for(const text of d.paragraphs)container.append(make('p','lesson-paragraph',text));
+  const quotes=[...(d.quotes||[])];if(d.quote)quotes.push({text:d.quote,ref:d.reference});for(const quote of quotes){const block=make('blockquote','lesson-quote',quote.text);if(quote.ref)block.append(make('cite','',quote.ref));container.append(block);}
+  if(d.key)container.append(make('div','highlight',d.key));
+  if(d.question||d.example){const question=make('div','question');question.append(make('p','lesson-paragraph',d.question||d.example));
+   if(d.choices){const choices=make('div','answers'),feedback=make('div','feedback');feedback.setAttribute('aria-live','polite');for(const choice of d.choices){const b=make('button','answer',choice.text);b.type='button';b.addEventListener('click',()=>{feedback.textContent=choice.feedback;});choices.append(b);}question.append(choices,feedback);}
+   else if(d.answer){const toggle=make('button','reveal-answer','Açıklamayı göster'),answer=make('div','answer-text',d.answer);answer.id='lesson-answer';answer.hidden=true;toggle.type='button';toggle.id='reveal-answer';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','lesson-answer');toggle.addEventListener('click',()=>{answer.hidden=!answer.hidden;toggle.textContent=answer.hidden?'Açıklamayı göster':'Açıklamayı gizle';toggle.setAttribute('aria-expanded',String(!answer.hidden));});question.append(toggle,answer);}container.append(question);}
+  if(d.url){const source=make('div','source','Kaynak bağlantısı: '),a=make('a','',d.source||'Kaynağı aç ↗');a.href=d.url;a.target='_blank';a.rel='noopener noreferrer';source.append(a);container.append(source);}
  }
- function showLesson(index,event){selected=index;page=0;lastTrigger=entries[index];restoreKeyboard=!!event&&event.detail===0;visited.add(index);entries.forEach((b,i)=>{b.dataset.visited=String(visited.has(i));});get('map-progress').textContent=visited.size+' / 4 bölüm keşfedildi';render();changeScreen('reader');if(restoreKeyboard)get('lesson-heading').focus({preventScroll:true});}
+ function showLesson(index,event){selected=index;lastTrigger=entries[index];visited.add(index);entries.forEach((b,i)=>b.dataset.visited=String(visited.has(i)));get('map-progress').textContent=visited.size+' / 4 bölüm keşfedildi';render();changeScreen('reader');reader.scrollTop=0;get('return-map').focus({preventScroll:true});}
  entries.forEach(button=>button.addEventListener('click',e=>showLesson(Number(button.dataset.lesson),e)));
  get('enter-card').addEventListener('click',e=>{changeScreen('map');if(e.detail===0)get('map-heading').focus({preventScroll:true});});
  get('return-cover').addEventListener('click',e=>{changeScreen('cover');if(e.detail===0)get('enter-card').focus({preventScroll:true});});
  function returnToMap(keyboard){changeScreen('map');if(keyboard&&lastTrigger)lastTrigger.focus({preventScroll:true});}
  get('return-map').addEventListener('click',e=>returnToMap(e.detail===0));
- get('previous-page').addEventListener('click',()=>{if(page>0){page--;render();}});get('next-page').addEventListener('click',()=>{if(page<lessonPages(data.lessons[selected]).length-1){page++;render();}});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!reader.hidden)returnToMap(true);});
+ document.addEventListener('click',e=>{if(!reader.hidden&&e.target===document.body)returnToMap(false);});
+ document.addEventListener('keydown',e=>{if(reader.hidden)return;if(e.key==='Escape'){returnToMap(true);return;}if(e.key==='Tab'){const nodes=[...reader.querySelectorAll('button:not(:disabled),a[href]')],first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
  changeScreen('cover');
 })();
