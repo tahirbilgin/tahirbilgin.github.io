@@ -469,7 +469,22 @@ body{background:radial-gradient(ellipse at 82% -12%,#dfeef0 0%,transparent 39%),
 @media(max-width:410px){.mind-map{grid-template-columns:1fr}.mind-item{padding:15px}}
 @media(prefers-reduced-motion:reduce){.mind-item,.lesson,.source-entry{transition:none}}
 </style>
-</head><body>
+<style id="mobile-concept-card-fix">
+@media(max-width:768px){
+#cards .flipgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#cards .flash{height:auto!important;min-height:250px!important;min-width:0;perspective:none;transform:none!important}
+#cards .flash-inner,#cards .flash.flipped .flash-inner{display:grid!important;grid-template-columns:minmax(0,1fr);height:auto!important;min-height:250px!important;transform:none!important;transform-style:flat!important}
+#cards .flash-face{position:relative!important;inset:auto!important;grid-area:1/1;width:100%;height:auto!important;min-height:250px;box-sizing:border-box;transform:none!important;backface-visibility:visible!important;-webkit-backface-visibility:visible!important;padding:16px 12px!important;overflow:visible;transition:opacity .15s ease}
+#cards .flash-front{visibility:visible;opacity:1;pointer-events:auto}
+#cards .flash-back{visibility:hidden;opacity:0;pointer-events:none}
+#cards .flash.flipped .flash-front{visibility:hidden;opacity:0;pointer-events:none}
+#cards .flash.flipped .flash-back{visibility:visible;opacity:1;pointer-events:auto}
+#cards .flash-back-content{height:auto;max-height:none;overflow:visible;box-sizing:border-box;padding:0;gap:14px}
+#cards .flash-front strong{font-size:19px!important;overflow-wrap:break-word}
+#cards .flash-back-content strong{font-size:14px!important;line-height:1.65!important;overflow-wrap:break-word;word-break:normal}
+#cards .flash-face small{letter-spacing:0;line-height:1.5}
+}
+</style></head><body>
 <div class="mobilebar"><button onclick="go('home')">⌂ Ana Sayfa</button><button onclick="go('principles')">◈ Konu Anlatımı</button><button onclick="go('sources')">☷ Ayet & Hadis</button><button onclick="go('cards')">▦ Kavramlar</button><button onclick="go('quiz')">✦ Bilgi Şöleni</button></div>
 <div class="shell" id="appShell"><aside class="side" id="appSidebar"><div class="brand"><div class="logo">✺</div><div><b>İslamiyet Atölyesi</b><small>DİNLER TARİHİ</small></div><button type="button" class="nav-close" aria-label="Menüyü kapat" onclick="closeNavigation()">×</button></div><div class="caption">ÖĞRENME ALANI</div><button class="nav active" data-to="home" onclick="go('home')"><span class="ico">⌂</span>Ana Sayfa</button><button class="nav" data-to="principles" onclick="go('principles')"><span class="ico">◈</span>Konu Anlatımı</button><button class="nav" data-to="sources" onclick="go('sources')"><span class="ico">☷</span>Ayet & Hadis</button><button class="nav" data-to="cards" onclick="go('cards')"><span class="ico">▦</span>Kavramlar</button><button class="nav" data-to="quiz" onclick="go('quiz')"><span class="ico">✦</span>Bilgi Şöleni</button><div class="caption">DERS REHBERİ</div><div class="sidefoot"><small>✦ YENİ NESİL DERSLİK</small><p>İnançtan ibadete, ahlaktan diğer dinlerle ilişkilere: keşfederek öğren.</p><div class="progressbar"><i></i></div><small style="color:#cfdaed;letter-spacing:0">Konu keşif alanı</small></div></aside>
 <main class="content"><div class="top"><div class="top-left"><button type="button" class="nav-trigger" id="navTrigger" aria-label="Öğrenme alanı menüsünü aç veya kapat" aria-controls="appSidebar" aria-expanded="true" onclick="toggleNavigation()">☰</button><div class="crumb">Eğitim Portalı <span style="color:#59ead2"> / </span> <span id="crumbCurrent">Ana Sayfa</span></div></div><div class="topright"><span class="pill">✦ İnteraktif ders alanı</span><div class="avatar">İA</div></div></div>
