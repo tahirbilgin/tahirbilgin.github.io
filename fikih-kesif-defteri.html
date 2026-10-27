@@ -395,6 +395,45 @@ body.book-closing-back #book .last-endpaper { opacity:0 !important; }
 .leather-endpaper .bl{bottom:4px;left:7px}.leather-endpaper .br{bottom:4px;right:7px}
 @media (max-width:600px){.leather-endpaper .endpaper-inset{inset:6.5%}.leather-endpaper .endpaper-center{gap:.6rem}}
 </style>
+<style>
+/* TAHİR AI LAB — MOBİL OKUYUCU: Masaüstü tasarımına müdahale etmez */
+@media (max-width:767px) {
+  html,body {width:100%!important;max-width:100%!important;overflow:hidden!important;}
+  body {height:100dvh!important;min-height:100dvh!important;}
+  body:not(.scene-landing) {background-color:#091b2b!important;}
+  body:not(.scene-landing)::before {content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(3,15,27,.72),rgba(4,23,32,.52) 54%,rgba(3,15,27,.80));}
+  header {padding:9px 12px!important;min-height:58px!important;gap:6px!important;}
+  header h1 {font-size:12px!important;letter-spacing:.02em!important;}
+  header p {font-size:10px!important;}
+  header .space-x-2 {gap:3px!important;}
+  header .space-x-2 > * + * {margin-left:0!important;}
+  header button {padding:8px!important;}
+  header .font-mono {font-size:11px!important;}
+  main {padding:6px 8px!important;overflow:hidden!important;display:flex!important;justify-content:center!important;align-items:center!important;min-height:0!important;}
+  .book-stage-shadow {max-width:100%!important;max-height:100%!important;margin:auto!important;filter:drop-shadow(0 14px 19px rgba(0,0,0,.65))!important;}
+  #book {margin:0 auto!important;}
+  .page-paper-texture {padding:clamp(14px,4vw,23px)!important;}
+  .page-paper-texture .font-book,.page-paper-texture .font-quran {font-size:clamp(18px,4.8vw,23px)!important;line-height:1.31!important;overflow-wrap:anywhere!important;}
+  .page-paper-texture h3 {font-size:clamp(19px,5vw,25px)!important;line-height:1.16!important;}
+  .page-paper-texture h4 {font-size:clamp(17px,4.6vw,22px)!important;line-height:1.22!important;}
+  .page-paper-texture .custom-scrollbar {overflow-y:auto!important;overflow-x:hidden!important;touch-action:pan-y!important;overscroll-behavior:contain;scrollbar-width:thin;min-height:0!important;}
+  .page-paper-texture .custom-scrollbar > * {max-width:100%!important;}
+  .page-paper-texture .space-y-3 > *, .page-paper-texture .space-y-3\.5 > * {padding:11px!important;}
+  .page-paper-texture p,.page-paper-texture span,.page-paper-texture li {overflow-wrap:anywhere;}
+  footer {min-height:57px!important;padding:8px 13px!important;gap:9px!important;}
+  footer #btn-prev, footer #btn-next {min-width:54px;min-height:40px;justify-content:center;}
+  footer #btn-autoplay {min-height:40px;}
+  #toc-modal {width:min(88vw,345px)!important;}
+  #scene-open-hint {bottom:9%!important;max-width:90vw;white-space:normal;text-align:center;}
+  :fullscreen .book-stage-shadow {filter:none!important;}
+}
+@media (max-width:380px) {
+  header .hub-top-name {display:none!important;}
+  header .space-x-3 {gap:3px!important;}
+  header button {padding:6px!important;}
+  #page-num-display {font-size:10px!important;}
+}
+</style>
 </head>
 <body class="scene-landing desk-background text-amber-50 h-screen w-screen flex flex-col justify-between relative">
 <div aria-hidden="true" id="scene-reading-veil"></div>
@@ -697,16 +736,16 @@ body.book-closing-back #book .last-endpaper { opacity:0 !important; }
         // -------------------------------------------------------------
         // DİNAMİK BOYUTLANDIRMA HESABI (Ekran Sınırlarına Uyum)
         // -------------------------------------------------------------
+        // Mobil: tek geniş sayfa; büyük ekran: iki karşılıklı sayfa.
+        const mobileReader = () => window.matchMedia('(max-width: 767px)').matches;
         function calculatePageDimensions() {
-            const stage = document.querySelector('main');
-            const rect = stage.getBoundingClientRect();
-            // Her boyutta kitap iki karşılıklı sayfaya yer açar.
-            const availableWidth = Math.max(200, rect.width - 36);
-            const availableHeight = Math.max(180, rect.height - 30);
-            // Sayfanın oranını 0.72'de tut; kapak tek yüz, açık kitap çift yüzdür.
-            const width = Math.max(95, Math.floor(Math.min(availableWidth / 2, availableHeight * .72, 500)));
-            const height = Math.max(135, Math.floor(Math.min(availableHeight, width / .72)));
-            return {width, height};
+            const rect = document.querySelector('main').getBoundingClientRect();
+            const mobile = mobileReader();
+            const availableWidth = Math.max(220, rect.width - (mobile ? 20 : 36));
+            const availableHeight = Math.max(250, rect.height - (mobile ? 14 : 30));
+            let width = Math.floor(Math.min(mobile ? availableWidth : availableWidth / 2, availableHeight * (mobile ? .80 : .72), 500));
+            let height = Math.floor(Math.min(availableHeight, width / (mobile ? .80 : .72)));
+            return {width: Math.max(195,width), height: Math.max(260,height)};
         }
 
         // Her yeniden boyutlandırmada motorun eskimiş DOM katmanlarını tekrar
@@ -719,7 +758,7 @@ body.book-closing-back #book .last-endpaper { opacity:0 !important; }
             const templates = Array.from(bookNode.querySelectorAll(':scope > .page'), p => p.cloneNode(true));
             const opts = {
                 size: 'fixed', drawShadow: true, flippingTime: 680,
-                usePortrait: false, autoSize: false, maxShadowOpacity: .75,
+                usePortrait: true, autoSize: false, maxShadowOpacity: .75,
                 showCover: false, mobileScrollSupport: false,
                 swipeDistance: 20, clickEventForward: false
             };
@@ -748,7 +787,7 @@ body.book-closing-back #book .last-endpaper { opacity:0 !important; }
                     fresh.id = 'book';
                     fresh.className = 'mx-auto';
                     fresh.style.cssText = 'position:relative;display:block;visibility:visible;opacity:1;';
-                    fresh.style.width = (dim.width * 2) + 'px';
+                    fresh.style.width = (dim.width * (mobileReader() ? 1 : 2)) + 'px';
                     fresh.style.height = dim.height + 'px';
                     templates.forEach(p => fresh.appendChild(p.cloneNode(true)));
                     bookMount.replaceChildren(fresh);
