@@ -82,7 +82,7 @@ window.addEventListener('fikih-page-changed',stop);
 $('m-focus').onclick=()=>{const on=b.classList.toggle('m-focus');$('m-focus').textContent=on?'Kapat':'Aç';toggle(false);window.dispatchEvent(new Event('resize'))};
 $('m-full').onclick=async()=>{toggle(false);try{if(d.fullscreenElement)await d.exitFullscreen();else await d.documentElement.requestFullscreen()}catch(e){b.classList.add('m-focus');window.dispatchEvent(new Event('resize'))}};
 })();
-</script>;
+${"</scr"+"ipt>"};
 html=html.replace('</head>',css+'</head>').replace('</body>',controls+script+'</body>');
 document.open();document.write(html);document.close();
 }catch(e){document.getElementById('loading').textContent='Uygulama yüklenemedi. Lütfen bağlantıyı kontrol edin.';console.error(e)}
