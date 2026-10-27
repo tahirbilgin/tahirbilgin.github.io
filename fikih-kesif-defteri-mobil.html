@@ -1,0 +1,90 @@
+<!doctype html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Fıkıh Keşif Defteri — Mobil</title><style>body{margin:0;background:#0b1930;color:#ead6ad;font:15px system-ui;display:grid;place-items:center;min-height:100dvh}</style></head><body><span id="loading">Fıkıh Keşif Defteri yükleniyor…</span><script>
+(async function(){
+if(matchMedia('(min-width:768px)').matches){location.replace('./fikih-kesif-defteri.html');return;}
+try{
+let r=await fetch('./fikih-kesif-defteri.html',{cache:'no-cache'});if(!r.ok)throw Error('Uygulama bulunamadı');
+let html=await r.text();
+const css=String.raw`
+<style id="tahir-mobile-ui">
+@media(max-width:767px){
+body{--reader-paper:#fcf8ee;height:100dvh!important;background:#0b1930!important}
+body.scene-landing header,body.scene-landing footer{display:none!important}
+body.scene-landing #scene-start-button{left:13%!important;top:19%!important;width:74%!important;height:65%!important}
+body.scene-landing #scene-open-hint{bottom:9%!important;max-width:90%;font-size:13px!important;background:#074b40f0!important;padding:13px 20px!important;border:1px solid #d6ad60!important}
+body:not(.scene-landing) header{height:56px!important;min-height:56px!important;padding:8px 52px!important;background:#081d2af5!important;justify-content:center!important}
+body:not(.scene-landing) header>div:first-child>div:first-child{display:none!important}
+body:not(.scene-landing) header h1{font-size:12px!important;white-space:nowrap}
+body:not(.scene-landing) header p{font-size:10px!important}
+body:not(.scene-landing) header>div:nth-child(2){margin-left:auto;padding:4px 9px!important}
+body:not(.scene-landing) header>div:nth-child(2)>span:first-child{display:none}
+body:not(.scene-landing) header>div:last-child{display:none!important}
+body:not(.scene-landing) footer{height:69px!important;min-height:69px!important;padding:7px 15px calc(7px + env(safe-area-inset-bottom))!important;background:#081d2af4!important}
+body:not(.scene-landing) footer>div:first-child{display:flex!important;gap:12px;width:100%!important;justify-content:center!important}
+body:not(.scene-landing) footer #btn-prev,body:not(.scene-landing) footer #btn-next{height:48px;flex:1;justify-content:center!important;border-radius:16px;font-size:14px}
+body:not(.scene-landing) footer #btn-prev span,body:not(.scene-landing) footer #btn-next span{display:inline!important}
+body:not(.scene-landing) footer>button,body:not(.scene-landing) footer>div:not(:first-child){display:none!important}
+body:not(.scene-landing) main{padding:8px 6px!important;min-height:0!important}
+body:not(.scene-landing) .book-stage-shadow{max-width:100%!important;max-height:100%!important}
+.page-paper-texture{padding:clamp(10px,3vw,20px)!important;background-color:var(--reader-paper)!important}
+.page-paper-texture .font-book,.page-paper-texture .font-quran{font-size:clamp(18px,5vw,22px)!important;line-height:1.32!important}
+.page-paper-texture h3{font-size:21px!important}
+.page-paper-texture h4{font-size:17px!important}
+.page-paper-texture .custom-scrollbar{overflow-y:auto!important;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+body.m-night .page-paper-texture{background:#162d33!important;color:#f8edda!important;background-image:none!important}
+body.m-night .page-paper-texture p,body.m-night .page-paper-texture h3,body.m-night .page-paper-texture h4,body.m-night .page-paper-texture strong,body.m-night .page-paper-texture li{color:#f8edda!important}
+body.m-night .page-paper-texture .bg-amber-100\/60,body.m-night .page-paper-texture .bg-stone-200\/50{background:#29464c!important;color:#f8edda!important}
+body.m-large .page-paper-texture .font-book,body.m-large .page-paper-texture .font-quran{font-size:24px!important}
+body.m-small .page-paper-texture .font-book,body.m-small .page-paper-texture .font-quran{font-size:16px!important}
+body.m-focus:not(.scene-landing) header,body.m-focus:not(.scene-landing) footer{display:none!important}
+body.m-focus:not(.scene-landing) main{height:100dvh!important;padding:56px 5px 10px!important}
+#mobile-menu-button{display:flex!important;position:fixed;top:calc(9px + env(safe-area-inset-top));left:12px;width:39px;height:39px;z-index:85;align-items:center;justify-content:center;background:#075044;color:#f5d99b;border:1px solid #d6ad607a;border-radius:11px;font-size:23px}
+body.scene-landing #mobile-menu-button{display:none!important}
+#mobile-shade{display:none;position:fixed;inset:0;background:#000a;z-index:109}
+#mobile-menu{position:fixed;right:0;top:0;bottom:0;z-index:110;width:min(88vw,350px);padding:calc(22px + env(safe-area-inset-top)) 18px 24px;overflow-y:auto;background:linear-gradient(155deg,#0d3040,#06141f);color:#f8eddb;box-shadow:-15px 0 55px #000b;transform:translateX(105%);transition:transform .25s ease;box-sizing:border-box}
+body.m-menu #mobile-menu{transform:translateX(0)}
+body.m-menu #mobile-shade{display:block}
+#mobile-menu h2{font:600 23px Georgia,serif;color:#efd08c;margin:0 0 6px}
+#mobile-menu p{color:#b9c4bc;font-size:12px;line-height:1.5}
+#mobile-menu button,#mobile-menu select{background:#16413e;color:#f8e8c8;border:1px solid #d6ad6055;border-radius:11px;padding:10px;min-height:42px}
+#mobile-menu .mr{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0}
+#mobile-menu .mg{border-top:1px solid #d6ad602c;padding-top:10px;margin-top:14px}
+#mobile-menu .mf{display:flex;gap:7px}#mobile-menu .mf>*{flex:1}
+}
+@media(min-width:768px){#mobile-menu-button,#mobile-menu,#mobile-shade{display:none!important}}
+</style>
+`;
+const controls=String.raw`
+<button id="mobile-menu-button" aria-label="Okuma ayarlarını aç">☰</button><div id="mobile-shade"></div>
+<aside id="mobile-menu" aria-label="Mobil kitap ayarları">
+<div class="mr"><div><h2>Okuma Ayarları</h2><p>Helallerde Genişlik</p></div><button id="m-close" aria-label="Kapat">✕</button></div>
+<div class="mg"><div class="mr"><b>İçindekiler</b><button id="m-toc">Aç</button></div><div class="mr"><b>Yer imi</b><button id="m-save">Kaydet</button></div><button id="m-restore">Kaydedilen sayfaya git</button></div>
+<div class="mg"><div class="mr"><b>Sayfa sesi</b><button id="m-sound">Açık ✓</button></div><div class="mr"><b>Otomatik çevirme</b><button id="m-auto">Kapalı</button></div><div class="mr"><b>Sesli anlatım</b><button id="m-read">Başlat</button></div><p>Cihazdaki Türkçe ses kullanılır. Sesli anlatım, cihazın desteğine bağlıdır.</p></div>
+<div class="mg"><div class="mr"><b>Gece modu</b><button id="m-night">Kapalı</button></div><div class="mr"><label for="m-theme">Kâğıt teması</label><select id="m-theme"><option value="#fcf8ee">Fildişi</option><option value="#edf4e9">Açık zümrüt</option><option value="#f5e9d5">Kum beji</option></select></div><div>Yazı boyutu</div><div class="mf"><button id="m-sm">A−</button><button id="m-md">Normal</button><button id="m-lg">A+</button></div></div>
+<div class="mg"><div class="mr"><b>Geniş okuma</b><button id="m-focus">Aç</button></div><div class="mr"><b>Tam ekran</b><button id="m-full">Dene</button></div><p>Safari desteklemezse geniş okuma görünümü kullanılır.</p></div>
+</aside>
+`;
+const script=String.raw`<script>
+(function(){
+const d=document,b=d.body,$=id=>d.getElementById(id);const toggle=(on)=>b.classList.toggle('m-menu',on);
+$('mobile-menu-button').onclick=()=>toggle(true);$('m-close').onclick=()=>toggle(false);$('mobile-shade').onclick=()=>toggle(false);
+$('m-toc').onclick=()=>{toggle(false);$('btn-toc').click()};
+$('m-sound').onclick=()=>{$('btn-sound').click();$('m-sound').textContent=soundEnabled?'Açık ✓':'Kapalı'};
+$('m-auto').onclick=()=>{$('btn-autoplay').click();$('m-auto').textContent=isAutoPlaying?'Durdur':'Kapalı'};
+$('m-night').onclick=()=>{$('m-night').textContent=b.classList.toggle('m-night')?'Açık':'Kapalı'};
+$('m-theme').onchange=e=>b.style.setProperty('--reader-paper',e.target.value);
+const font=v=>{b.classList.remove('m-small','m-large');if(v)b.classList.add('m-'+v)};
+$('m-sm').onclick=()=>font('small');$('m-md').onclick=()=>font('');$('m-lg').onclick=()=>font('large');
+$('m-save').onclick=()=>{try{localStorage.setItem('fikih-mobil-yer-imi',pageFlip.getCurrentPageIndex());$('m-save').textContent='Kaydedildi ✓'}catch(e){}};
+$('m-restore').onclick=()=>{let n=Number(localStorage.getItem('fikih-mobil-yer-imi'));if(n>=1&&n<=5)pageFlip.turnToPage(n);toggle(false)};
+const stop=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();$('m-read').textContent='Başlat'};
+$('m-read').onclick=()=>{if(!('speechSynthesis'in window)){alert('Sesli anlatım desteklenmiyor');return}if(speechSynthesis.speaking){stop();return}let pages=d.querySelectorAll('#book .page'),i=pageFlip.getCurrentPageIndex(),txt=pages[i]?.innerText||'';let u=new SpeechSynthesisUtterance(txt);u.lang='tr-TR';u.rate=.9;u.onend=stop;u.onerror=stop;speechSynthesis.speak(u);$('m-read').textContent='Durdur'};
+window.addEventListener('fikih-page-changed',stop);
+$('m-focus').onclick=()=>{const on=b.classList.toggle('m-focus');$('m-focus').textContent=on?'Kapat':'Aç';toggle(false);window.dispatchEvent(new Event('resize'))};
+$('m-full').onclick=async()=>{toggle(false);try{if(d.fullscreenElement)await d.exitFullscreen();else await d.documentElement.requestFullscreen()}catch(e){b.classList.add('m-focus');window.dispatchEvent(new Event('resize'))}};
+})();
+</script>;
+html=html.replace('</head>',css+'</head>').replace('</body>',controls+script+'</body>');
+document.open();document.write(html);document.close();
+}catch(e){document.getElementById('loading').textContent='Uygulama yüklenemedi. Lütfen bağlantıyı kontrol edin.';console.error(e)}
+})();
+</script></body></html>
