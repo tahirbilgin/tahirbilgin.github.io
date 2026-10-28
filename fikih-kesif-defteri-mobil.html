@@ -76,6 +76,21 @@ body.focus header,body.focus #pagebottom{display:none}
 body.focus #readstage{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 body.focus #menubtn{position:fixed;top:calc(8px + env(safe-area-inset-top));left:12px;z-index:12;opacity:.8}
 @media(min-width:768px){#loading{display:none}#app{display:none!important}}
+
+/* Mobile paper fits its full content and acts as a draggable leaf. */
+#bookcase {touch-action:none;-webkit-user-select:none;user-select:none}
+#bookcase .sheet, #bookcase .paper-content{touch-action:none;overscroll-behavior:none}
+.paper-content {overflow:hidden!important;scrollbar-width:none;padding:clamp(9px,3.2vw,18px) clamp(10px,3.3vw,19px) 11px!important;line-height:1.3!important}
+.paper-content p,.paper-content li{line-height:1.33!important;margin-bottom:.57em!important}
+.paper-content h3{font-size:1.5em!important;line-height:1.13!important;margin:0 0 .55em!important;padding-bottom:.34em!important}
+.paper-content h4{font-size:1.17em!important;line-height:1.14!important;margin:.55em 0!important}
+.paper-content .space-y-3>div,.paper-content .space-y-3\\.5>div,.paper-content .bg-amber-100\\/60,.paper-content .bg-stone-200\\/50,.paper-content .bg-amber-100\\/40{padding:.48em!important;margin-bottom:.55em!important}
+.paper-content ul{margin:.35em 0!important;padding-left:1.05em!important}
+.paper-content li{margin-bottom:.25em!important}
+.paper-content .text-\\[10px\\]{font-size:.76em!important}
+#flip-sheet{will-change:transform;backface-visibility:hidden}
+#back-sheet{backface-visibility:hidden}
+body.dragging #bookcase{cursor:grabbing}
 </style></head><body>
 <iframe id="source" src="./fikih-kesif-defteri.html" aria-hidden="true" tabindex="-1"></iframe>
 <div id="loading">Fıkıh Keşif Defteri hazırlanıyor…</div>
@@ -97,44 +112,104 @@ body.focus #menubtn{position:fixed;top:calc(8px + env(safe-area-inset-top));left
 if(matchMedia('(min-width:768px)').matches){location.replace('./fikih-kesif-defteri.html');return}
 const $=id=>document.getElementById(id),app=$('app');let pages=[],index=0,animating=false,soundOn=true,autoTimer=null,drag=null,voice=false,loaded=false;let child=null;
 const closeMenu=()=>document.body.classList.remove('menu-open');
+let requestedFont=18, flipTimer=null, lastTouch=0;
+function fitPage(sheet){
+ const el=sheet?.querySelector('.paper-content');if(!el)return;
+ el.style.fontSize=requestedFont+'px';
+ el.style.overflow='hidden';
+ const max=Math.min(23,Math.max(12,requestedFont)), min=8.2;
+ // Binary-search the largest readable size that fits the full page without vertical scrolling.
+ let low=min,high=max;
+ for(let i=0;i<17;i++){
+   const mid=(low+high)/2;
+   el.style.fontSize=mid.toFixed(3)+'px';
+   if(el.scrollHeight<=el.clientHeight+1 && el.scrollWidth<=el.clientWidth+1)low=mid;
+   else high=mid;
+ }
+ el.style.fontSize=low.toFixed(3)+'px';
+}
+function fitAll(){
+ ['current-sheet','back-sheet','flip-sheet'].forEach(id=>fitPage($(id)));
+}
+function pageMarkup(content){return '<div class="paper-content">'+content+'</div>'}
 function showPage(i){
+ if(!pages.length)return;
  index=Math.max(0,Math.min(pages.length-1,i));
- const content=pages[index].html;
- $('current-sheet').innerHTML='<div class="paper-content">'+content+'</div>';
+ $('current-sheet').innerHTML=pageMarkup(pages[index].html);
  $('headernum').textContent=(index+1)+' / '+pages.length;
  $('pagecounter').textContent=(index+1)+' / '+pages.length;
  $('prev').disabled=false;$('next').disabled=false;
+ fitPage($('current-sheet'));
+}
+let audioContext=null;
+function playFallback(cover){
+ try{
+  audioContext ||= new (window.AudioContext||window.webkitAudioContext)();
+  if(audioContext.state==='suspended')audioContext.resume();
+  const ctx=audioContext,now=ctx.currentTime,len=cover?.18:.32,n=Math.round(ctx.sampleRate*len);
+  const buf=ctx.createBuffer(1,n,ctx.sampleRate),arr=buf.getChannelData(0);
+  for(let i=0;i<n;i++){const t=i/n;arr[i]=(Math.random()*2-1)*(cover?Math.exp(-t*18):Math.sin(Math.PI*t)**.8)}
+  const node=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+  node.buffer=buf;filter.type=cover?'lowpass':'bandpass';filter.frequency.value=cover?420:1350;
+  gain.gain.value=cover?.23:.14;node.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
+  node.start(now);node.stop(now+len);
+ }catch(e){}
 }
 function turnSound(cover=false){
  if(!soundOn)return;
  try{
-  if(cover&&child?.triggerCoverSound){child.triggerCoverSound('close');return}
-  if(child?.triggerPaperTurnSound){child.triggerPaperTurnSound();return}
+  if(cover&&typeof child?.triggerCoverSound==='function'){child.triggerCoverSound('close');return}
+  if(!cover&&typeof child?.triggerPaperTurnSound==='function'){child.triggerPaperTurnSound();return}
  }catch(e){}
+ playFallback(cover);
 }
 function stopSpeech(){if('speechSynthesis'in window)speechSynthesis.cancel();$('speak').textContent='Başlat'}
+function resetLeaf(){
+ clearTimeout(flipTimer);
+ const leaf=$('flip-sheet');leaf.style.transition='none';leaf.style.transform='none';leaf.style.display='none';leaf.style.filter='';
+ $('back-sheet').innerHTML='';drag=null;animating=false;document.body.classList.remove('dragging');
+}
 function toDesk(){
  if(animating)return;
- turnSound(true); stopSpeech();
+ resetLeaf();turnSound(true);stopSpeech();
  app.classList.remove('reading');
  $('current-sheet').innerHTML='';index=0;
  if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('auto').textContent='Kapalı'}
 }
+function prepareLeaf(dir){
+ if(animating||!pages.length)return false;
+ const dest=index+dir;
+ if(dest<0||dest>=pages.length)return false;
+ const leaf=$('flip-sheet');
+ $('back-sheet').innerHTML=pageMarkup(pages[dest].html);
+ leaf.className='sheet '+(dir>0?'forward':'backward');
+ leaf.innerHTML=pageMarkup(pages[index].html);
+ leaf.style.display='block';leaf.style.transition='none';leaf.style.filter='brightness(.96)';
+ leaf.style.transform='rotateY(0deg)';
+ fitPage($('back-sheet'));fitPage(leaf);
+ animating=true;
+ return true;
+}
+function finishLeaf(dir,commit,initialAngle){
+ const leaf=$('flip-sheet');
+ const target=commit?(dir>0?-178:178):0;
+ const duration=commit?Math.max(170,Math.round(520*(1-Math.abs(initialAngle)/180))):210;
+ leaf.style.transition='transform '+duration+'ms cubic-bezier(.18,.68,.21,1),filter '+duration+'ms ease';
+ leaf.style.transform='rotateY('+target+'deg)';
+ leaf.style.filter='brightness('+(commit?.85:1)+')';
+ clearTimeout(flipTimer);
+ flipTimer=setTimeout(()=>{
+  if(commit)showPage(index+dir);
+  resetLeaf();
+ },duration+45);
+ if(commit)turnSound(false);
+}
 function change(dir){
  if(animating)return;
- const n=index+dir;
- if(n<0||n>=pages.length){toDesk();return}
- animating=true;stopSpeech();
- const next=pages[n].html;
- $('back-sheet').innerHTML='<div class="paper-content">'+next+'</div>';
- const leaf=$('flip-sheet');leaf.className='sheet '+(dir>0?'forward':'backward');leaf.innerHTML='<div class="paper-content">'+pages[index].html+'</div>';
- leaf.style.display='block';leaf.style.transition='none';leaf.style.transform=dir>0?'rotateY(0deg)':'rotateY(0deg)';
- $('bookcase').offsetWidth;
- leaf.style.transition='transform 600ms cubic-bezier(.23,.64,.18,1),filter 600ms';
- leaf.style.transform=dir>0?'rotateY(-178deg)':'rotateY(178deg)';
- leaf.style.filter='brightness(.84)';
- turnSound(false);
- setTimeout(()=>{leaf.style.display='none';leaf.style.transform='none';leaf.style.filter='';showPage(n);animating=false},625);
+ if(index+dir<0||index+dir>=pages.length){toDesk();return}
+ if(!prepareLeaf(dir))return;
+ stopSpeech();
+ requestAnimationFrame(()=>requestAnimationFrame(()=>finishLeaf(dir,true,0)));
 }
 function loadSource(){
  if(loaded)return;
@@ -151,18 +226,65 @@ function loadSource(){
  $('scene').style.backgroundSize='cover';$('scene').style.backgroundPosition='50% center';
  $('toclist').innerHTML=pages.map((p,i)=>'<button data-jump="'+i+'" style="display:block;width:100%;text-align:left;margin:6px 0;padding:11px;border:1px solid #cdaa6c66;background:#103d3c;color:#fff2cd;border-radius:9px">'+(i+1)+'. '+p.title+'</button>').join('');
  $('toclist').querySelectorAll('button').forEach(b=>b.onclick=()=>{showPage(+b.dataset.jump);closeMenu()});
- showPage(0);loaded=true;app.classList.add('ready');$('loading').hidden=true;
+ showPage(0);loaded=true;app.classList.add('ready');$('loading').hidden=true;document.fonts?.ready.then(fitAll);
  }catch(e){console.warn('İçerik yüklenemedi',e)}
 }
 $('source').addEventListener('load',loadSource);
 let attempts=0;const poll=setInterval(()=>{if(loaded){clearInterval(poll);return}loadSource();if(++attempts>80){clearInterval(poll);$('loading').textContent='Kitap yüklenemedi. İnternet bağlantısını kontrol edip sayfayı yenileyin.'}},220);
-function openBook(){app.classList.add('reading');showPage(0);$('current-sheet').querySelector('.paper-content')?.scrollTo(0,0)}
+function openBook(){app.classList.add('reading');showPage(0);requestAnimationFrame(fitAll)}
 $('landing-tap').onclick=openBook;$('landing-button').onclick=openBook;
 $('prev').onclick=()=>change(-1);$('next').onclick=()=>change(1);
 const stage=$('bookcase');
-stage.addEventListener('pointerdown',e=>{if(animating||e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,t:performance.now()};stage.setPointerCapture?.(e.pointerId)});
-stage.addEventListener('pointerup',e=>{if(!drag||animating)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.1)change(dx<0?1:-1)});
-stage.addEventListener('pointercancel',()=>drag=null);
+stage.addEventListener('pointerdown',e=>{
+ if(animating||!app.classList.contains('reading')||e.button>0)return;
+ drag={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now(),dir:0,angle:0,started:false,ending:false};
+ try{stage.setPointerCapture(e.pointerId)}catch(err){}
+});
+stage.addEventListener('pointermove',e=>{
+ const d=drag;if(!d||d.id!==e.pointerId||d.ending)return;
+ const dx=e.clientX-d.x,dy=e.clientY-d.y;
+ if(!d.started){
+  if(Math.abs(dx)<8)return;
+  if(Math.abs(dy)>Math.abs(dx)*1.6)return;
+  d.dir=dx<0?1:-1;
+  if(index+d.dir<0||index+d.dir>=pages.length){
+    d.boundary=true;return;
+  }
+  if(!prepareLeaf(d.dir))return;
+  d.started=true;document.body.classList.add('dragging');stopSpeech();
+ }
+ if(d.boundary)return;
+ e.preventDefault();
+ const width=Math.max(160,stage.clientWidth);
+ const ratio=Math.max(0,Math.min(.995,Math.abs(dx)/width));
+ const a=(d.dir>0?-1:1)*ratio*177;
+ d.angle=a;
+ const leaf=$('flip-sheet');
+ leaf.style.transform='rotateY('+a+'deg)';
+ leaf.style.filter='brightness('+(1-ratio*.19)+')';
+});
+function pointerEnd(e,cancelled=false){
+ const d=drag;if(!d||d.id!==e.pointerId)return;
+ const dx=e.clientX-d.x,dy=e.clientY-d.y;
+ if(d.boundary){
+   drag=null;
+   if(!cancelled&&Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy))toDesk();
+   return;
+ }
+ if(!d.started){
+   drag=null;
+   // A quick flick can finish before a move event is emitted on mobile Safari.
+   if(!cancelled&&Math.abs(dx)>28&&Math.abs(dx)>Math.abs(dy)*1.05)change(dx<0?1:-1);
+   return;
+ }
+ const speed=Math.abs(dx)/Math.max(16,performance.now()-d.t);
+ const commit=!cancelled&&(Math.abs(dx)>stage.clientWidth*.23||speed>.42);
+ d.ending=true;drag=null;document.body.classList.remove('dragging');
+ finishLeaf(d.dir,commit,d.angle);
+}
+stage.addEventListener('pointerup',e=>pointerEnd(e));
+stage.addEventListener('pointercancel',e=>pointerEnd(e,true));
+stage.addEventListener('lostpointercapture',e=>{if(drag&&drag.id===e.pointerId)pointerEnd(e,true)});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();return}if(!app.classList.contains('reading'))return;if(e.key==='ArrowRight')change(1);if(e.key==='ArrowLeft')change(-1)});
 $('menubtn').onclick=()=>document.body.classList.add('menu-open');$('closemenu').onclick=closeMenu;$('menuBackdrop').onclick=closeMenu;
 $('toc').onclick=()=>{$('toclist').hidden=!$('toclist').hidden};
@@ -173,8 +295,9 @@ $('auto').onclick=()=>{if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('
 $('speak').onclick=()=>{if(!('speechSynthesis'in window))return alert('Tarayıcınız sesli anlatımı desteklemiyor');if(speechSynthesis.speaking){stopSpeech();return}let v=new SpeechSynthesisUtterance($('current-sheet').innerText);v.lang='tr-TR';v.rate=.86;v.onend=stopSpeech;v.onerror=stopSpeech;speechSynthesis.speak(v);$('speak').textContent='Durdur'};
 $('night').onclick=()=>{$('night').textContent=document.body.classList.toggle('night')?'Açık':'Kapalı'};
 $('theme').onchange=e=>document.documentElement.style.setProperty('--paper',e.target.value);
-$('sm').onclick=()=>document.documentElement.style.setProperty('--font','16px');$('md').onclick=()=>document.documentElement.style.setProperty('--font','18px');$('lg').onclick=()=>document.documentElement.style.setProperty('--font','22px');
+$('sm').onclick=()=>{requestedFont=16;fitAll()};$('md').onclick=()=>{requestedFont=18;fitAll()};$('lg').onclick=()=>{requestedFont=22;fitAll()};
 $('focus').onclick=()=>{const a=document.body.classList.toggle('focus');$('focus').textContent=a?'Kapat':'Aç';closeMenu()};
 $('full').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch(e){document.body.classList.add('focus');$('focus').textContent='Kapat'}closeMenu()};
+window.addEventListener('resize',()=>{if(app.classList.contains('reading')&&!animating)fitAll()});
 })();
 </script></body></html>
