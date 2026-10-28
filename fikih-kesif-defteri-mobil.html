@@ -28,7 +28,10 @@ button,select{font:inherit}button{cursor:pointer}button:focus-visible{outline:2p
 #reader-title small{display:block;font-size:10px;color:#cbb890}
 #counter{font-size:12px;min-width:52px;text-align:right}
 #book-stage{flex:1;min-height:0;overflow:hidden;display:flex;justify-content:center;align-items:center;position:relative;padding:7px 10px 8px}
-#book{margin:auto;filter:drop-shadow(0px 19px 19px #000a)}
+#book{position:relative!important;margin:0!important;flex-shrink:0;filter:drop-shadow(0px 19px 19px #000a);will-change:transform;transform:translate3d(0,0,0)}
+#book-stage{isolation:isolate}
+#book .stf__parent{overflow:visible!important}
+#book-stage .page{touch-action:none}
 .page{background:#f9f1df;color:var(--ink);box-sizing:border-box;overflow:hidden}
 .page.paper{background-color:var(--paper);background-image:linear-gradient(90deg,#a490692e,transparent 5%,transparent 94%,#ac896a33),radial-gradient(ellipse at 50% 45%,#ffffff29,#9f79451a 100%);box-shadow:inset 0 0 0 1px #c8a6787a}
 .paper-area{position:absolute;inset:13px 14px 20px;overflow:hidden;font:var(--paperfont)/1.37 "Crimson Pro",Georgia,serif;word-break:normal;overflow-wrap:break-word}
@@ -170,6 +173,37 @@ function paginate(contentNodes,w,h){
  for(const el of contentNodes)for(const n of buildUnits(el))push(n);
  flush();measure.remove();return output;
 }
+
+let centeringFrame=0,bookOffset=0;
+function locateReadablePage(){
+ const stage=$('book-stage'),root=$('book');
+ if(!stage||!root||!flip||!app.classList.contains('reading'))return;
+ const candidates=[...root.querySelectorAll('.page.paper')];
+ const visible=candidates.filter(el=>{
+   const r=el.getBoundingClientRect(),st=stage.getBoundingClientRect();
+   return r.width>70&&r.height>150&&r.right>st.left-30&&r.left<st.right+30;
+ });
+ // Choose the page closest to the visible reader's physical page.
+ const st=stage.getBoundingClientRect();
+ const center=st.left+st.width/2;
+ const desired=visible.find(el=>el.classList.contains('stf__item'))||visible.reduce((best,el)=>{
+   if(!best)return el;
+   const a=el.getBoundingClientRect(),b=best.getBoundingClientRect();
+   const aa=Math.abs((a.left+a.right)/2-center),bb=Math.abs((b.left+b.right)/2-center);
+   return aa<bb?el:best
+ },null);
+ if(!desired)return;
+ const rect=desired.getBoundingClientRect();
+ const delta=center-(rect.left+rect.width/2);
+ if(Math.abs(delta)>3 && Math.abs(delta)<stage.clientWidth*1.8){
+    bookOffset+=delta;
+    root.style.transform='translate3d('+bookOffset.toFixed(1)+'px,0,0)';
+ }
+}
+function adjustBook(){
+ cancelAnimationFrame(centeringFrame);
+ centeringFrame=requestAnimationFrame(()=>requestAnimationFrame(locateReadablePage));
+}
 function createBook(start=1){
  if(typeof St==='undefined'||!St.PageFlip)throw Error('3D sayfa motoru yüklenemedi');
  const stage=$('book-stage'),width=Math.max(210,Math.floor(Math.min(stage.clientWidth-20,530))),height=Math.max(330,Math.floor(stage.clientHeight-16));
@@ -178,20 +212,21 @@ function createBook(start=1){
  for(const section of chapters)content.push(...paginate(section.nodes,padW,padH));
  if(!content.length)throw Error('Ders sayfaları hazırlanamadı');
  leafNodes=[makeSheetHTML('',true),...content.map(html=>makeSheetHTML(html)),makeSheetHTML('',true)];
- const container=$('book');if(flip){try{flip.destroy()}catch(e){}flip=null}container.replaceChildren(...leafNodes);
- flip=new St.PageFlip(container,{width,height,size:'fixed',drawShadow:true,maxShadowOpacity:.75,flippingTime:630,showCover:false,usePortrait:true,autoSize:true,mobileScrollSupport:false,clickEventForward:true,swipeDistance:20,startPage:Math.min(Math.max(1,start),leafNodes.length-2)});
+ const container=$('book');if(flip){try{flip.destroy()}catch(e){}flip=null}bookOffset=0;container.style.transform='translate3d(0,0,0)';container.replaceChildren(...leafNodes);
+ flip=new St.PageFlip(container,{width,height,size:'fixed',drawShadow:true,maxShadowOpacity:.75,flippingTime:630,showCover:false,usePortrait:true,autoSize:false,mobileScrollSupport:false,clickEventForward:true,swipeDistance:20,startPage:Math.min(Math.max(1,start),leafNodes.length-2)});
  flip.loadFromHTML(container.querySelectorAll('.page'));
  currentPage=flip.getCurrentPageIndex();
  const total=leafNodes.length-2;
  function updateCounter(i){let num=Math.max(1,Math.min(total,i));$('counter').textContent=num+' / '+total;$('page-count').textContent=num+' / '+total}
  updateCounter(currentPage);
+ adjustBook();setTimeout(adjustBook,100);setTimeout(adjustBook,360);
  flip.on('flip',e=>{
   let i=e.data,now=performance.now();
-  currentPage=i;updateCounter(i);stopVoice();
+  currentPage=i;updateCounter(i);stopVoice();setTimeout(adjustBook,80);setTimeout(adjustBook,680);
   if(now-lastFlipAt>190){paperSound(i===0||i===leafNodes.length-1);lastFlipAt=now}
   if(i===0||i===leafNodes.length-1){setTimeout(()=>{if(currentPage===i)gotoDesk()},Math.max(330,640))}
  });
- flip.on('changeState',e=>{busy=['flipping','user_fold'].includes(e.data)});
+ flip.on('changeState',e=>{busy=['flipping','user_fold'].includes(e.data);if(e.data==='read')setTimeout(adjustBook,50)});
  $('contents-list').innerHTML=chapters.map((c,i)=>'<button data-chapter="'+i+'">'+(i+1)+'. '+c.title+'</button>').join('');
  $('contents-list').querySelectorAll('button').forEach(btn=>btn.onclick=()=>{const t=chapters[+btn.dataset.chapter].firstPage||1;flip.flip(t);closeMenu()});
 }
@@ -217,7 +252,7 @@ function readOriginal(){
 function showError(e){console.error(e);$('loading').hidden=false;$('loading').innerHTML='<p>Kitap açılamadı. Lütfen internet bağlantınızı kontrol ederek sayfayı yenileyin.</p>'}
 const src=$('source');src.addEventListener('load',readOriginal);
 let polls=0;const timer=setInterval(()=>{if(initialized){clearInterval(timer);return}readOriginal();if(++polls>80){clearInterval(timer);showError(Error('Kaynak zaman aşımı'))}},250);
-function openBook(){if(!flip){showError(Error('Sayfalar henüz hazır değil'));return}app.classList.add('reading');try{flip.turnToPage(1)}catch(e){}}
+function openBook(){if(!flip){showError(Error('Sayfalar henüz hazır değil'));return}app.classList.add('reading');try{flip.turnToPage(1)}catch(e){}adjustBook();setTimeout(adjustBook,100)}
 $('landing-hit').onclick=openBook;$('open-btn').onclick=openBook;
 $('prev').onclick=()=>{if(!flip||busy)return;if(currentPage<=1){paperSound(true);gotoDesk()}else flip.flipPrev()};
 $('next').onclick=()=>{if(!flip||busy)return;flip.flipNext()};
