@@ -1,303 +1,240 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#09232b"><title>Fıkıh Keşif Defteri • Mobil Okuyucu</title>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081b22"><title>Fıkıh Keşif Defteri | Mobil Özel Baskı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Crimson+Pro:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-:root{--gold:#d6ad60;--green:#064b40;--paper:#fcf6e9;--ink:#273132;--font:18px}
-*{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overscroll-behavior:none;background:#061521;font-family:Inter,system-ui,sans-serif}
-button,select{font:inherit;cursor:pointer}
-button:focus-visible{outline:3px solid #ffd47a;outline-offset:3px}
-#source{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-5px;top:-5px}
-#loading{position:fixed;inset:0;z-index:40;display:grid;place-items:center;color:#efd7a4;background:#0b1930;font-size:15px;text-align:center;padding:30px}
-#loading[hidden]{display:none}
-#app{display:none;position:relative;height:100dvh;width:100%;overflow:hidden}
-#app.ready{display:block}
-#landing{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#244a50,#071521 75%)}
-#scene{position:absolute;inset:0;background-position:center;background-size:cover;filter:saturate(1.08)}
-#landing:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#05101b15 0%,transparent 49%,#02131d92 100%)}
-#landing-button{z-index:2;position:relative;bottom:calc(8dvh + env(safe-area-inset-bottom));border:1px solid #e8c783;border-radius:16px;color:#f6e1af;background:linear-gradient(135deg,#0b5747,#062f32);padding:17px 37px;box-shadow:0 15px 32px #0009;font-family:Georgia,serif;font-size:21px;letter-spacing:.01em}
-#landing-tap{position:absolute;z-index:1;inset:17% 12% 24%;border:0;background:transparent}
-#reading{position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 80%,#244648,#081923 76%)}
-#app.reading #reading{display:flex}
-#app.reading #landing{display:none}
-header{height:54px;min-height:54px;display:flex;align-items:center;gap:10px;padding:6px 12px;background:#061823eb;border-bottom:1px solid #d6ad6040;color:#f4e0b8;z-index:4}
-.icon{width:42px;height:42px;border:1px solid #e1c27b45;border-radius:12px;background:#0c403b;color:#f7dfac;font-size:23px;display:grid;place-items:center;flex-shrink:0}
-header .identity{flex:1;min-width:0;text-align:center}
-header strong{display:block;font:600 15px Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-header small{font-size:11px;color:#d5c4a4}
-header .num{font-size:12px;white-space:nowrap;color:#dfbe7b}
-#readstage{flex:1;min-height:0;display:flex;align-items:stretch;justify-content:center;padding:9px 9px 8px;position:relative;perspective:1350px;overflow:hidden}
-#bookcase{position:relative;width:min(100%,560px);height:100%;border-radius:5px 10px 12px 5px;background:#f6eedc;box-shadow:0 24px 36px #0009,8px 5px 0 #003c39;transform-style:preserve-3d;overflow:hidden}
-#bookcase:before{content:"";position:absolute;top:0;bottom:0;left:0;width:9px;background:linear-gradient(90deg,#927a50a8,transparent);z-index:2;pointer-events:none}
-#bookcase:after{content:"";position:absolute;top:0;bottom:0;right:0;width:5px;background:linear-gradient(90deg,transparent,#d5bd8a);z-index:2;pointer-events:none}
-.sheet{position:absolute;inset:0;background:var(--paper);transform-style:preserve-3d;backface-visibility:hidden;overflow:hidden}
-.paper-content{position:absolute;inset:0;overflow-y:auto;padding:clamp(19px,5.5vw,30px) clamp(18px,5vw,30px) 32px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:thin;line-height:1.54;color:var(--ink);font:var(--font)/1.55 Georgia,serif}
-.paper-content h3,.paper-content h4{font-family:Georgia,serif;color:#174c45;font-weight:700;line-height:1.24;margin:0 0 18px}
-.paper-content h3{font-size:clamp(24px,7vw,32px);border-bottom:1px solid #be955e60;padding-bottom:12px;text-align:center}
-.paper-content h4{font-size:21px;margin-top:23px}
-.paper-content p{line-height:1.59;margin:0 0 15px}
-.paper-content strong{color:#124e40}
-.paper-content ul{padding-left:21px}
-.paper-content li{margin:0 0 11px;line-height:1.47}
-.paper-content .space-y-3>div,.paper-content .space-y-3\.5>div,.paper-content .bg-amber-100\/60,.paper-content .bg-stone-200\/50,.paper-content .bg-amber-100\/40{background:#f0e6d3!important;color:#2f3331!important;border-left:3px solid #bc9355!important;padding:14px!important;border-radius:6px;margin-bottom:14px}
-.paper-content .text-xs,.paper-content .text-sm,.paper-content .font-book,.paper-content .font-quran{font-size:inherit!important;line-height:inherit!important;font-family:Georgia,serif!important}
-.paper-content .font-title{font-family:Georgia,serif!important}
-.paper-content .text-\[10px\]{font-size:12px!important}
-.paper-content .font-quran{font-family:Amiri,Georgia,serif!important}
-.paper-content span,.paper-content div,.paper-content p{max-width:100%;overflow-wrap:break-word}
-.paper-content .border-t{display:none}
-.paper-content sup{font-size:11px;color:#806847}
-.sheet-shadow{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#6552392e 0%,transparent 8%,transparent 87%,#5a421228 100%);z-index:2}
-#flip-sheet{display:none;z-index:9;transform-origin:left center;box-shadow:14px 2px 35px #0005;pointer-events:none}
-#flip-sheet.forward{transform-origin:left center}
-#flip-sheet.backward{transform-origin:right center}
-#flip-sheet .paper-content{filter:none}
-#flip-sheet:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#ffffff00,#9978544d 60%,#ffffffab);opacity:var(--fold,0)}
-#pagebottom{height:68px;min-height:68px;display:flex;align-items:center;gap:13px;justify-content:space-between;padding:6px 17px calc(6px + env(safe-area-inset-bottom));color:#e8d3a4;background:#071d28}
-.nav{display:grid;place-items:center;border:1px solid #d6ad6070;border-radius:50%;width:49px;height:49px;background:linear-gradient(145deg,#0d564a,#092d31);color:#ffe4b2;font-size:28px}
-.nav:disabled{opacity:.35}
-#pagecounter{font-size:13px;font-weight:600;letter-spacing:.06em}
-#gestureTip{position:absolute;z-index:3;bottom:24px;left:50%;transform:translateX(-50%);padding:7px 14px;background:#103b38de;color:#f9e7bf;font-size:11px;border-radius:22px;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .3s}
-#menuBackdrop{position:fixed;inset:0;background:#0009;z-index:18;display:none}
-#menu{position:fixed;right:0;top:0;bottom:0;z-index:19;width:min(88vw,390px);overflow-y:auto;background:linear-gradient(160deg,#0d3540,#061724);color:#f7ebd4;transform:translateX(105%);transition:transform .25s;padding:calc(25px + env(safe-area-inset-top)) 20px 28px;box-shadow:-15px 0 50px #000b}
+:root{--gold:#d6ad60;--emerald:#075344;--paper:#f9f1df;--ink:#243330;--paperfont:16px}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091826;color:#f5e2b8;font-family:Inter,system-ui,sans-serif}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible{outline:2px solid #edc37b;outline-offset:2px}
+#source{position:absolute;left:-100px;top:-100px;width:1px;height:1px;opacity:0;pointer-events:none;border:0}
+#app{width:100%;height:100dvh;display:none;overflow:hidden;position:relative}
+#app.ready{display:block}#loading{position:fixed;inset:0;display:grid;place-items:center;background:#0b1d2a;color:#e7d6b7;z-index:50;font-size:14px;text-align:center;padding:25px}#loading[hidden]{display:none}
+#landing{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse at 45% 43%,#183d47,#071523)}
+#landing-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(1.09);transform:scale(1.025)}
+#landing::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(#05132240 0%,transparent 38%,#02121d9e 100%);pointer-events:none}
+#landing-caption{position:absolute;z-index:2;left:0;right:0;top:calc(30px + env(safe-area-inset-top));text-align:center;text-shadow:0 2px 15px #000}
+#landing-caption h1{font:600 clamp(27px,8vw,38px)/1.1 Georgia,serif;letter-spacing:.01em;color:#f9dfac;margin:0}
+#landing-caption p{font-size:13px;color:#f2d59c;letter-spacing:.12em;margin:10px}
+#landing-hit{position:absolute;inset:19% 7% 20%;z-index:2;border:0;background:transparent}
+#open-btn{position:absolute;bottom:calc(7% + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:3;color:#f5d99c;border:1px solid #f3c675;border-radius:999px;background:linear-gradient(135deg,#106b57,#05342f);padding:17px 42px;box-shadow:0 14px 36px #000a;font:600 20px Georgia,serif;white-space:nowrap}
+#reader{position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 55%,#1b3e43,#091923 80%)}
+#app.reading #reader{display:flex}#app.reading #landing{display:none}
+#reader-header{height:52px;min-height:52px;display:flex;align-items:center;gap:8px;padding:6px 12px;color:#f6ddb1;background:#071a25f5;border-bottom:1px solid #d6ad6040;z-index:8}
+.round-btn{width:39px;height:39px;border:1px solid #d6ad6060;border-radius:11px;color:#f3d49a;background:#0b413c;display:grid;place-items:center;font-size:22px}
+#reader-title{text-align:center;flex:1;min-width:0}
+#reader-title b{display:block;font:600 14px Georgia,serif;white-space:nowrap}
+#reader-title small{display:block;font-size:10px;color:#cbb890}
+#counter{font-size:12px;min-width:52px;text-align:right}
+#book-stage{flex:1;min-height:0;overflow:hidden;display:flex;justify-content:center;align-items:center;position:relative;padding:7px 10px 8px}
+#book{margin:auto;filter:drop-shadow(0px 19px 19px #000a)}
+.page{background:#f9f1df;color:var(--ink);box-sizing:border-box;overflow:hidden}
+.page.paper{background-color:var(--paper);background-image:linear-gradient(90deg,#a490692e,transparent 5%,transparent 94%,#ac896a33),radial-gradient(ellipse at 50% 45%,#ffffff29,#9f79451a 100%);box-shadow:inset 0 0 0 1px #c8a6787a}
+.paper-area{position:absolute;inset:13px 14px 20px;overflow:hidden;font:var(--paperfont)/1.37 "Crimson Pro",Georgia,serif;word-break:normal;overflow-wrap:break-word}
+.paper-area::after{content:"";position:absolute;pointer-events:none;inset:0;border:1px solid #cda86d47}
+.paper-area h3{font:700 1.5em/1.13 Georgia,serif;color:#15564a;text-align:center;margin:0 0 .55em;padding-bottom:.32em;border-bottom:1px solid #b48a5360}
+.paper-area h4{font:700 1.15em/1.18 Georgia,serif;color:#15564a;margin:.56em 0 .38em}
+.paper-area p{margin:0 0 .57em;line-height:1.36}
+.paper-area strong{color:#145043}
+.paper-area ul{margin:.35em 0;padding-left:1.1em}.paper-area li{margin:0 0 .31em}
+.paper-area .text-xs,.paper-area .text-sm,.paper-area .font-book,.paper-area .font-quran{font-size:inherit!important;line-height:inherit!important;font-family:inherit!important}
+.paper-area .font-title{font-family:Georgia,serif!important}
+.paper-area .font-quran{font-family:Amiri,Georgia,serif!important}
+.paper-area .bg-amber-100\/60,.paper-area .bg-stone-200\/50,.paper-area .bg-amber-100\/40,.paper-area .space-y-3>div,.paper-area .space-y-3\.5>div{padding:.52em!important;margin:.32em 0!important;background:#efe3cd!important;color:#243330!important;border-radius:3px;border-left:2px solid #c69859!important}
+.paper-area .text-\[10px\]{font-size:.72em!important}
+.paper-area .border-t{display:none}
+.paper-area sup{font-size:.63em}
+.paper-area span,.paper-area div{max-width:100%}
+.paper-area [class*="absolute"]{position:static!important}
+.page.leather{background:radial-gradient(ellipse at 35% 20%,#147865,#05382f 75%);color:#eed3a0;border:5px solid #06473b;box-shadow:inset 0 0 30px #0008}
+.leather-frame{position:absolute;inset:15px;border:2px double #d6ad608a;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-direction:column;font:600 24px Georgia,serif;color:#f2d39a;text-align:center;gap:14px}
+.leather-frame:before,.leather-frame:after{content:"❖";color:#caa55c;font-size:20px}
+#reader-footer{min-height:66px;height:66px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 17px calc(6px + env(safe-area-inset-bottom));background:#071a25f7;border-top:1px solid #d6ad6040;z-index:7}
+#reader-footer button{border:1px solid #e0bb7f80;border-radius:50%;width:46px;height:46px;background:#0a5145;color:#f6db9d;font-size:27px}
+#page-count{font-size:13px;border-radius:22px;padding:8px 17px;background:#182d31;border:1px solid #c69e6178;letter-spacing:.06em}
+#veil{display:none;position:fixed;inset:0;background:#000a;z-index:24}body.menu-open #veil{display:block}
+#menu{position:fixed;right:0;top:0;bottom:0;width:min(89vw,390px);z-index:25;background:linear-gradient(155deg,#0d3237,#061720);box-shadow:-18px 0 60px #000b;transform:translateX(105%);transition:transform .25s ease;overflow-y:auto;padding:calc(24px + env(safe-area-inset-top)) 20px 30px;color:#f4dfb5}
 body.menu-open #menu{transform:translateX(0)}
-body.menu-open #menuBackdrop{display:block}
-.menu-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.menu-head h2{margin:0;color:#edcb89;font:600 23px Georgia,serif}
-.group{border-top:1px solid #d6ad6040;padding:12px 0;display:grid;gap:12px}
-.setting{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
-.setting button,.setting select,.group>button,.sizes button{color:#ffe9bf;background:#15423f;border:1px solid #d6ad6060;border-radius:10px;padding:11px;font-size:13px}
-.sizes{display:flex;gap:8px}.sizes button{flex:1}
-#menu p{font-size:12px;color:#c9c6be;line-height:1.5}
-body.night{--paper:#142d30;--ink:#f4ead7}
-body.night .paper-content h3,body.night .paper-content h4,body.night .paper-content strong{color:#dec58f}
-body.night .paper-content .space-y-3>div,body.night .paper-content .space-y-3\.5>div,body.night .paper-content .bg-amber-100\/60,body.night .paper-content .bg-stone-200\/50{background:#204247!important;color:#f6ead4!important}
-body.focus header,body.focus #pagebottom{display:none}
-body.focus #readstage{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-body.focus #menubtn{position:fixed;top:calc(8px + env(safe-area-inset-top));left:12px;z-index:12;opacity:.8}
-@media(min-width:768px){#loading{display:none}#app{display:none!important}}
-
-/* Mobile paper fits its full content and acts as a draggable leaf. */
-#bookcase {touch-action:none;-webkit-user-select:none;user-select:none}
-#bookcase .sheet, #bookcase .paper-content{touch-action:none;overscroll-behavior:none}
-.paper-content {overflow:hidden!important;scrollbar-width:none;padding:clamp(9px,3.2vw,18px) clamp(10px,3.3vw,19px) 11px!important;line-height:1.3!important}
-.paper-content p,.paper-content li{line-height:1.33!important;margin-bottom:.57em!important}
-.paper-content h3{font-size:1.5em!important;line-height:1.13!important;margin:0 0 .55em!important;padding-bottom:.34em!important}
-.paper-content h4{font-size:1.17em!important;line-height:1.14!important;margin:.55em 0!important}
-.paper-content .space-y-3>div,.paper-content .space-y-3\\.5>div,.paper-content .bg-amber-100\\/60,.paper-content .bg-stone-200\\/50,.paper-content .bg-amber-100\\/40{padding:.48em!important;margin-bottom:.55em!important}
-.paper-content ul{margin:.35em 0!important;padding-left:1.05em!important}
-.paper-content li{margin-bottom:.25em!important}
-.paper-content .text-\\[10px\\]{font-size:.76em!important}
-#flip-sheet{will-change:transform;backface-visibility:hidden}
-#back-sheet{backface-visibility:hidden}
-body.dragging #bookcase{cursor:grabbing}
+#menu h2{font:600 25px Georgia,serif;margin:0}#menu p{font-size:12px;line-height:1.5;color:#c1c5be}
+.menu-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;font-size:14px}
+.menu-block{border-top:1px solid #d6ad6040;margin-top:17px;padding-top:10px}
+#menu button,#menu select{border:1px solid #d6ad6050;border-radius:10px;background:#16473d;color:#f2dfb5;padding:10px;font-size:13px}
+#menu #menu-close{font-size:19px}
+#contents-list button{width:100%;margin:4px 0;text-align:left}
+body.night{--paper:#1a3537;--ink:#f6efde}
+body.night .paper-area h3,body.night .paper-area h4,body.night .paper-area strong{color:#dcb873}
+body.night .paper-area .bg-amber-100\/60,body.night .paper-area .bg-stone-200\/50,body.night .paper-area .bg-amber-100\/40{background:#294b4b!important;color:#f6efde!important}
+body.focus #reader-header,body.focus #reader-footer{display:none}
+body.focus #book-stage{padding-top:calc(42px + env(safe-area-inset-top));padding-bottom:env(safe-area-inset-bottom)}
+body.focus #mobile-menu-quick{display:block}
+#mobile-menu-quick{display:none;position:fixed;z-index:12;top:calc(10px + env(safe-area-inset-top));left:12px}
+#loading p{max-width:300px}
 </style></head><body>
-<iframe id="source" src="./fikih-kesif-defteri.html" aria-hidden="true" tabindex="-1"></iframe>
-<div id="loading">Fıkıh Keşif Defteri hazırlanıyor…</div>
-<div id="app"><section id="landing"><div id="scene"></div><button id="landing-tap" aria-label="Kitabı aç"></button><button id="landing-button">📖 Kitabı Aç</button></section>
-<section id="reading">
-<header><button class="icon" id="menubtn" aria-label="Menüyü aç">☰</button><div class="identity"><strong>Fıkıh Keşif Defteri</strong><small>Helallerde Genişlik</small></div><span id="headernum" class="num">1 / 4</span></header>
-<div id="readstage"><div id="bookcase"><div id="back-sheet" class="sheet"></div><div id="current-sheet" class="sheet"></div><div id="flip-sheet" class="sheet"></div><div class="sheet-shadow"></div></div><div id="gestureTip">Sayfayı sağa veya sola kaydır</div></div>
-<div id="pagebottom"><button id="prev" class="nav" aria-label="Önceki sayfa">‹</button><span id="pagecounter">1 / 4</span><button id="next" class="nav" aria-label="Sonraki sayfa">›</button></div>
-</section></div>
-<div id="menuBackdrop"></div><aside id="menu" aria-label="Okuma ayarları">
-<div class="menu-head"><div><h2>Okuma Ayarları</h2><p>Helallerde Genişlik</p></div><button id="closemenu" class="icon" aria-label="Kapat">×</button></div>
-<div class="group"><div class="setting">İçindekiler <button id="toc">Göster</button></div><div id="toclist" hidden></div><div class="setting">Yer imi <button id="bookmark">Kaydet</button></div><button id="restore">Kaydedilen sayfaya git</button></div>
-<div class="group"><div class="setting">Sayfa çevirme sesi <button id="sound">Açık ✓</button></div><div class="setting">Otomatik çevirme <button id="auto">Kapalı</button></div><div class="setting">Sesli anlatım <button id="speak">Başlat</button></div><p>Türkçe okuma cihazın ses motorunu kullanır; orijinal ses kaydı değildir.</p></div>
-<div class="group"><div class="setting">Gece modu <button id="night">Kapalı</button></div><div class="setting">Kâğıt teması <select id="theme"><option value="#fcf6e9">Fildişi</option><option value="#eaf3ec">Zümrüt</option><option value="#f1e5d0">Kum</option></select></div><div>Yazı boyutu</div><div class="sizes"><button id="sm">A−</button><button id="md">Normal</button><button id="lg">A+</button></div></div>
-<div class="group"><div class="setting">Geniş okuma modu <button id="focus">Aç</button></div><div class="setting">Tam ekran <button id="full">Dene</button></div><p>iPhone'da tam ekran desteği sınırlı olabilir; geniş okuma modu kullanılabilir.</p></div>
-</aside>
+<iframe id="source" src="./fikih-kesif-defteri.html" title="" aria-hidden="true" tabindex="-1"></iframe>
+<div id="loading"><p>Fıkıh Keşif Defteri hazırlanıyor…</p></div>
+<main id="app">
+<section id="landing"><div id="landing-bg"></div><div id="landing-caption"><h1>Fıkıh Keşif Defteri</h1><p>HELALLERDE GENİŞLİK</p></div><button id="landing-hit" aria-label="Kitabı aç"></button><button id="open-btn">📖 Kitabı Aç</button></section>
+<section id="reader"><header id="reader-header"><button id="menu-btn" class="round-btn" aria-label="Okuma menüsü">☰</button><div id="reader-title"><b>Fıkıh Keşif Defteri</b><small>Helallerde Genişlik</small></div><span id="counter">1 / 5</span></header>
+<div id="book-stage"><div id="book"></div></div>
+<footer id="reader-footer"><button id="prev" aria-label="Önceki sayfa">‹</button><div id="page-count">1 / 5</div><button id="next" aria-label="Sonraki sayfa">›</button></footer></section>
+<button id="mobile-menu-quick" class="round-btn" aria-label="Menüyü aç">☰</button>
+</main>
+<div id="veil"></div><aside id="menu" aria-label="Mobil okuma ayarları">
+<div class="menu-row"><div><h2>Okuma Ayarları</h2><p>Helallerde Genişlik</p></div><button id="menu-close" aria-label="Kapat">✕</button></div>
+<div class="menu-block"><div class="menu-row"><b>İçindekiler</b><button id="contents-btn">Göster</button></div><div id="contents-list" hidden></div><div class="menu-row"><b>Yer imi</b><button id="bookmark">Kaydet</button></div><button id="restore">Kaydedilen sayfaya git</button></div>
+<div class="menu-block"><div class="menu-row">Sayfa çevirme sesi <button id="sound">Açık ✓</button></div><div class="menu-row">Otomatik çevirme <button id="auto">Kapalı</button></div><div class="menu-row">Sesli anlatım <button id="speech">Başlat</button></div><p>Sesli anlatım telefonun Türkçe seslendirme desteğini kullanır.</p></div>
+<div class="menu-block"><div class="menu-row">Gece modu <button id="night">Kapalı</button></div><div class="menu-row">Kâğıt teması <select id="theme"><option value="#f9f1df">Klasik</option><option value="#eaf1e7">Zümrüt</option><option value="#f5e6d0">Sepya</option></select></div>
+<div class="menu-row">Yazı boyutu <div><button id="sm">A−</button><button id="normal">A</button><button id="lg">A+</button></div></div></div>
+<div class="menu-block"><div class="menu-row">Geniş okuma <button id="focus">Aç</button></div><div class="menu-row">Tam ekran <button id="full">Dene</button></div><p>iPhone tarayıcılarında gerçek tam ekran kullanılamazsa geniş okuma modu açılır.</p></div></aside>
 <script>
 (()=>{
 if(matchMedia('(min-width:768px)').matches){location.replace('./fikih-kesif-defteri.html');return}
-const $=id=>document.getElementById(id),app=$('app');let pages=[],index=0,animating=false,soundOn=true,autoTimer=null,drag=null,voice=false,loaded=false;let child=null;
-const closeMenu=()=>document.body.classList.remove('menu-open');
-let requestedFont=18, flipTimer=null, lastTouch=0;
-function fitPage(sheet){
- const el=sheet?.querySelector('.paper-content');if(!el)return;
- el.style.fontSize=requestedFont+'px';
- el.style.overflow='hidden';
- const max=Math.min(23,Math.max(12,requestedFont)), min=8.2;
- // Binary-search the largest readable size that fits the full page without vertical scrolling.
- let low=min,high=max;
- for(let i=0;i<17;i++){
-   const mid=(low+high)/2;
-   el.style.fontSize=mid.toFixed(3)+'px';
-   if(el.scrollHeight<=el.clientHeight+1 && el.scrollWidth<=el.clientWidth+1)low=mid;
-   else high=mid;
- }
- el.style.fontSize=low.toFixed(3)+'px';
-}
-function fitAll(){
- ['current-sheet','back-sheet','flip-sheet'].forEach(id=>fitPage($(id)));
-}
-function pageMarkup(content){return '<div class="paper-content">'+content+'</div>'}
-function showPage(i){
- if(!pages.length)return;
- index=Math.max(0,Math.min(pages.length-1,i));
- $('current-sheet').innerHTML=pageMarkup(pages[index].html);
- $('headernum').textContent=(index+1)+' / '+pages.length;
- $('pagecounter').textContent=(index+1)+' / '+pages.length;
- $('prev').disabled=false;$('next').disabled=false;
- fitPage($('current-sheet'));
-}
-let audioContext=null;
-function playFallback(cover){
- try{
-  audioContext ||= new (window.AudioContext||window.webkitAudioContext)();
-  if(audioContext.state==='suspended')audioContext.resume();
-  const ctx=audioContext,now=ctx.currentTime,len=cover?.18:.32,n=Math.round(ctx.sampleRate*len);
-  const buf=ctx.createBuffer(1,n,ctx.sampleRate),arr=buf.getChannelData(0);
-  for(let i=0;i<n;i++){const t=i/n;arr[i]=(Math.random()*2-1)*(cover?Math.exp(-t*18):Math.sin(Math.PI*t)**.8)}
-  const node=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
-  node.buffer=buf;filter.type=cover?'lowpass':'bandpass';filter.frequency.value=cover?420:1350;
-  gain.gain.value=cover?.23:.14;node.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
-  node.start(now);node.stop(now+len);
- }catch(e){}
-}
-function turnSound(cover=false){
+const $=id=>document.getElementById(id),body=document.body,app=$('app');
+let flip=null,sourceWin=null,sourceDoc=null,chapters=[],leafNodes=[],soundOn=true,busy=false,autoplay=null,lastFlipAt=0,currentPage=1,baseFont=16,loading=false,initialized=false,resizing=null;
+function paperSound(close){
  if(!soundOn)return;
  try{
-  if(cover&&typeof child?.triggerCoverSound==='function'){child.triggerCoverSound('close');return}
-  if(!cover&&typeof child?.triggerPaperTurnSound==='function'){child.triggerPaperTurnSound();return}
+  if(close&&typeof sourceWin?.triggerCoverSound==='function'){sourceWin.triggerCoverSound('close');return}
+  if(!close&&typeof sourceWin?.triggerPaperTurnSound==='function'){sourceWin.triggerPaperTurnSound();return}
  }catch(e){}
- playFallback(cover);
-}
-function stopSpeech(){if('speechSynthesis'in window)speechSynthesis.cancel();$('speak').textContent='Başlat'}
-function resetLeaf(){
- clearTimeout(flipTimer);
- const leaf=$('flip-sheet');leaf.style.transition='none';leaf.style.transform='none';leaf.style.display='none';leaf.style.filter='';
- $('back-sheet').innerHTML='';drag=null;animating=false;document.body.classList.remove('dragging');
-}
-function toDesk(){
- if(animating)return;
- resetLeaf();turnSound(true);stopSpeech();
- app.classList.remove('reading');
- $('current-sheet').innerHTML='';index=0;
- if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('auto').textContent='Kapalı'}
-}
-function prepareLeaf(dir){
- if(animating||!pages.length)return false;
- const dest=index+dir;
- if(dest<0||dest>=pages.length)return false;
- const leaf=$('flip-sheet');
- $('back-sheet').innerHTML=pageMarkup(pages[dest].html);
- leaf.className='sheet '+(dir>0?'forward':'backward');
- leaf.innerHTML=pageMarkup(pages[index].html);
- leaf.style.display='block';leaf.style.transition='none';leaf.style.filter='brightness(.96)';
- leaf.style.transform='rotateY(0deg)';
- fitPage($('back-sheet'));fitPage(leaf);
- animating=true;
- return true;
-}
-function finishLeaf(dir,commit,initialAngle){
- const leaf=$('flip-sheet');
- const target=commit?(dir>0?-178:178):0;
- const duration=commit?Math.max(170,Math.round(520*(1-Math.abs(initialAngle)/180))):210;
- leaf.style.transition='transform '+duration+'ms cubic-bezier(.18,.68,.21,1),filter '+duration+'ms ease';
- leaf.style.transform='rotateY('+target+'deg)';
- leaf.style.filter='brightness('+(commit?.85:1)+')';
- clearTimeout(flipTimer);
- flipTimer=setTimeout(()=>{
-  if(commit)showPage(index+dir);
-  resetLeaf();
- },duration+45);
- if(commit)turnSound(false);
-}
-function change(dir){
- if(animating)return;
- if(index+dir<0||index+dir>=pages.length){toDesk();return}
- if(!prepareLeaf(dir))return;
- stopSpeech();
- requestAnimationFrame(()=>requestAnimationFrame(()=>finishLeaf(dir,true,0)));
-}
-function loadSource(){
- if(loaded)return;
  try{
- const d=$('source').contentDocument;if(!d||!d.querySelector('.page-paper-texture'))return;
- child=$('source').contentWindow;
- pages=[...d.querySelectorAll('#book > .page-paper-texture')];
- if(pages.length===0)pages=[...d.querySelectorAll('.page-paper-texture')];
- pages=pages.map((p,i)=>({html:(p.querySelector('.custom-scrollbar')||p).innerHTML,title:(p.querySelector('h3,h4')?.textContent||'Sayfa '+(i+1)).trim()}));
- if(!pages.length)return;
- const visual=getComputedStyle(d.body,'::before').backgroundImage;
- const bg=visual&&visual!=='none'?visual:getComputedStyle(d.body).backgroundImage;
- $('scene').style.backgroundImage=bg;
- $('scene').style.backgroundSize='cover';$('scene').style.backgroundPosition='50% center';
- $('toclist').innerHTML=pages.map((p,i)=>'<button data-jump="'+i+'" style="display:block;width:100%;text-align:left;margin:6px 0;padding:11px;border:1px solid #cdaa6c66;background:#103d3c;color:#fff2cd;border-radius:9px">'+(i+1)+'. '+p.title+'</button>').join('');
- $('toclist').querySelectorAll('button').forEach(b=>b.onclick=()=>{showPage(+b.dataset.jump);closeMenu()});
- showPage(0);loaded=true;app.classList.add('ready');$('loading').hidden=true;document.fonts?.ready.then(fitAll);
- }catch(e){console.warn('İçerik yüklenemedi',e)}
+ const ctx=paperSound.ctx||(paperSound.ctx=new (window.AudioContext||window.webkitAudioContext)());
+ if(ctx.state==='suspended')ctx.resume();
+ const len=close?.16:.28,buffer=ctx.createBuffer(1,Math.round(ctx.sampleRate*len),ctx.sampleRate),a=buffer.getChannelData(0);
+ for(let i=0;i<a.length;i++){let t=i/a.length;a[i]=(Math.random()*2-1)*(close?Math.exp(-t*16):Math.sin(t*Math.PI)**.7)}
+ const node=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+ f.type=close?'lowpass':'bandpass';f.frequency.value=close?400:1200;g.gain.value=close?.21:.12;
+ node.buffer=buffer;node.connect(f);f.connect(g);g.connect(ctx.destination);node.start();node.stop(ctx.currentTime+len);
+ }catch(e){}
 }
-$('source').addEventListener('load',loadSource);
-let attempts=0;const poll=setInterval(()=>{if(loaded){clearInterval(poll);return}loadSource();if(++attempts>80){clearInterval(poll);$('loading').textContent='Kitap yüklenemedi. İnternet bağlantısını kontrol edip sayfayı yenileyin.'}},220);
-function openBook(){app.classList.add('reading');showPage(0);requestAnimationFrame(fitAll)}
-$('landing-tap').onclick=openBook;$('landing-button').onclick=openBook;
-$('prev').onclick=()=>change(-1);$('next').onclick=()=>change(1);
-const stage=$('bookcase');
-stage.addEventListener('pointerdown',e=>{
- if(animating||!app.classList.contains('reading')||e.button>0)return;
- drag={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now(),dir:0,angle:0,started:false,ending:false};
- try{stage.setPointerCapture(e.pointerId)}catch(err){}
-});
-stage.addEventListener('pointermove',e=>{
- const d=drag;if(!d||d.id!==e.pointerId||d.ending)return;
- const dx=e.clientX-d.x,dy=e.clientY-d.y;
- if(!d.started){
-  if(Math.abs(dx)<8)return;
-  if(Math.abs(dy)>Math.abs(dx)*1.6)return;
-  d.dir=dx<0?1:-1;
-  if(index+d.dir<0||index+d.dir>=pages.length){
-    d.boundary=true;return;
+const closeMenu=()=>body.classList.remove('menu-open');
+function stopVoice(){if('speechSynthesis'in window)speechSynthesis.cancel();$('speech').textContent='Başlat'}
+function gotoDesk(){stopVoice();if(autoplay){clearInterval(autoplay);autoplay=null;$('auto').textContent='Kapalı'}app.classList.remove('reading');if(flip)flip.turnToPage(1);currentPage=1}
+function isFit(box){return box.scrollHeight<=box.clientHeight+1&&box.scrollWidth<=box.clientWidth+1}
+function makeSheetHTML(html,cover=false){
+ let el=document.createElement('div');el.className='page '+(cover?'leather':'paper');el.setAttribute('data-density',cover?'hard':'soft');
+ if(cover){el.innerHTML='<div class="leather-frame">FIKIH<br>KEŞİF DEFTERİ</div>'}
+ else el.innerHTML='<div class="paper-area">'+html+'</div>';
+ return el;
+}
+function cleanNode(n){
+ const x=n.cloneNode(true);
+ x.querySelectorAll('script,button,svg,.text-center.font-mono,.border-t').forEach(el=>el.remove());
+ x.querySelectorAll('[style]').forEach(el=>{if(el.style.position==='absolute')el.style.position='static'});
+ return x;
+}
+function buildUnits(element,depth=0){
+ const el=cleanNode(element);if(!el.textContent.trim())return [];
+ const tag=el.tagName;
+ if(depth<3&&el.children.length>1&&(['DIV','SECTION','UL'].includes(tag))&&!el.matches('.p-3,.p-3\\.5')&&el.textContent.length>260){
+  let nodes=[];
+  for(const c of [...el.children]){
+    if(c.textContent.trim())nodes.push(...buildUnits(c,depth+1));
   }
-  if(!prepareLeaf(d.dir))return;
-  d.started=true;document.body.classList.add('dragging');stopSpeech();
+  if(nodes.length)return nodes;
  }
- if(d.boundary)return;
- e.preventDefault();
- const width=Math.max(160,stage.clientWidth);
- const ratio=Math.max(0,Math.min(.995,Math.abs(dx)/width));
- const a=(d.dir>0?-1:1)*ratio*177;
- d.angle=a;
- const leaf=$('flip-sheet');
- leaf.style.transform='rotateY('+a+'deg)';
- leaf.style.filter='brightness('+(1-ratio*.19)+')';
-});
-function pointerEnd(e,cancelled=false){
- const d=drag;if(!d||d.id!==e.pointerId)return;
- const dx=e.clientX-d.x,dy=e.clientY-d.y;
- if(d.boundary){
-   drag=null;
-   if(!cancelled&&Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy))toDesk();
-   return;
- }
- if(!d.started){
-   drag=null;
-   // A quick flick can finish before a move event is emitted on mobile Safari.
-   if(!cancelled&&Math.abs(dx)>28&&Math.abs(dx)>Math.abs(dy)*1.05)change(dx<0?1:-1);
-   return;
- }
- const speed=Math.abs(dx)/Math.max(16,performance.now()-d.t);
- const commit=!cancelled&&(Math.abs(dx)>stage.clientWidth*.23||speed>.42);
- d.ending=true;drag=null;document.body.classList.remove('dragging');
- finishLeaf(d.dir,commit,d.angle);
+ return [el];
 }
-stage.addEventListener('pointerup',e=>pointerEnd(e));
-stage.addEventListener('pointercancel',e=>pointerEnd(e,true));
-stage.addEventListener('lostpointercapture',e=>{if(drag&&drag.id===e.pointerId)pointerEnd(e,true)});
-window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();return}if(!app.classList.contains('reading'))return;if(e.key==='ArrowRight')change(1);if(e.key==='ArrowLeft')change(-1)});
-$('menubtn').onclick=()=>document.body.classList.add('menu-open');$('closemenu').onclick=closeMenu;$('menuBackdrop').onclick=closeMenu;
-$('toc').onclick=()=>{$('toclist').hidden=!$('toclist').hidden};
-$('bookmark').onclick=()=>{try{localStorage.setItem('fikih-mobil-bookmark-v3',index);$('bookmark').textContent='Kaydedildi ✓'}catch(e){}};
-$('restore').onclick=()=>{try{const n=+localStorage.getItem('fikih-mobil-bookmark-v3');if(n>=0&&n<pages.length)showPage(n)}catch(e){}closeMenu()};
+function splitText(el,box){
+ const words=(el.textContent||'').trim().split(/\s+/);
+ if(words.length<3)return [el];
+ let chunks=[],start=0;
+ while(start<words.length){
+  let lo=start+1,hi=words.length,best=start+1;
+  while(lo<=hi){
+   let mid=Math.floor((lo+hi)/2),p=el.cloneNode(false);
+   p.textContent=words.slice(start,mid).join(' ');
+   box.appendChild(p);let fits=isFit(box);p.remove();
+   if(fits){best=mid;lo=mid+1}else hi=mid-1;
+  }
+  let copy=el.cloneNode(false);copy.textContent=words.slice(start,best).join(' ');
+  chunks.push(copy);start=best;
+ }
+ return chunks;
+}
+function paginate(contentNodes,w,h){
+ const measure=document.createElement('div');measure.className='paper-area';measure.style.cssText='position:fixed;left:-10000px;top:0;width:'+(w-0)+'px;height:'+h+'px;pointer-events:none;visibility:hidden;padding:0';
+ document.body.appendChild(measure);
+ let output=[],page=document.createElement('div');
+ const flush=()=>{if(page.childNodes.length){output.push(page.innerHTML);page=document.createElement('div')}};
+ const test=n=>{measure.innerHTML='';measure.append(...[...page.childNodes].map(x=>x.cloneNode(true)));measure.append(n.cloneNode(true));return isFit(measure)};
+ function push(n){
+  if(test(n)){page.appendChild(n);return}
+  if(page.childNodes.length)flush();
+  if(test(n)){page.appendChild(n);return}
+  const splits=splitText(n,measure);
+  if(splits.length===1){page.appendChild(n);flush();return}
+  for(const x of splits){if(!test(x)&&page.childNodes.length)flush();page.appendChild(x)}
+ }
+ for(const el of contentNodes)for(const n of buildUnits(el))push(n);
+ flush();measure.remove();return output;
+}
+function createBook(start=1){
+ if(typeof St==='undefined'||!St.PageFlip)throw Error('3D sayfa motoru yüklenemedi');
+ const stage=$('book-stage'),width=Math.max(210,Math.floor(Math.min(stage.clientWidth-20,530))),height=Math.max(330,Math.floor(stage.clientHeight-16));
+ const padW=width-42,padH=height-50;
+ const content=[];
+ for(const section of chapters)content.push(...paginate(section.nodes,padW,padH));
+ if(!content.length)throw Error('Ders sayfaları hazırlanamadı');
+ leafNodes=[makeSheetHTML('',true),...content.map(html=>makeSheetHTML(html)),makeSheetHTML('',true)];
+ const container=$('book');if(flip){try{flip.destroy()}catch(e){}flip=null}container.replaceChildren(...leafNodes);
+ flip=new St.PageFlip(container,{width,height,size:'fixed',drawShadow:true,maxShadowOpacity:.75,flippingTime:630,showCover:false,usePortrait:true,autoSize:true,mobileScrollSupport:false,clickEventForward:true,swipeDistance:20,startPage:Math.min(Math.max(1,start),leafNodes.length-2)});
+ flip.loadFromHTML(container.querySelectorAll('.page'));
+ currentPage=flip.getCurrentPageIndex();
+ const total=leafNodes.length-2;
+ function updateCounter(i){let num=Math.max(1,Math.min(total,i));$('counter').textContent=num+' / '+total;$('page-count').textContent=num+' / '+total}
+ updateCounter(currentPage);
+ flip.on('flip',e=>{
+  let i=e.data,now=performance.now();
+  currentPage=i;updateCounter(i);stopVoice();
+  if(now-lastFlipAt>190){paperSound(i===0||i===leafNodes.length-1);lastFlipAt=now}
+  if(i===0||i===leafNodes.length-1){setTimeout(()=>{if(currentPage===i)gotoDesk()},Math.max(330,640))}
+ });
+ flip.on('changeState',e=>{busy=['flipping','user_fold'].includes(e.data)});
+ $('contents-list').innerHTML=chapters.map((c,i)=>'<button data-chapter="'+i+'">'+(i+1)+'. '+c.title+'</button>').join('');
+ $('contents-list').querySelectorAll('button').forEach(btn=>btn.onclick=()=>{const t=chapters[+btn.dataset.chapter].firstPage||1;flip.flip(t);closeMenu()});
+}
+function readOriginal(){
+ if(initialized||loading)return;loading=true;
+ try{
+ sourceDoc=$('source').contentDocument;sourceWin=$('source').contentWindow;
+ if(!sourceDoc?.querySelector('.page-paper-texture')){loading=false;return}
+ const candidates=[...sourceDoc.querySelectorAll('#book > .page-paper-texture')];
+ const original=candidates.length?candidates:[...sourceDoc.querySelectorAll('.page-paper-texture')];
+ if(!original.length){loading=false;return}
+ chapters=original.map((p,i)=>{
+  const area=p.querySelector('.custom-scrollbar')||p;
+  return {title:(p.querySelector('h3,h4')?.textContent||'Bölüm '+(i+1)).trim(),nodes:[...area.children].map(x=>x.cloneNode(true))}
+ });
+ const bg=getComputedStyle(sourceDoc.body).backgroundImage;
+ $('landing-bg').style.backgroundImage=bg!=='none'?bg:'linear-gradient(125deg,#15483f,#071923)';
+ initialized=true;
+ $('loading').hidden=true;app.classList.add('ready');loading=false;
+ document.fonts.ready.then(()=>{try{createBook(1)}catch(err){showError(err)}}); 
+ }catch(err){loading=false;showError(err)}
+}
+function showError(e){console.error(e);$('loading').hidden=false;$('loading').innerHTML='<p>Kitap açılamadı. Lütfen internet bağlantınızı kontrol ederek sayfayı yenileyin.</p>'}
+const src=$('source');src.addEventListener('load',readOriginal);
+let polls=0;const timer=setInterval(()=>{if(initialized){clearInterval(timer);return}readOriginal();if(++polls>80){clearInterval(timer);showError(Error('Kaynak zaman aşımı'))}},250);
+function openBook(){if(!flip){showError(Error('Sayfalar henüz hazır değil'));return}app.classList.add('reading');try{flip.turnToPage(1)}catch(e){}}
+$('landing-hit').onclick=openBook;$('open-btn').onclick=openBook;
+$('prev').onclick=()=>{if(!flip||busy)return;if(currentPage<=1){paperSound(true);gotoDesk()}else flip.flipPrev()};
+$('next').onclick=()=>{if(!flip||busy)return;flip.flipNext()};
+$('menu-btn').onclick=()=>body.classList.add('menu-open');$('mobile-menu-quick').onclick=()=>body.classList.add('menu-open');$('menu-close').onclick=closeMenu;$('veil').onclick=closeMenu;
+$('contents-btn').onclick=()=>{$('contents-list').hidden=!$('contents-list').hidden};
+$('bookmark').onclick=()=>{localStorage.setItem('fikih-kesif-mobil-bookmark',currentPage);$('bookmark').textContent='Kaydedildi ✓'};
+$('restore').onclick=()=>{const n=Number(localStorage.getItem('fikih-kesif-mobil-bookmark'));if(n>=1&&n<leafNodes.length-1)flip.flip(n);closeMenu()};
 $('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'Açık ✓':'Kapalı'};
-$('auto').onclick=()=>{if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('auto').textContent='Kapalı'}else{autoTimer=setInterval(()=>{if(!animating&&app.classList.contains('reading'))change(1)},5500);$('auto').textContent='Durdur'}};
-$('speak').onclick=()=>{if(!('speechSynthesis'in window))return alert('Tarayıcınız sesli anlatımı desteklemiyor');if(speechSynthesis.speaking){stopSpeech();return}let v=new SpeechSynthesisUtterance($('current-sheet').innerText);v.lang='tr-TR';v.rate=.86;v.onend=stopSpeech;v.onerror=stopSpeech;speechSynthesis.speak(v);$('speak').textContent='Durdur'};
-$('night').onclick=()=>{$('night').textContent=document.body.classList.toggle('night')?'Açık':'Kapalı'};
+$('auto').onclick=()=>{if(autoplay){clearInterval(autoplay);autoplay=null;$('auto').textContent='Kapalı'}else{autoplay=setInterval(()=>{if(flip&&!busy&&app.classList.contains('reading'))flip.flipNext()},5200);$('auto').textContent='Durdur'}};
+$('speech').onclick=()=>{if(!('speechSynthesis'in window))return alert('Sesli anlatım bu tarayıcıda bulunmuyor');if(speechSynthesis.speaking){stopVoice();return}let p=leafNodes[currentPage];let s=new SpeechSynthesisUtterance(p?.innerText||'');s.lang='tr-TR';s.rate=.9;s.onend=stopVoice;s.onerror=stopVoice;speechSynthesis.speak(s);$('speech').textContent='Durdur'};
+$('night').onclick=()=>{$('night').textContent=body.classList.toggle('night')?'Açık':'Kapalı'};
 $('theme').onchange=e=>document.documentElement.style.setProperty('--paper',e.target.value);
-$('sm').onclick=()=>{requestedFont=16;fitAll()};$('md').onclick=()=>{requestedFont=18;fitAll()};$('lg').onclick=()=>{requestedFont=22;fitAll()};
-$('focus').onclick=()=>{const a=document.body.classList.toggle('focus');$('focus').textContent=a?'Kapat':'Aç';closeMenu()};
-$('full').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch(e){document.body.classList.add('focus');$('focus').textContent='Kapat'}closeMenu()};
-window.addEventListener('resize',()=>{if(app.classList.contains('reading')&&!animating)fitAll()});
+function fontSet(n){baseFont=n;document.documentElement.style.setProperty('--paperfont',n+'px');if(flip)createBook(Math.max(1,currentPage))}
+$('sm').onclick=()=>fontSet(14);$('normal').onclick=()=>fontSet(16);$('lg').onclick=()=>fontSet(18);
+$('focus').onclick=()=>{body.classList.toggle('focus');$('focus').textContent=body.classList.contains('focus')?'Kapat':'Aç';closeMenu();setTimeout(()=>createBook(currentPage),120)};
+$('full').onclick=async()=>{closeMenu();try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch(e){body.classList.add('focus')}setTimeout(()=>createBook(currentPage),150)};
+window.addEventListener('resize',()=>{if(!initialized)return;clearTimeout(resizing);resizing=setTimeout(()=>{const n=currentPage;try{createBook(n)}catch(e){console.error(e)}},250)});
+window.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();if(!flip||!app.classList.contains('reading'))return;if(e.key==='ArrowLeft')flip.flipPrev();if(e.key==='ArrowRight')flip.flipNext()});
 })();
 </script></body></html>
