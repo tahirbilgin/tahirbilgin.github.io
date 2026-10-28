@@ -246,13 +246,24 @@ function readOriginal(){
  $('landing-bg').style.backgroundImage=bg!=='none'?bg:'linear-gradient(125deg,#15483f,#071923)';
  initialized=true;
  $('loading').hidden=true;app.classList.add('ready');loading=false;
- document.fonts.ready.then(()=>{try{createBook(1)}catch(err){showError(err)}}); 
+ /* Book must initialize only AFTER the reading view becomes visible and measurable. */ 
  }catch(err){loading=false;showError(err)}
 }
 function showError(e){console.error(e);$('loading').hidden=false;$('loading').innerHTML='<p>Kitap açılamadı. Lütfen internet bağlantınızı kontrol ederek sayfayı yenileyin.</p>'}
 const src=$('source');src.addEventListener('load',readOriginal);
 let polls=0;const timer=setInterval(()=>{if(initialized){clearInterval(timer);return}readOriginal();if(++polls>80){clearInterval(timer);showError(Error('Kaynak zaman aşımı'))}},250);
-function openBook(){if(!flip){showError(Error('Sayfalar henüz hazır değil'));return}app.classList.add('reading');try{flip.turnToPage(1)}catch(e){}adjustBook();setTimeout(adjustBook,100)}
+function openBook(){
+ if(!initialized){showError(Error('Ders içeriği henüz hazır değil'));return}
+ app.classList.add('reading');
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   try{
+      if(!flip)createBook(1);
+      else if($('book-stage').clientWidth>0)flip.update();
+      flip.turnToPage(1);
+      adjustBook();setTimeout(adjustBook,120);
+   }catch(e){showError(e)}
+ }));
+}
 $('landing-hit').onclick=openBook;$('open-btn').onclick=openBook;
 $('prev').onclick=()=>{if(!flip||busy)return;if(currentPage<=1){paperSound(true);gotoDesk()}else flip.flipPrev()};
 $('next').onclick=()=>{if(!flip||busy)return;flip.flipNext()};
