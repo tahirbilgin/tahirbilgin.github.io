@@ -1,14 +1,180 @@
-<!doctype html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Fıkıh Keşif Defteri — Mobil</title><style>html,body{height:100%;margin:0;overflow:hidden;background:#0b1930}iframe{display:block;width:100%;height:100dvh;border:0}#fallback{position:fixed;inset:0;display:grid;place-items:center;color:#f4e6d0;background:#0b1930;font:15px system-ui;z-index:5}#fallback[hidden]{display:none}</style></head><body><div id="fallback">Fıkıh Keşif Defteri yükleniyor…</div><iframe id="reader" title="Fıkıh Keşif Defteri" src="./fikih-kesif-defteri.html" allow="fullscreen" allowfullscreen></iframe><script>
-if(matchMedia('(min-width:768px)').matches){location.replace('./fikih-kesif-defteri.html')}
-const frame=document.getElementById('reader'),fallback=document.getElementById('fallback');
-frame.addEventListener('load',()=>{
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#09232b"><title>Fıkıh Keşif Defteri • Mobil Okuyucu</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{--gold:#d6ad60;--green:#064b40;--paper:#fcf6e9;--ink:#273132;--font:18px}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overscroll-behavior:none;background:#061521;font-family:Inter,system-ui,sans-serif}
+button,select{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #ffd47a;outline-offset:3px}
+#source{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-5px;top:-5px}
+#loading{position:fixed;inset:0;z-index:40;display:grid;place-items:center;color:#efd7a4;background:#0b1930;font-size:15px;text-align:center;padding:30px}
+#loading[hidden]{display:none}
+#app{display:none;position:relative;height:100dvh;width:100%;overflow:hidden}
+#app.ready{display:block}
+#landing{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#244a50,#071521 75%)}
+#scene{position:absolute;inset:0;background-position:center;background-size:cover;filter:saturate(1.08)}
+#landing:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#05101b15 0%,transparent 49%,#02131d92 100%)}
+#landing-button{z-index:2;position:relative;bottom:calc(8dvh + env(safe-area-inset-bottom));border:1px solid #e8c783;border-radius:16px;color:#f6e1af;background:linear-gradient(135deg,#0b5747,#062f32);padding:17px 37px;box-shadow:0 15px 32px #0009;font-family:Georgia,serif;font-size:21px;letter-spacing:.01em}
+#landing-tap{position:absolute;z-index:1;inset:17% 12% 24%;border:0;background:transparent}
+#reading{position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 80%,#244648,#081923 76%)}
+#app.reading #reading{display:flex}
+#app.reading #landing{display:none}
+header{height:54px;min-height:54px;display:flex;align-items:center;gap:10px;padding:6px 12px;background:#061823eb;border-bottom:1px solid #d6ad6040;color:#f4e0b8;z-index:4}
+.icon{width:42px;height:42px;border:1px solid #e1c27b45;border-radius:12px;background:#0c403b;color:#f7dfac;font-size:23px;display:grid;place-items:center;flex-shrink:0}
+header .identity{flex:1;min-width:0;text-align:center}
+header strong{display:block;font:600 15px Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header small{font-size:11px;color:#d5c4a4}
+header .num{font-size:12px;white-space:nowrap;color:#dfbe7b}
+#readstage{flex:1;min-height:0;display:flex;align-items:stretch;justify-content:center;padding:9px 9px 8px;position:relative;perspective:1350px;overflow:hidden}
+#bookcase{position:relative;width:min(100%,560px);height:100%;border-radius:5px 10px 12px 5px;background:#f6eedc;box-shadow:0 24px 36px #0009,8px 5px 0 #003c39;transform-style:preserve-3d;overflow:hidden}
+#bookcase:before{content:"";position:absolute;top:0;bottom:0;left:0;width:9px;background:linear-gradient(90deg,#927a50a8,transparent);z-index:2;pointer-events:none}
+#bookcase:after{content:"";position:absolute;top:0;bottom:0;right:0;width:5px;background:linear-gradient(90deg,transparent,#d5bd8a);z-index:2;pointer-events:none}
+.sheet{position:absolute;inset:0;background:var(--paper);transform-style:preserve-3d;backface-visibility:hidden;overflow:hidden}
+.paper-content{position:absolute;inset:0;overflow-y:auto;padding:clamp(19px,5.5vw,30px) clamp(18px,5vw,30px) 32px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:thin;line-height:1.54;color:var(--ink);font:var(--font)/1.55 Georgia,serif}
+.paper-content h3,.paper-content h4{font-family:Georgia,serif;color:#174c45;font-weight:700;line-height:1.24;margin:0 0 18px}
+.paper-content h3{font-size:clamp(24px,7vw,32px);border-bottom:1px solid #be955e60;padding-bottom:12px;text-align:center}
+.paper-content h4{font-size:21px;margin-top:23px}
+.paper-content p{line-height:1.59;margin:0 0 15px}
+.paper-content strong{color:#124e40}
+.paper-content ul{padding-left:21px}
+.paper-content li{margin:0 0 11px;line-height:1.47}
+.paper-content .space-y-3>div,.paper-content .space-y-3\.5>div,.paper-content .bg-amber-100\/60,.paper-content .bg-stone-200\/50,.paper-content .bg-amber-100\/40{background:#f0e6d3!important;color:#2f3331!important;border-left:3px solid #bc9355!important;padding:14px!important;border-radius:6px;margin-bottom:14px}
+.paper-content .text-xs,.paper-content .text-sm,.paper-content .font-book,.paper-content .font-quran{font-size:inherit!important;line-height:inherit!important;font-family:Georgia,serif!important}
+.paper-content .font-title{font-family:Georgia,serif!important}
+.paper-content .text-\[10px\]{font-size:12px!important}
+.paper-content .font-quran{font-family:Amiri,Georgia,serif!important}
+.paper-content span,.paper-content div,.paper-content p{max-width:100%;overflow-wrap:break-word}
+.paper-content .border-t{display:none}
+.paper-content sup{font-size:11px;color:#806847}
+.sheet-shadow{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#6552392e 0%,transparent 8%,transparent 87%,#5a421228 100%);z-index:2}
+#flip-sheet{display:none;z-index:9;transform-origin:left center;box-shadow:14px 2px 35px #0005;pointer-events:none}
+#flip-sheet.forward{transform-origin:left center}
+#flip-sheet.backward{transform-origin:right center}
+#flip-sheet .paper-content{filter:none}
+#flip-sheet:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#ffffff00,#9978544d 60%,#ffffffab);opacity:var(--fold,0)}
+#pagebottom{height:68px;min-height:68px;display:flex;align-items:center;gap:13px;justify-content:space-between;padding:6px 17px calc(6px + env(safe-area-inset-bottom));color:#e8d3a4;background:#071d28}
+.nav{display:grid;place-items:center;border:1px solid #d6ad6070;border-radius:50%;width:49px;height:49px;background:linear-gradient(145deg,#0d564a,#092d31);color:#ffe4b2;font-size:28px}
+.nav:disabled{opacity:.35}
+#pagecounter{font-size:13px;font-weight:600;letter-spacing:.06em}
+#gestureTip{position:absolute;z-index:3;bottom:24px;left:50%;transform:translateX(-50%);padding:7px 14px;background:#103b38de;color:#f9e7bf;font-size:11px;border-radius:22px;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .3s}
+#menuBackdrop{position:fixed;inset:0;background:#0009;z-index:18;display:none}
+#menu{position:fixed;right:0;top:0;bottom:0;z-index:19;width:min(88vw,390px);overflow-y:auto;background:linear-gradient(160deg,#0d3540,#061724);color:#f7ebd4;transform:translateX(105%);transition:transform .25s;padding:calc(25px + env(safe-area-inset-top)) 20px 28px;box-shadow:-15px 0 50px #000b}
+body.menu-open #menu{transform:translateX(0)}
+body.menu-open #menuBackdrop{display:block}
+.menu-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.menu-head h2{margin:0;color:#edcb89;font:600 23px Georgia,serif}
+.group{border-top:1px solid #d6ad6040;padding:12px 0;display:grid;gap:12px}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
+.setting button,.setting select,.group>button,.sizes button{color:#ffe9bf;background:#15423f;border:1px solid #d6ad6060;border-radius:10px;padding:11px;font-size:13px}
+.sizes{display:flex;gap:8px}.sizes button{flex:1}
+#menu p{font-size:12px;color:#c9c6be;line-height:1.5}
+body.night{--paper:#142d30;--ink:#f4ead7}
+body.night .paper-content h3,body.night .paper-content h4,body.night .paper-content strong{color:#dec58f}
+body.night .paper-content .space-y-3>div,body.night .paper-content .space-y-3\.5>div,body.night .paper-content .bg-amber-100\/60,body.night .paper-content .bg-stone-200\/50{background:#204247!important;color:#f6ead4!important}
+body.focus header,body.focus #pagebottom{display:none}
+body.focus #readstage{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body.focus #menubtn{position:fixed;top:calc(8px + env(safe-area-inset-top));left:12px;z-index:12;opacity:.8}
+@media(min-width:768px){#loading{display:none}#app{display:none!important}}
+</style></head><body>
+<iframe id="source" src="./fikih-kesif-defteri.html" aria-hidden="true" tabindex="-1"></iframe>
+<div id="loading">Fıkıh Keşif Defteri hazırlanıyor…</div>
+<div id="app"><section id="landing"><div id="scene"></div><button id="landing-tap" aria-label="Kitabı aç"></button><button id="landing-button">📖 Kitabı Aç</button></section>
+<section id="reading">
+<header><button class="icon" id="menubtn" aria-label="Menüyü aç">☰</button><div class="identity"><strong>Fıkıh Keşif Defteri</strong><small>Helallerde Genişlik</small></div><span id="headernum" class="num">1 / 4</span></header>
+<div id="readstage"><div id="bookcase"><div id="back-sheet" class="sheet"></div><div id="current-sheet" class="sheet"></div><div id="flip-sheet" class="sheet"></div><div class="sheet-shadow"></div></div><div id="gestureTip">Sayfayı sağa veya sola kaydır</div></div>
+<div id="pagebottom"><button id="prev" class="nav" aria-label="Önceki sayfa">‹</button><span id="pagecounter">1 / 4</span><button id="next" class="nav" aria-label="Sonraki sayfa">›</button></div>
+</section></div>
+<div id="menuBackdrop"></div><aside id="menu" aria-label="Okuma ayarları">
+<div class="menu-head"><div><h2>Okuma Ayarları</h2><p>Helallerde Genişlik</p></div><button id="closemenu" class="icon" aria-label="Kapat">×</button></div>
+<div class="group"><div class="setting">İçindekiler <button id="toc">Göster</button></div><div id="toclist" hidden></div><div class="setting">Yer imi <button id="bookmark">Kaydet</button></div><button id="restore">Kaydedilen sayfaya git</button></div>
+<div class="group"><div class="setting">Sayfa çevirme sesi <button id="sound">Açık ✓</button></div><div class="setting">Otomatik çevirme <button id="auto">Kapalı</button></div><div class="setting">Sesli anlatım <button id="speak">Başlat</button></div><p>Türkçe okuma cihazın ses motorunu kullanır; orijinal ses kaydı değildir.</p></div>
+<div class="group"><div class="setting">Gece modu <button id="night">Kapalı</button></div><div class="setting">Kâğıt teması <select id="theme"><option value="#fcf6e9">Fildişi</option><option value="#eaf3ec">Zümrüt</option><option value="#f1e5d0">Kum</option></select></div><div>Yazı boyutu</div><div class="sizes"><button id="sm">A−</button><button id="md">Normal</button><button id="lg">A+</button></div></div>
+<div class="group"><div class="setting">Geniş okuma modu <button id="focus">Aç</button></div><div class="setting">Tam ekran <button id="full">Dene</button></div><p>iPhone'da tam ekran desteği sınırlı olabilir; geniş okuma modu kullanılabilir.</p></div>
+</aside>
+<script>
+(()=>{
+if(matchMedia('(min-width:768px)').matches){location.replace('./fikih-kesif-defteri.html');return}
+const $=id=>document.getElementById(id),app=$('app');let pages=[],index=0,animating=false,soundOn=true,autoTimer=null,drag=null,voice=false,loaded=false;let child=null;
+const closeMenu=()=>document.body.classList.remove('menu-open');
+function showPage(i){
+ index=Math.max(0,Math.min(pages.length-1,i));
+ const content=pages[index].html;
+ $('current-sheet').innerHTML='<div class="paper-content">'+content+'</div>';
+ $('headernum').textContent=(index+1)+' / '+pages.length;
+ $('pagecounter').textContent=(index+1)+' / '+pages.length;
+ $('prev').disabled=false;$('next').disabled=false;
+}
+function turnSound(cover=false){
+ if(!soundOn)return;
  try{
-  const doc=frame.contentDocument;if(!doc||!doc.body)throw Error('İçeriğe erişilemiyor');
-  const style=doc.createElement('style');style.id='tahir-mobile-ui';style.textContent="\n@media(max-width:767px){\nbody{--reader-paper:#fcf8ee;height:100dvh!important;background:#0b1930!important}\nbody.scene-landing header,body.scene-landing footer{display:none!important}\nbody.scene-landing #scene-start-button{left:13%!important;top:19%!important;width:74%!important;height:65%!important}\nbody.scene-landing #scene-open-hint{bottom:9%!important;max-width:90%;font-size:13px!important;background:#074b40f0!important;padding:13px 20px!important;border:1px solid #d6ad60!important}\nbody:not(.scene-landing) header{height:56px!important;min-height:56px!important;padding:8px 52px!important;background:#081d2af5!important;justify-content:center!important}\nbody:not(.scene-landing) header>div:first-child>div:first-child{display:none!important}\nbody:not(.scene-landing) header h1{font-size:12px!important;white-space:nowrap}\nbody:not(.scene-landing) header p{font-size:10px!important}\nbody:not(.scene-landing) header>div:nth-child(2){margin-left:auto;padding:4px 9px!important}\nbody:not(.scene-landing) header>div:nth-child(2)>span:first-child{display:none}\nbody:not(.scene-landing) header>div:last-child{display:none!important}\nbody:not(.scene-landing) footer{height:69px!important;min-height:69px!important;padding:7px 15px calc(7px + env(safe-area-inset-bottom))!important;background:#081d2af4!important}\nbody:not(.scene-landing) footer>div:first-child{display:flex!important;gap:12px;width:100%!important;justify-content:center!important}\nbody:not(.scene-landing) footer #btn-prev,body:not(.scene-landing) footer #btn-next{height:48px;flex:1;justify-content:center!important;border-radius:16px;font-size:14px}\nbody:not(.scene-landing) footer #btn-prev span,body:not(.scene-landing) footer #btn-next span{display:inline!important}\nbody:not(.scene-landing) footer>button,body:not(.scene-landing) footer>div:not(:first-child){display:none!important}\nbody:not(.scene-landing) main{padding:8px 6px!important;min-height:0!important}\nbody:not(.scene-landing) .book-stage-shadow{max-width:100%!important;max-height:100%!important}\n.page-paper-texture{padding:clamp(10px,3vw,20px)!important;background-color:var(--reader-paper)!important}\n.page-paper-texture .font-book,.page-paper-texture .font-quran{font-size:clamp(18px,5vw,22px)!important;line-height:1.32!important}\n.page-paper-texture h3{font-size:21px!important}\n.page-paper-texture h4{font-size:17px!important}\n.page-paper-texture .custom-scrollbar{overflow-y:auto!important;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}\nbody.m-night .page-paper-texture{background:#162d33!important;color:#f8edda!important;background-image:none!important}\nbody.m-night .page-paper-texture p,body.m-night .page-paper-texture h3,body.m-night .page-paper-texture h4,body.m-night .page-paper-texture strong,body.m-night .page-paper-texture li{color:#f8edda!important}\nbody.m-night .page-paper-texture .bg-amber-100\\/60,body.m-night .page-paper-texture .bg-stone-200\\/50{background:#29464c!important;color:#f8edda!important}\nbody.m-large .page-paper-texture .font-book,body.m-large .page-paper-texture .font-quran{font-size:24px!important}\nbody.m-small .page-paper-texture .font-book,body.m-small .page-paper-texture .font-quran{font-size:16px!important}\nbody.m-focus:not(.scene-landing) header,body.m-focus:not(.scene-landing) footer{display:none!important}\nbody.m-focus:not(.scene-landing) main{height:100dvh!important;padding:56px 5px 10px!important}\n#mobile-menu-button{display:flex!important;position:fixed;top:calc(9px + env(safe-area-inset-top));left:12px;width:39px;height:39px;z-index:85;align-items:center;justify-content:center;background:#075044;color:#f5d99b;border:1px solid #d6ad607a;border-radius:11px;font-size:23px}\nbody.scene-landing #mobile-menu-button{display:none!important}\n#mobile-shade{display:none;position:fixed;inset:0;background:#000a;z-index:109}\n#mobile-menu{position:fixed;right:0;top:0;bottom:0;z-index:110;width:min(88vw,350px);padding:calc(22px + env(safe-area-inset-top)) 18px 24px;overflow-y:auto;background:linear-gradient(155deg,#0d3040,#06141f);color:#f8eddb;box-shadow:-15px 0 55px #000b;transform:translateX(105%);transition:transform .25s ease;box-sizing:border-box}\nbody.m-menu #mobile-menu{transform:translateX(0)}\nbody.m-menu #mobile-shade{display:block}\n#mobile-menu h2{font:600 23px Georgia,serif;color:#efd08c;margin:0 0 6px}\n#mobile-menu p{color:#b9c4bc;font-size:12px;line-height:1.5}\n#mobile-menu button,#mobile-menu select{background:#16413e;color:#f8e8c8;border:1px solid #d6ad6055;border-radius:11px;padding:10px;min-height:42px}\n#mobile-menu .mr{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0}\n#mobile-menu .mg{border-top:1px solid #d6ad602c;padding-top:10px;margin-top:14px}\n#mobile-menu .mf{display:flex;gap:7px}#mobile-menu .mf>*{flex:1}\n}\n@media(min-width:768px){#mobile-menu-button,#mobile-menu,#mobile-shade{display:none!important}}\n";doc.head.appendChild(style);
-  doc.body.insertAdjacentHTML('beforeend',"\n<button id=\"mobile-menu-button\" aria-label=\"Okuma ayarlarını aç\">☰</button><div id=\"mobile-shade\"></div>\n<aside id=\"mobile-menu\" aria-label=\"Mobil kitap ayarları\">\n<div class=\"mr\"><div><h2>Okuma Ayarları</h2><p>Helallerde Genişlik</p></div><button id=\"m-close\" aria-label=\"Kapat\">✕</button></div>\n<div class=\"mg\"><div class=\"mr\"><b>İçindekiler</b><button id=\"m-toc\">Aç</button></div><div class=\"mr\"><b>Yer imi</b><button id=\"m-save\">Kaydet</button></div><button id=\"m-restore\">Kaydedilen sayfaya git</button></div>\n<div class=\"mg\"><div class=\"mr\"><b>Sayfa sesi</b><button id=\"m-sound\">Açık ✓</button></div><div class=\"mr\"><b>Otomatik çevirme</b><button id=\"m-auto\">Kapalı</button></div><div class=\"mr\"><b>Sesli anlatım</b><button id=\"m-read\">Başlat</button></div><p>Cihazdaki Türkçe ses kullanılır. Sesli anlatım, cihazın desteğine bağlıdır.</p></div>\n<div class=\"mg\"><div class=\"mr\"><b>Gece modu</b><button id=\"m-night\">Kapalı</button></div><div class=\"mr\"><label for=\"m-theme\">Kâğıt teması</label><select id=\"m-theme\"><option value=\"#fcf8ee\">Fildişi</option><option value=\"#edf4e9\">Açık zümrüt</option><option value=\"#f5e9d5\">Kum beji</option></select></div><div>Yazı boyutu</div><div class=\"mf\"><button id=\"m-sm\">A−</button><button id=\"m-md\">Normal</button><button id=\"m-lg\">A+</button></div></div>\n<div class=\"mg\"><div class=\"mr\"><b>Geniş okuma</b><button id=\"m-focus\">Aç</button></div><div class=\"mr\"><b>Tam ekran</b><button id=\"m-full\">Dene</button></div><p>Safari desteklemezse geniş okuma görünümü kullanılır.</p></div>\n</aside>\n");
-  const sc=doc.createElement('script');sc.textContent="\n(function(){\nconst d=document,b=d.body,$=id=>d.getElementById(id);const toggle=(on)=>b.classList.toggle('m-menu',on);\n$('mobile-menu-button').onclick=()=>toggle(true);$('m-close').onclick=()=>toggle(false);$('mobile-shade').onclick=()=>toggle(false);\n$('m-toc').onclick=()=>{toggle(false);$('btn-toc').click()};\n$('m-sound').onclick=()=>{$('btn-sound').click();$('m-sound').textContent=soundEnabled?'Açık ✓':'Kapalı'};\n$('m-auto').onclick=()=>{$('btn-autoplay').click();$('m-auto').textContent=isAutoPlaying?'Durdur':'Kapalı'};\n$('m-night').onclick=()=>{$('m-night').textContent=b.classList.toggle('m-night')?'Açık':'Kapalı'};\n$('m-theme').onchange=e=>b.style.setProperty('--reader-paper',e.target.value);\nconst font=v=>{b.classList.remove('m-small','m-large');if(v)b.classList.add('m-'+v)};\n$('m-sm').onclick=()=>font('small');$('m-md').onclick=()=>font('');$('m-lg').onclick=()=>font('large');\n$('m-save').onclick=()=>{try{localStorage.setItem('fikih-mobil-yer-imi',pageFlip.getCurrentPageIndex());$('m-save').textContent='Kaydedildi ✓'}catch(e){}};\n$('m-restore').onclick=()=>{let n=Number(localStorage.getItem('fikih-mobil-yer-imi'));if(n>=1&&n<=5)pageFlip.turnToPage(n);toggle(false)};\nconst stop=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();$('m-read').textContent='Başlat'};\n$('m-read').onclick=()=>{if(!('speechSynthesis'in window)){alert('Sesli anlatım desteklenmiyor');return}if(speechSynthesis.speaking){stop();return}let pages=d.querySelectorAll('#book .page'),i=pageFlip.getCurrentPageIndex(),txt=pages[i]?.innerText||'';let u=new SpeechSynthesisUtterance(txt);u.lang='tr-TR';u.rate=.9;u.onend=stop;u.onerror=stop;speechSynthesis.speak(u);$('m-read').textContent='Durdur'};\nwindow.addEventListener('fikih-page-changed',stop);\n$('m-focus').onclick=()=>{const on=b.classList.toggle('m-focus');$('m-focus').textContent=on?'Kapat':'Aç';toggle(false);window.dispatchEvent(new Event('resize'))};\n$('m-full').onclick=async()=>{toggle(false);try{if(d.fullscreenElement)await d.exitFullscreen();else await d.documentElement.requestFullscreen()}catch(e){b.classList.add('m-focus');window.dispatchEvent(new Event('resize'))}};\n})();\n";doc.body.appendChild(sc);
-  fallback.hidden=true;
- }catch(e){console.error('Mobil arayüz:',e);fallback.hidden=true}
-});
-frame.addEventListener('error',()=>{fallback.textContent='Uygulama yüklenemedi. Sayfayı yenileyin.'});
+  if(cover&&child?.triggerCoverSound){child.triggerCoverSound('close');return}
+  if(child?.triggerPaperTurnSound){child.triggerPaperTurnSound();return}
+ }catch(e){}
+}
+function stopSpeech(){if('speechSynthesis'in window)speechSynthesis.cancel();$('speak').textContent='Başlat'}
+function toDesk(){
+ if(animating)return;
+ turnSound(true); stopSpeech();
+ app.classList.remove('reading');
+ $('current-sheet').innerHTML='';index=0;
+ if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('auto').textContent='Kapalı'}
+}
+function change(dir){
+ if(animating)return;
+ const n=index+dir;
+ if(n<0||n>=pages.length){toDesk();return}
+ animating=true;stopSpeech();
+ const next=pages[n].html;
+ $('back-sheet').innerHTML='<div class="paper-content">'+next+'</div>';
+ const leaf=$('flip-sheet');leaf.className='sheet '+(dir>0?'forward':'backward');leaf.innerHTML='<div class="paper-content">'+pages[index].html+'</div>';
+ leaf.style.display='block';leaf.style.transition='none';leaf.style.transform=dir>0?'rotateY(0deg)':'rotateY(0deg)';
+ $('bookcase').offsetWidth;
+ leaf.style.transition='transform 600ms cubic-bezier(.23,.64,.18,1),filter 600ms';
+ leaf.style.transform=dir>0?'rotateY(-178deg)':'rotateY(178deg)';
+ leaf.style.filter='brightness(.84)';
+ turnSound(false);
+ setTimeout(()=>{leaf.style.display='none';leaf.style.transform='none';leaf.style.filter='';showPage(n);animating=false},625);
+}
+function loadSource(){
+ if(loaded)return;
+ try{
+ const d=$('source').contentDocument;if(!d||!d.querySelector('.page-paper-texture'))return;
+ child=$('source').contentWindow;
+ pages=[...d.querySelectorAll('#book > .page-paper-texture')];
+ if(pages.length===0)pages=[...d.querySelectorAll('.page-paper-texture')];
+ pages=pages.map((p,i)=>({html:(p.querySelector('.custom-scrollbar')||p).innerHTML,title:(p.querySelector('h3,h4')?.textContent||'Sayfa '+(i+1)).trim()}));
+ if(!pages.length)return;
+ const visual=getComputedStyle(d.body,'::before').backgroundImage;
+ const bg=visual&&visual!=='none'?visual:getComputedStyle(d.body).backgroundImage;
+ $('scene').style.backgroundImage=bg;
+ $('scene').style.backgroundSize='cover';$('scene').style.backgroundPosition='50% center';
+ $('toclist').innerHTML=pages.map((p,i)=>'<button data-jump="'+i+'" style="display:block;width:100%;text-align:left;margin:6px 0;padding:11px;border:1px solid #cdaa6c66;background:#103d3c;color:#fff2cd;border-radius:9px">'+(i+1)+'. '+p.title+'</button>').join('');
+ $('toclist').querySelectorAll('button').forEach(b=>b.onclick=()=>{showPage(+b.dataset.jump);closeMenu()});
+ showPage(0);loaded=true;app.classList.add('ready');$('loading').hidden=true;
+ }catch(e){console.warn('İçerik yüklenemedi',e)}
+}
+$('source').addEventListener('load',loadSource);
+let attempts=0;const poll=setInterval(()=>{if(loaded){clearInterval(poll);return}loadSource();if(++attempts>80){clearInterval(poll);$('loading').textContent='Kitap yüklenemedi. İnternet bağlantısını kontrol edip sayfayı yenileyin.'}},220);
+function openBook(){app.classList.add('reading');showPage(0);$('current-sheet').querySelector('.paper-content')?.scrollTo(0,0)}
+$('landing-tap').onclick=openBook;$('landing-button').onclick=openBook;
+$('prev').onclick=()=>change(-1);$('next').onclick=()=>change(1);
+const stage=$('bookcase');
+stage.addEventListener('pointerdown',e=>{if(animating||e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,t:performance.now()};stage.setPointerCapture?.(e.pointerId)});
+stage.addEventListener('pointerup',e=>{if(!drag||animating)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.1)change(dx<0?1:-1)});
+stage.addEventListener('pointercancel',()=>drag=null);
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();return}if(!app.classList.contains('reading'))return;if(e.key==='ArrowRight')change(1);if(e.key==='ArrowLeft')change(-1)});
+$('menubtn').onclick=()=>document.body.classList.add('menu-open');$('closemenu').onclick=closeMenu;$('menuBackdrop').onclick=closeMenu;
+$('toc').onclick=()=>{$('toclist').hidden=!$('toclist').hidden};
+$('bookmark').onclick=()=>{try{localStorage.setItem('fikih-mobil-bookmark-v3',index);$('bookmark').textContent='Kaydedildi ✓'}catch(e){}};
+$('restore').onclick=()=>{try{const n=+localStorage.getItem('fikih-mobil-bookmark-v3');if(n>=0&&n<pages.length)showPage(n)}catch(e){}closeMenu()};
+$('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'Açık ✓':'Kapalı'};
+$('auto').onclick=()=>{if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('auto').textContent='Kapalı'}else{autoTimer=setInterval(()=>{if(!animating&&app.classList.contains('reading'))change(1)},5500);$('auto').textContent='Durdur'}};
+$('speak').onclick=()=>{if(!('speechSynthesis'in window))return alert('Tarayıcınız sesli anlatımı desteklemiyor');if(speechSynthesis.speaking){stopSpeech();return}let v=new SpeechSynthesisUtterance($('current-sheet').innerText);v.lang='tr-TR';v.rate=.86;v.onend=stopSpeech;v.onerror=stopSpeech;speechSynthesis.speak(v);$('speak').textContent='Durdur'};
+$('night').onclick=()=>{$('night').textContent=document.body.classList.toggle('night')?'Açık':'Kapalı'};
+$('theme').onchange=e=>document.documentElement.style.setProperty('--paper',e.target.value);
+$('sm').onclick=()=>document.documentElement.style.setProperty('--font','16px');$('md').onclick=()=>document.documentElement.style.setProperty('--font','18px');$('lg').onclick=()=>document.documentElement.style.setProperty('--font','22px');
+$('focus').onclick=()=>{const a=document.body.classList.toggle('focus');$('focus').textContent=a?'Kapat':'Aç';closeMenu()};
+$('full').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch(e){document.body.classList.add('focus');$('focus').textContent='Kapat'}closeMenu()};
+})();
 </script></body></html>
