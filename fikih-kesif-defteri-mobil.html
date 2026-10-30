@@ -92,6 +92,52 @@ body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
   body{display:grid;place-items:center;background:#0a1821}
   .app{width:430px;height:860px;border-radius:36px;overflow:hidden;box-shadow:0 40px 70px #0008;border:10px solid #0c1014}
 }
+
+/* Mobil defter v2: sakin sayfa geçişi, gerçekçi kâğıt kıvrımı ve kompakt kontroller */
+.reader-screen{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
+.topbar{gap:6px;padding:calc(env(safe-area-inset-top) + 4px) 9px 5px;min-height:48px}
+.topbar .icon-btn{height:32px;width:32px;min-width:32px;border-radius:10px;font-size:17px}
+.topbar .title-wrap strong{font-size:clamp(14px,3.7vw,17px)}
+.topbar .title-wrap small{font-size:10px}
+.topbar .counter{min-width:32px;font-size:11px}
+.close-book-btn{border:1px solid #d6ad6055;background:#113f3b;color:#f4ddb1;border-radius:8px;padding:5px 7px;font-size:10px;white-space:nowrap;cursor:pointer}
+.bottombar{min-height:0;gap:8px;padding:5px 12px calc(env(safe-area-inset-bottom) + 4px)}
+.bottombar .nav-btn{height:37px;width:37px;min-width:37px;font-size:22px}
+.bottombar .pager-chip{min-width:67px;font-size:12px;padding:6px 10px}
+.stage{min-height:0;padding:8px 10px 6px;perspective:1300px}
+.page-stack{isolation:isolate;perspective:1300px;transform-style:preserve-3d}
+.reader-page{opacity:0;visibility:hidden;transform:none;transition:none!important;backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:transform;transform-style:preserve-3d}
+.reader-page.active{opacity:1;visibility:visible;transform:none}
+.reader-page.turn-next,.reader-page.turn-prev{visibility:visible;opacity:1;pointer-events:none;animation-duration:.62s;animation-timing-function:cubic-bezier(.35,.03,.25,1);animation-fill-mode:both}
+.reader-page.turn-next{transform-origin:0 50%;animation-name:mobileTurnForward}
+.reader-page.turn-prev{transform-origin:100% 50%;animation-name:mobileTurnBackward}
+@keyframes mobileTurnForward{
+0%{transform:rotateY(0deg);filter:brightness(1)}
+35%{transform:rotateY(-32deg);filter:brightness(.91)}
+75%{transform:rotateY(-72deg);filter:brightness(.8)}
+100%{transform:rotateY(-92deg);filter:brightness(.76);opacity:.94}
+}
+@keyframes mobileTurnBackward{
+0%{transform:rotateY(0deg);filter:brightness(1)}
+35%{transform:rotateY(32deg);filter:brightness(.91)}
+75%{transform:rotateY(72deg);filter:brightness(.8)}
+100%{transform:rotateY(92deg);filter:brightness(.76);opacity:.94}
+}
+.reader-page.turn-next .paper-inner,.reader-page.turn-prev .paper-inner{
+box-shadow:inset -16px 0 22px -14px #38241255, 0 11px 22px #0005;
+}
+.paper-inner{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+@media (prefers-reduced-motion:reduce){
+.reader-page.turn-next,.reader-page.turn-prev{animation-duration:.01ms}
+}
+@media(max-height:760px){
+.paper-head{padding-top:14px;padding-bottom:9px}
+.paper-body{font-size:calc(15px * var(--font-scale));line-height:1.38;padding-top:12px;height:calc(100% - 112px)}
+.paper-body li{margin-bottom:7px}
+.paper-body p{margin-bottom:8px}
+.paper-head h2{font-size:clamp(24px,6vw,35px)}
+}
+
 </style>
 </head>
 <body>
@@ -119,7 +165,7 @@ body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
         <strong>Fıkıh Keşif Defteri</strong>
         <small id="chapterTitle">Helallerde Genişlik</small>
       </div>
-      <div id="topCounter" class="counter">1 / 4</div>
+      <div id="topCounter" class="counter">1 / 4</div><button id="closeBookBtn" class="close-book-btn" aria-label="Defteri kapat" title="Defteri kapat">Kapat</button>
       <button id="menuBtn" class="icon-btn" aria-label="Ayarları aç">☰</button>
     </div>
     <div class="stage">
@@ -229,6 +275,7 @@ body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
   const bottomCounter = document.getElementById('bottomCounter');
   const startBtn = document.getElementById('startBtn');
   const backBtn = document.getElementById('backBtn');
+  const closeBookBtn = document.getElementById('closeBookBtn');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const menuBtn = document.getElementById('menuBtn');
@@ -261,6 +308,7 @@ body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
 
   function showCover() {
     if (window.speechSynthesis) window.speechSynthesis.cancel();
+    closeMenu();
     readerScreen.classList.add('hidden');
     coverScreen.classList.remove('hidden');
   }
@@ -269,26 +317,32 @@ body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
     if (animating || index < 0 || index >= pages.length) return;
     const old = pages[current];
     const next = pages[index];
-    pages.forEach(p => p.classList.remove('active','prev','next','turn-next','turn-prev'));
-    if (direction && old !== next) {
-      animating = true;
-      old.classList.add('active', direction === 'next' ? 'turn-next' : 'turn-prev');
-      next.classList.add('active');
-      next.style.zIndex = '2';
-      old.style.zIndex = '3';
-      setTimeout(() => {
-        old.classList.remove('active','turn-next','turn-prev');
-        next.classList.add('active');
-        next.style.zIndex = '2';
-        old.style.zIndex = '';
-        animating = false;
-      }, 620);
-    } else {
-      next.classList.add('active');
-    }
+    const isTurn = Boolean(direction && old !== next);
+    pages.forEach(p => {
+      p.classList.remove('active','prev','next','turn-next','turn-prev');
+      p.style.zIndex = '';
+    });
+    // Keep the destination page stationary underneath the turning sheet.
+    next.classList.add('active');
+    next.style.zIndex = '2';
     current = index;
     updateCounters();
     saveState();
+    if (!isTurn) return;
+    animating = true;
+    old.classList.add('active', direction === 'next' ? 'turn-next' : 'turn-prev');
+    old.style.zIndex = '3';
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      old.classList.remove('active','turn-next','turn-prev');
+      old.style.zIndex = '';
+      next.style.zIndex = '';
+      animating = false;
+    };
+    old.addEventListener('animationend', finish, { once:true });
+    setTimeout(finish, 720);
   }
 
   function nextPage() { if (current < pages.length - 1) renderPage(current + 1, 'next'); }
@@ -326,6 +380,7 @@ body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
 
   startBtn.addEventListener('click', showReader);
   backBtn.addEventListener('click', showCover);
+  closeBookBtn.addEventListener('click', showCover);
   prevBtn.addEventListener('click', prevPage);
   nextBtn.addEventListener('click', nextPage);
   menuBtn.addEventListener('click', openMenu);
