@@ -342,18 +342,18 @@
     
 .mode-picker{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:8px 0 25px}.mode-picker label{cursor:pointer;padding:13px 19px;border:1px solid #d4af37;border-radius:15px;background:#172251;color:white;font-weight:700}.mode-picker input{accent-color:#d4af37}#group-scoreboard{text-align:center;background:#13275a;border:1px solid #d4af37;border-radius:14px;margin-top:90px;padding:11px;color:#f6d883;font-weight:750}.overlay{overflow:auto}@media(max-width:850px){body{height:auto;min-height:100vh;overflow:auto}#game-container{height:auto;min-height:95vh}#group-scoreboard{margin-top:28px}.mode-picker{flex-direction:column}}
 
-#game-fullscreen-toggle{position:absolute;top:20px;left:175px;z-index:8;background:rgba(2,2,48,.9);color:#e9c96d;border:2px solid #d4af37;padding:8px 14px;border-radius:22px;font-size:14px;font-weight:800;cursor:pointer}
+#game-action-bar{position:absolute;top:16px;left:175px;z-index:30;display:flex;flex-wrap:wrap;gap:8px}#game-action-bar button{position:static;cursor:pointer;background:#092453;color:#ffe4a1;border:2px solid #d4af37;border-radius:22px;padding:9px 13px;font-size:13px;font-weight:800;box-shadow:0 3px 12px #0009}#game-action-bar button:hover{background:#d4af37;color:#061a3b}.overlay-fullscreen{margin-top:14px!important;padding:11px 25px!important;font-size:1rem!important;background:transparent!important;color:#f4d473!important;border:2px solid #d4af37!important}
 #game-container:fullscreen{width:100vw;max-width:none;height:100dvh;min-height:0;border-radius:0;overflow:auto;margin:0}
 #game-container:fullscreen #main-area{justify-content:center}
-#game-container:fullscreen #sidebar{border-radius:0}
-@media(max-width:850px){#game-fullscreen-toggle{top:10px;left:125px;font-size:12px;padding:6px 9px}#game-container:fullscreen{height:100dvh;max-height:none;overflow:auto}}
+#game-container:fullscreen #sidebar{border-radius:0}#game-container:fullscreen #game-action-bar{position:fixed;z-index:120}
+@media(max-width:850px){#game-action-bar{top:48px;left:10px;right:10px}#game-action-bar button{font-size:11px;padding:6px 8px}#game-container #joker-container{margin-top:90px}#game-container:fullscreen{height:100dvh;max-height:none;overflow:auto}}
 </style>
 </head>
 <body>
 
 <div id="game-container">
     <div id="main-area">
-        <button id="sound-toggle" onclick="toggleSound()">🔊 Ses: Açık</button><button id="game-fullscreen-toggle" type="button" onclick="toggleGameFullscreen()" aria-label="Tam ekrana geç">⛶ Tam Ekran</button>
+        <button id="sound-toggle" onclick="toggleSound()">🔊 Ses: Açık</button><div id="game-action-bar"><button id="game-back-button" type="button" onclick="backToModeSelection()">← Ana Ekrana Dön</button><button id="game-fullscreen-toggle" type="button" onclick="toggleGameFullscreen()" aria-label="Tam ekrana geç">⛶ Tam Ekran</button></div>
         <div id="timer-container">20</div>
         
         <div id="joker-container">
@@ -381,7 +381,7 @@
     <div id="start-screen" class="overlay">
         <h2>İSLAMİYET ÖZEL</h2>
         <p>Dinler Tarihi · İslamiyet bilgi yarışması.<br>Her soru için 20 saniyeniz var!</p><div class="mode-picker"><label><input type="radio" name="gameMode" value="solo" checked onchange="selectGameMode(this.value)"> 👤 Bireysel yarışma</label><label><input type="radio" name="gameMode" value="group" onchange="selectGameMode(this.value)"> 👥 Grup A – Grup B</label></div>
-        <button class="btn-action" onclick="initGame()">Yarışmayı Başlat</button>
+        <button class="btn-action" onclick="initGame()">Yarışmayı Başlat</button><button class="btn-action overlay-fullscreen" type="button" onclick="toggleGameFullscreen()">⛶ Tam Ekran Modu</button>
     </div>
 
     <!-- Oyun Bitiş Ekranı -->
@@ -1221,9 +1221,10 @@
 ];
     let questions = [];
     let selectedMode = "solo";
+    let gameSession = 0;
     let teamScores = [0,0];
     function selectGameMode(mode){selectedMode=mode;}
-    function backToModeSelection(){stopTimer();document.getElementById("game-over").style.display="none";document.getElementById("start-screen").style.display="flex";}
+    function backToModeSelection(){gameSession++;stopTimer();isAnswering=true;document.getElementById("game-over").style.display="none";document.getElementById("start-screen").style.display="flex";document.getElementById("phone-call-ui").style.display="none";document.getElementById("audience-poll").style.display="none";}
 
     const moneyLadder = [
         "1.000 TL", "5.000 TL", "10.000 TL", "25.000 TL", "50.000 TL", 
@@ -1291,7 +1292,7 @@
                     clearInterval(timerInterval);
                     isAnswering = true;
                     sounds.wrong();
-                    if(selectedMode==="group"){setTimeout(advanceGroup,1200)}else endGame(false, "Süreniz Doldu!");
+                    if(selectedMode==="group"){setTimeout(()=>{if(!document.getElementById("start-screen").offsetParent)advanceGroup()},1200)}else endGame(false, "Süreniz Doldu!");
                 }
             }
         }, 1000);
@@ -1323,6 +1324,7 @@
     document.addEventListener('fullscreenchange',syncGameFullscreen);
 
     function initGame() {
+        gameSession++;
         initAudio();
         enterGameFullscreen();
         
@@ -1392,13 +1394,16 @@
         const options = document.querySelectorAll('.option');
         options[index].classList.add('selected');
 
+        const activeSession=gameSession;
         setTimeout(() => {
+            if(activeSession!==gameSession)return;
             if (index === correctIndex) {
                 if(selectedMode==="group"){teamScores[currentStep%2]+=10;refreshTeamScores();}
                 sounds.correct();
                 options[index].classList.replace('selected', 'correct');
                 
                 setTimeout(() => {
+                    if(activeSession!==gameSession)return;
                     if(selectedMode==="group"){advanceGroup();} else if (currentStep === questions.length - 1) {
                         sounds.win();
                         endGame(true);
@@ -1413,7 +1418,7 @@
                 sounds.wrong();
                 options[index].classList.replace('selected', 'wrong');
                 options[correctIndex].classList.add('correct');
-                setTimeout(() => selectedMode==="group"?advanceGroup():endGame(false), 2000);
+                setTimeout(() => {if(activeSession===gameSession)(selectedMode==="group"?advanceGroup():endGame(false));}, 2000);
             }
         }, 1500);
     }
