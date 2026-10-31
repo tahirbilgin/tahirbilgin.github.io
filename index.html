@@ -330,17 +330,17 @@ html[data-tb-theme="dark"] .hub-panel::-webkit-scrollbar-thumb:hover{background:
 @media(prefers-reduced-motion:reduce){.hub-panel{scroll-behavior:auto}}
 </style>
 <style id="tb-discovery-compass-style">
-#tb-discovery-compass{position:fixed;right:16px;bottom:calc(19px + env(safe-area-inset-bottom));z-index:450;width:66px;height:66px;border:1px solid #b8d8ff91;border-radius:50%;background:rgba(246,249,255,.82);display:grid;place-items:center;cursor:pointer;padding:0;backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);box-shadow:0 7px 21px #214d9940,0 0 18px #6dadff55,inset 0 1px 0 #fff;transition:transform .2s ease,box-shadow .2s ease}
-#tb-discovery-compass:hover{transform:translateY(-2px);box-shadow:0 12px 27px #214d9959,0 0 20px #6dadff77}
-#tb-discovery-compass:focus-visible{outline:3px solid #5ca2ff;outline-offset:3px}
-#tb-discovery-compass .tb-compass-svg{position:absolute;inset:4px;width:56px;height:56px;transform:rotate(-90deg)}
-#tb-discovery-compass .tb-compass-track{fill:none;stroke:#b6cef2;stroke-width:4.2}
-#tb-discovery-compass .tb-compass-progress{fill:none;stroke:url(#tb-compass-blue-gradient);stroke-width:4.7;stroke-linecap:round;filter:drop-shadow(0 0 3px #3985ff99);transition:stroke-dashoffset .15s linear}
-#tb-discovery-compass .tb-compass-arrow{width:23px;height:23px;stroke:#2769ec;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round;fill:none;filter:drop-shadow(0 0 2px #76adff80)}
-html[data-tb-theme="dark"] #tb-discovery-compass{background:rgba(14,30,52,.85);border-color:#557bac;box-shadow:0 8px 22px #0008,0 0 17px #428fff4d}
+#tb-discovery-compass{position:fixed;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:450;width:54px;height:54px;border:0;border-radius:50%;background:transparent;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transition:transform .2s ease}
+#tb-discovery-compass:hover{transform:translateY(-2px)}
+#tb-discovery-compass:focus-visible{outline:2px solid #5ca2ff;outline-offset:3px}
+#tb-discovery-compass .tb-compass-svg{position:absolute;inset:0;width:54px;height:54px;transform:rotate(-90deg)}
+#tb-discovery-compass .tb-compass-track{fill:none;stroke:#afc9ed;stroke-width:4.2}
+#tb-discovery-compass .tb-compass-progress{fill:none;stroke:url(#tb-compass-blue-gradient);stroke-width:4.7;stroke-linecap:round;filter:drop-shadow(0 0 3px #3985ff77);transition:stroke-dashoffset .15s linear}
+#tb-discovery-compass .tb-compass-arrow{width:18px;height:18px;stroke:#2769ec;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round;fill:none}
+html[data-tb-theme="dark"] #tb-discovery-compass{background:transparent;border:0;box-shadow:none}
 html[data-tb-theme="dark"] #tb-discovery-compass .tb-compass-track{stroke:#345079}
 html[data-tb-theme="dark"] #tb-discovery-compass .tb-compass-arrow{stroke:#a4cfff}
-@media(max-width:720px){#tb-discovery-compass{width:60px;height:60px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom))}#tb-discovery-compass .tb-compass-svg{inset:4px;width:50px;height:50px}#tb-discovery-compass .tb-compass-arrow{width:21px;height:21px}}
+@media(max-width:720px){#tb-discovery-compass{width:50px;height:50px;right:10px;bottom:calc(14px + env(safe-area-inset-bottom))}#tb-discovery-compass .tb-compass-svg{width:50px;height:50px}#tb-discovery-compass .tb-compass-arrow{width:17px;height:17px}}
 @media(prefers-reduced-motion:reduce){#tb-discovery-compass,#tb-discovery-compass .tb-compass-progress{transition:none}}
 </style><style id="tb-compass-cleanup-style">
 /* Eski ışıklı ok/çubuk kontrolünü gizle; Keşif Pusulası tek kontrol kalsın. */
