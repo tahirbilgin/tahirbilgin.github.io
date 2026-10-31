@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kim Milyoner Olmak İster? - İslamiyet Özel</title>
+    <style>
+        :root {
+            --dark-blue: #020230;
+            --medium-blue: #050a5e;
+            --accent-blue: #1e2a78;
+            --gold: #d4af37;
+            --white: #ffffff;
+            --correct: #28a745;
+            --wrong: #dc3545;
+            --selected: #e18c00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle, var(--medium-blue) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 95%;
+            max-width: 1200px;
+            min-height: 600px;
+            height: min(88vh,850px);
+            display: flex;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--accent-blue);
+            border-radius: 24px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        #main-area {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+            position: relative;
+        }
+
+        #timer-container {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: rgba(2, 2, 48, 0.8);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        #sound-toggle {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            background: rgba(2, 2, 48, 0.8);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        #sound-toggle:hover {
+            background: var(--gold);
+            color: var(--dark-blue);
+        }
+
+        #sidebar {
+            flex: 0 0 27%;
+            min-width: 225px;
+            min-height: 0;
+            background: rgba(2, 2, 48, 0.9);
+            border-left: 2px solid var(--accent-blue);
+            display: flex;
+            flex-direction: column-reverse;
+            padding: 12px 9px;
+            gap: 4px;
+            border-radius: 0 24px 24px 0;
+            overflow: hidden;
+        }
+
+        .money-step {
+            padding: 3px 12px;
+            margin: 0;
+            flex: 1 1 0;
+            min-height: 0;
+            align-items: center;
+            white-space: nowrap;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--gold);
+            font-size: clamp(0.72rem, 1.1vw, 0.93rem);
+            display: flex;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .money-step.active {
+            background: var(--selected);
+            color: white;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(225, 140, 0, 0.4);
+            border-color: var(--gold);
+        }
+
+        .money-step.checkpoint {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        #joker-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 50px;
+            margin-bottom: auto;
+        }
+
+        .joker {
+            width: 60px;
+            height: 40px;
+            border: 2px solid var(--gold);
+            border-radius: 50% / 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: 0.3s;
+            background: rgba(2, 2, 48, 0.8);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .joker:hover:not(.used) {
+            background: var(--gold);
+            color: var(--dark-blue);
+            transform: translateY(-3px);
+        }
+
+        .joker.used {
+            opacity: 0.2;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        #question-box {
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+            padding: 35px;
+            text-align: center;
+            border-top: 2px solid var(--gold);
+            border-bottom: 2px solid var(--gold);
+            margin: 30px 0;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            line-height: 1.5;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .option {
+            background: linear-gradient(90deg, #050a5e, #1e2a78);
+            border: 2px solid var(--gold);
+            padding: 18px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            position: relative;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+        }
+
+        .option span {
+            color: var(--gold);
+            margin-right: 15px;
+            font-weight: 800;
+        }
+
+        .option:hover {
+            background: var(--accent-blue);
+            border-color: white;
+            padding-left: 35px;
+        }
+
+        .option.selected { background: var(--selected) !important; color: white; border-color: white; }
+        .option.correct { background: var(--correct) !important; color: white; border-color: white; animation: blink 0.5s 3; }
+        .option.wrong { background: var(--wrong) !important; color: white; border-color: white; }
+        .option.hidden { opacity: 0; pointer-events: none; }
+
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 24px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        #start-screen { display: flex; }
+        #game-over { display: none; }
+
+        .overlay h2 { font-size: 3rem; color: var(--gold); margin-bottom: 20px; letter-spacing: 2px; }
+        .overlay p { font-size: 1.4rem; margin-bottom: 30px; line-height: 1.6; }
+
+        .btn-action {
+            padding: 15px 45px;
+            font-size: 1.2rem;
+            background: var(--gold);
+            color: var(--dark-blue);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        #audience-poll {
+            display: none;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 12px;
+            height: 100px;
+            margin-top: 20px;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .poll-bar {
+            width: 35px;
+            background: linear-gradient(to top, var(--gold), #fff);
+            position: relative;
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease-out;
+        }
+
+        .poll-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        #phone-call-ui {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--gold);
+            color: var(--dark-blue);
+            padding: 15px;
+            border-radius: 15px;
+            max-width: 250px;
+            display: none;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (min-width: 851px) and (max-height: 650px) {
+            #game-container { height: 96vh; }
+            #sidebar { gap: 2px; padding: 6px; }
+            .money-step { padding-block: 1px; }
+        }
+
+        @media (max-width: 850px) {
+            #game-container { flex-direction: column; height: 95vh; overflow-y: auto; }
+            #sidebar { border-left: none; border-top: 2px solid var(--accent-blue); border-radius: 0 0 24px 24px; min-width: 0; height: auto; flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column; grid-template-rows: repeat(5, minmax(32px, auto)); gap: 4px; padding: 8px; overflow: visible; }
+            .money-step { font-size: 0.78rem; padding: 6px 9px; }
+            #main-area { padding: 20px; flex: 1; }
+            #timer-container { top: 10px; right: 10px; width: 50px; height: 50px; font-size: 1.2rem; }
+            #sound-toggle { top: 10px; left: 10px; padding: 5px 10px; font-size: 0.8rem; }
+            #joker-container { margin-top: 35px; }
+            #question-box { font-size: 1.1rem; padding: 20px; margin: 20px 0; }
+            #options-container { grid-template-columns: 1fr; gap: 10px; }
+            .option { padding: 12px 20px; font-size: 0.95rem; }
+            .overlay h2 { font-size: 2rem; }
+        }
+    
+.mode-picker{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:8px 0 25px}.mode-picker label{cursor:pointer;padding:13px 19px;border:1px solid #d4af37;border-radius:15px;background:#172251;color:white;font-weight:700}.mode-picker input{accent-color:#d4af37}#group-scoreboard{text-align:center;background:#13275a;border:1px solid #d4af37;border-radius:14px;margin-top:90px;padding:11px;color:#f6d883;font-weight:750}.overlay{overflow:auto}@media(max-width:850px){body{height:auto;min-height:100vh;overflow:auto}#game-container{height:auto;min-height:95vh}#group-scoreboard{margin-top:28px}.mode-picker{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="main-area">
+        <button id="sound-toggle" onclick="toggleSound()">🔊 Ses: Açık</button>
+        <div id="timer-container">20</div>
+        
+        <div id="joker-container">
+            <div id="joker-50" class="joker" onclick="useHalfJoker()" title="50:50">50:50</div>
+            <div id="joker-audience" class="joker" onclick="useAudienceJoker()" title="Seyirciye Sor">👤</div>
+            <div id="joker-phone" class="joker" onclick="usePhoneJoker()" title="Arkadaş Jokeri">📞</div>
+        </div>
+
+        <div id="group-scoreboard" style="display:none" aria-live="polite">Grup A: <strong id="team-score-a">0</strong> &nbsp;•&nbsp; Grup B: <strong id="team-score-b">0</strong> &nbsp;•&nbsp; Sıra: <strong id="team-turn">Grup A</strong></div><div id="question-box">Hazır mısınız?</div>
+
+        <div id="options-container">
+            <div class="option" onclick="handleAnswer(0)" id="opt-0"><span>A:</span> <p></p></div>
+            <div class="option" onclick="handleAnswer(1)" id="opt-1"><span>B:</span> <p></p></div>
+            <div class="option" onclick="handleAnswer(2)" id="opt-2"><span>C:</span> <p></p></div>
+            <div class="option" onclick="handleAnswer(3)" id="opt-3"><span>D:</span> <p></p></div>
+        </div>
+
+        <div id="audience-poll"></div>
+        <div id="phone-call-ui"></div>
+    </div>
+
+    <div id="sidebar"></div>
+
+    <!-- Başlangıç Ekranı -->
+    <div id="start-screen" class="overlay">
+        <h2>İSLAMİYET ÖZEL</h2>
+        <p>Dinler Tarihi · İslamiyet bilgi yarışması.<br>Her soru için 20 saniyeniz var!</p><div class="mode-picker"><label><input type="radio" name="gameMode" value="solo" checked onchange="selectGameMode(this.value)"> 👤 Bireysel yarışma</label><label><input type="radio" name="gameMode" value="group" onchange="selectGameMode(this.value)"> 👥 Grup A – Grup B</label></div>
+        <button class="btn-action" onclick="initGame()">Yarışmayı Başlat</button>
+    </div>
+
+    <!-- Oyun Bitiş Ekranı -->
+    <div id="game-over" class="overlay">
+        <h2 id="result-title">SONUÇ</h2>
+        <p id="result-desc"></p>
+        <button class="btn-action" onclick="backToModeSelection()">Yeni Yarışma</button>
+    </div>
+</div>
+
+<script>
+    // --- SES SİSTEMİ (Web Audio API) ---
+    let audioCtx = null;
+    let isSoundMuted = false;
+    
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        isSoundMuted = !isSoundMuted;
+        document.getElementById('sound-toggle').innerText = isSoundMuted ? "🔇 Ses: Kapalı" : "🔊 Ses: Açık";
+    }
+
+    function playTone(freq, type, duration, volume = 0.05) {
+        if (isSoundMuted || !audioCtx) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    const sounds = {
+        // Her saniye tok bir tik; son 10 saniyede daha tiz ve belirgin.
+        tick: (urgent = false) => {
+            playTone(urgent ? 1050 : 680, 'square', urgent ? 0.085 : 0.055, urgent ? 0.033 : 0.020);
+        },
+        select: () => playTone(440, 'triangle', 0.16, 0.035),
+        // Doğru cevap: yükselen üç notalı «tırunt» melodisi.
+        correct: () => {
+            [523, 659, 880].forEach((note, i) =>
+                setTimeout(() => playTone(note, 'sine', i === 2 ? 0.48 : 0.2, 0.065), i * 125));
+        },
+        // Yanlış cevap: tek, alçalan «tın» uyarısı.
+        wrong: () => {
+            playTone(260, 'triangle', 0.55, 0.085);
+            setTimeout(() => playTone(155, 'sine', 0.46, 0.065), 135);
+        },
+        win: () => {
+            const notes = [523, 659, 783, 1046];
+            notes.forEach((n, i) => setTimeout(() => playTone(n, 'square', 0.5, 0.08), i * 150));
+        },
+        joker: () => playTone(880, 'sine', 0.3, 0.05)
+    };
+
+    const questionBank = [
+    {
+        "id": 0,
+        "q": "İslamiyet’te inanç esasları hangi kavramla ifade edilir?",
+        "a": [
+            "İcma",
+            "Âmentü",
+            "İçtihat",
+            "Muamelat"
+        ],
+        "c": 1,
+        "page": 35,
+        "cat": "İnanç"
+    },
+    {
+        "id": 1,
+        "q": "İslam inancının iki temel kaynağı hangileridir?",
+        "a": [
+            "Kur’an ve sahih hadisler",
+            "Tarih ve edebiyat",
+            "Örf ve mitoloji",
+            "Felsefe ve hukuk"
+        ],
+        "c": 0,
+        "page": 35,
+        "cat": "İnanç"
+    },
+    {
+        "id": 2,
+        "q": "Cibril hadisinde aşağıdakilerden hangisine inanmak zikredilir?",
+        "a": [
+            "Rüyalara",
+            "Burçlara",
+            "Kadere",
+            "Uğurlu sayılara"
+        ],
+        "c": 2,
+        "page": 35,
+        "cat": "İnanç"
+    },
+    {
+        "id": 3,
+        "q": "Aşağıdakilerden hangisi İslam’ın iman esaslarından biri değildir?",
+        "a": [
+            "Meleklere iman",
+            "Peygamberlere iman",
+            "Ahirete iman",
+            "Mezheplere iman"
+        ],
+        "c": 3,
+        "page": 35,
+        "cat": "İnanç"
+    },
+    {
+        "id": 4,
+        "q": "Kitaba göre İslam’ın genel anlamı hangisidir?",
+        "a": [
+            "Yalnız Arap toplumunun tarihi",
+            "Hz. Âdem’den Hz. Muhammed’e gelen dinin genel adı",
+            "Yalnız ibadet kuralları",
+            "Yalnız ahlak kuralları"
+        ],
+        "c": 1,
+        "page": 35,
+        "cat": "İnanç"
+    },
+    {
+        "id": 5,
+        "q": "Tevhit inancının temel vurgusu nedir?",
+        "a": [
+            "Birden fazla ilahın eşitliği",
+            "İbadetin aracı kişilere yöneltilmesi",
+            "Allah’ın otoritesinin paylaşılmaması",
+            "Evrenin kendi kendine yönetilmesi"
+        ],
+        "c": 2,
+        "page": 36,
+        "cat": "İnanç"
+    },
+    {
+        "id": 6,
+        "q": "İslamiyet’e göre dua ve bağışlanma talebi öncelikle kime yöneltilir?",
+        "a": [
+            "Yalnız Allah’a",
+            "Bir din adamına",
+            "Bir meleğe",
+            "Herhangi bir hükümdara"
+        ],
+        "c": 0,
+        "page": 36,
+        "cat": "İnanç"
+    },
+    {
+        "id": 7,
+        "q": "Tevhit inancının beşerî yönü hangisidir?",
+        "a": [
+            "Bütün varlıklara eşit kulluk",
+            "Meleklerin otoritesini paylaşmak",
+            "İbadetten vazgeçmek",
+            "En üstün sevgi ve saygıyı yalnız Allah’a yöneltmek"
+        ],
+        "c": 3,
+        "page": 36,
+        "cat": "İnanç"
+    },
+    {
+        "id": 8,
+        "q": "Kur’an ve sünnetin ilişkisine dair hangisi doğrudur?",
+        "a": [
+            "Sünnet Kur’an’dan bağımsızdır",
+            "Sünnet Kur’an’daki esasları açıklar ve uygulamada gösterir",
+            "Kur’an ibadeti bütünüyle dışlar",
+            "Sünnet yalnız tarihî bir kaynak sayılır"
+        ],
+        "c": 1,
+        "page": 36,
+        "cat": "İnanç"
+    },
+    {
+        "id": 9,
+        "q": "Kitaba göre ahiret hayatı hangi olayla başlar?",
+        "a": [
+            "Hicret",
+            "Vahyin başlaması",
+            "Kıyametin kopması",
+            "İlk vahyin inmesi"
+        ],
+        "c": 2,
+        "page": 37,
+        "cat": "İnanç"
+    },
+    {
+        "id": 10,
+        "q": "Hangisi ahiret hayatıyla ilişkili olaylardan biri değildir?",
+        "a": [
+            "Yeniden dirilme",
+            "Hesap",
+            "Cennet ve cehennem",
+            "Zekâtın hesaplanması"
+        ],
+        "c": 3,
+        "page": 37,
+        "cat": "İnanç"
+    },
+    {
+        "id": 11,
+        "q": "Kur’an’a göre kıyametin zamanını kim bilir?",
+        "a": [
+            "Yalnız Allah",
+            "Bütün peygamberler",
+            "Bütün melekler",
+            "Astronomlar"
+        ],
+        "c": 0,
+        "page": 37,
+        "cat": "İnanç"
+    },
+    {
+        "id": 12,
+        "q": "Kasas suresi 77. ayetle ilişkilendirilen ilke nedir?",
+        "a": [
+            "Sadece dünya için çalışmak",
+            "Dünya ve ahiret dengesini gözetmek",
+            "Dünyadan bütünüyle çekilmek",
+            "İbadeti terk etmek"
+        ],
+        "c": 1,
+        "page": 37,
+        "cat": "İnanç"
+    },
+    {
+        "id": 13,
+        "q": "Meleklere iman, kitapta özellikle hangi inanç alanıyla ilişkilendirilir?",
+        "a": [
+            "Ticaret",
+            "Sanat",
+            "Vahyin peygamberlere ulaştırılması",
+            "Spor"
+        ],
+        "c": 2,
+        "page": 37,
+        "cat": "İnanç"
+    },
+    {
+        "id": 14,
+        "q": "Kur’an’dan önce indirildiği belirtilen kitaplar hangileridir?",
+        "a": [
+            "Tevrat, Zebur ve İncil",
+            "Yalnız Tevrat",
+            "Tanah, Talmud ve Mişna",
+            "Yalnız İncil"
+        ],
+        "c": 0,
+        "page": 38,
+        "cat": "İnanç"
+    },
+    {
+        "id": 15,
+        "q": "Bazı peygamberlere verildiği bildirilen sayfalara ne denir?",
+        "a": [
+            "Kıssa",
+            "Hutbe",
+            "Risale",
+            "Suhuf"
+        ],
+        "c": 3,
+        "page": 38,
+        "cat": "İnanç"
+    },
+    {
+        "id": 16,
+        "q": "Hicr suresi 9. ayette hangi husus vurgulanır?",
+        "a": [
+            "Hac zamanı",
+            "Kur’an’ın korunması",
+            "Namaz vakitleri",
+            "Zekât oranları"
+        ],
+        "c": 1,
+        "page": 38,
+        "cat": "İnanç"
+    },
+    {
+        "id": 17,
+        "q": "Peygamberlere iman hakkında hangisi doğrudur?",
+        "a": [
+            "Yalnız son peygambere iman edilir",
+            "Peygamberler arasında iman bakımından ayrım yapılır",
+            "Bütün peygamberlere ayrım gözetmeden iman edilir",
+            "Peygamberliğin vahiy ile ilişkisi yoktur"
+        ],
+        "c": 2,
+        "page": 38,
+        "cat": "İnanç"
+    },
+    {
+        "id": 18,
+        "q": "İslamiyet’e göre ilk peygamber kimdir?",
+        "a": [
+            "Hz. Âdem",
+            "Hz. Nuh",
+            "Hz. İbrahim",
+            "Hz. Musa"
+        ],
+        "c": 0,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 19,
+        "q": "İslamiyet’e göre son peygamber kimdir?",
+        "a": [
+            "Hz. İsa",
+            "Hz. Musa",
+            "Hz. Davut",
+            "Hz. Muhammed"
+        ],
+        "c": 3,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 20,
+        "q": "Peygamberlerin görevlerinde hatadan korunmuşluğu hangi kavramla anlatılır?",
+        "a": [
+            "İhsan",
+            "İsmet",
+            "Tevekkül",
+            "İnfak"
+        ],
+        "c": 1,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 21,
+        "q": "Kader kelimesinin sözlük anlamları arasında hangisi yer alır?",
+        "a": [
+            "Sadece ödüllendirme",
+            "Kutsal metin okuma",
+            "Ölçüyle yapmak ve planlamak",
+            "Yolculuk yapmak"
+        ],
+        "c": 2,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 22,
+        "q": "Kader inancında insanın sorumluluğu nasıl açıklanır?",
+        "a": [
+            "İnsan iradesiyle iyi ve kötüyü seçebilir",
+            "İnsan hiçbir seçime sahip değildir",
+            "Hiçbir davranıştan sorumlu tutulmaz",
+            "İnsan geleceği kesin bilir"
+        ],
+        "c": 0,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 23,
+        "q": "Kitaba göre İslam mezhepleri kaç ana grupta incelenir?",
+        "a": [
+            "İki",
+            "Dört",
+            "Beş",
+            "Üç"
+        ],
+        "c": 3,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 24,
+        "q": "Aşağıdakilerden hangisi kitapta sayılan mezhep türlerinden değildir?",
+        "a": [
+            "İtikadî",
+            "Coğrafî",
+            "Amelî",
+            "Siyasî"
+        ],
+        "c": 1,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 25,
+        "q": "Genel anlamda ibadet hangisini de kapsar?",
+        "a": [
+            "Yalnız beş vakit namazı",
+            "Sadece hac ibadetini",
+            "Allah’ın rızası için yapılan olumlu davranışları",
+            "Yalnız oruç tutmayı"
+        ],
+        "c": 2,
+        "page": 40,
+        "cat": "İbadet"
+    },
+    {
+        "id": 26,
+        "q": "Özel anlamda ibadet neyi ifade eder?",
+        "a": [
+            "Allah ve Resulü tarafından istenen belirli kulluk davranışlarını",
+            "Yalnız alışverişi",
+            "Herhangi bir günlük alışkanlığı",
+            "Sadece seyahati"
+        ],
+        "c": 0,
+        "page": 40,
+        "cat": "İbadet"
+    },
+    {
+        "id": 27,
+        "q": "İslam’ın şartlarından sayılan, İslam’a giriş anahtarı olarak tanımlanan ifade nedir?",
+        "a": [
+            "İhlas",
+            "Tevekkül",
+            "Tesbih",
+            "Kelimeişehadet"
+        ],
+        "c": 3,
+        "page": 40,
+        "cat": "İbadet"
+    },
+    {
+        "id": 28,
+        "q": "Kur’an’da ibadetlerin uygulama ayrıntıları genel olarak neyle netleşir?",
+        "a": [
+            "Yalnız örflerle",
+            "Hz. Peygamber’in açıklama ve uygulamalarıyla",
+            "Tarihteki hükümdarlarla",
+            "Coğrafî şartlarla"
+        ],
+        "c": 1,
+        "page": 40,
+        "cat": "İbadet"
+    },
+    {
+        "id": 29,
+        "q": "Asr suresinde imanla birlikte özellikle hangisi anılır?",
+        "a": [
+            "Sadece servet",
+            "Yalnız soy bağı",
+            "Salih amel ve hakkı, sabrı tavsiye",
+            "Yalnız ticaret"
+        ],
+        "c": 2,
+        "page": 40,
+        "cat": "İbadet"
+    },
+    {
+        "id": 30,
+        "q": "Namaz hangi ifadeyle başlar, hangisiyle sona erer?",
+        "a": [
+            "Tekbirle başlar, selâmla biter",
+            "Dua ile başlar, hutbeyle biter",
+            "Selâmla başlar, tekbirle biter",
+            "Ezanla başlar, oruçla biter"
+        ],
+        "c": 0,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 31,
+        "q": "Hanefilere göre namaz kaç grupta değerlendirilir?",
+        "a": [
+            "İki",
+            "Dört",
+            "Beş",
+            "Üç"
+        ],
+        "c": 3,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 32,
+        "q": "Diğer mezheplerin namaz tasnifinde vacipten farklı olarak kaç temel grup bulunur?",
+        "a": [
+            "Üç",
+            "İki",
+            "Dört",
+            "Beş"
+        ],
+        "c": 1,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 33,
+        "q": "Oruç hangi iki zaman arasında tutulur?",
+        "a": [
+            "Güneşin doğuşu ve öğle",
+            "Öğle ve ikindi",
+            "İmsak ve iftar",
+            "Akşam ve yatsı"
+        ],
+        "c": 2,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 34,
+        "q": "Zekâtın temel muhatabı kimdir?",
+        "a": [
+            "Dinen zengin sayılan Müslüman",
+            "Sadece çocuklar",
+            "Yalnız yolcular",
+            "Herkes aynı miktarda"
+        ],
+        "c": 0,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 35,
+        "q": "Hac ibadeti hangi hicrî ayda yerine getirilir?",
+        "a": [
+            "Muharrem",
+            "Recep",
+            "Ramazan",
+            "Zilhicce"
+        ],
+        "c": 3,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 36,
+        "q": "Aşağıdakilerden hangisi kitapta temel ibadetler dışında anılır?",
+        "a": [
+            "Yalnız matematik",
+            "Sadaka vermek",
+            "Yalnız şiir yazmak",
+            "Yalnız seyahat"
+        ],
+        "c": 1,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 37,
+        "q": "Kitaba göre dinin birbiriyle ilişkili üç boyutu hangileridir?",
+        "a": [
+            "Bilim, sanat, ticaret",
+            "Dil, tarih, coğrafya",
+            "İnanç, ibadet ve ahlak",
+            "Spor, sanat, edebiyat"
+        ],
+        "c": 2,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 38,
+        "q": "Bakara 177. ayette aşağıdakilerden hangisi iyilik örneği olarak sayılır?",
+        "a": [
+            "Verilen sözü yerine getirmek",
+            "İnsanlarla alay etmek",
+            "Kusur araştırmak",
+            "Emanete ihanet etmek"
+        ],
+        "c": 0,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 39,
+        "q": "Hucurat 11. ayette hangisinden sakındırılır?",
+        "a": [
+            "Yardımlaşmaktan",
+            "Güzel söz söylemekten",
+            "Adaletten",
+            "Birbirini kötü lakaplarla çağırmaktan"
+        ],
+        "c": 3,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 40,
+        "q": "Hucurat 12. ayet hangi davranışı yasaklar?",
+        "a": [
+            "Özür dilemeyi",
+            "Gıybet etmeyi",
+            "Yardım etmeyi",
+            "Sözünde durmayı"
+        ],
+        "c": 1,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 41,
+        "q": "“Müslüman, elinden ve dilinden insanların güvende olduğu kimsedir.” sözü neyi öne çıkarır?",
+        "a": [
+            "Soy bağını",
+            "Zenginliği",
+            "Güvenilirlik ve zarar vermemeyi",
+            "Yalnız bilgi birikimini"
+        ],
+        "c": 2,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 42,
+        "q": "Kitaba göre ahlaki duyarlılığın artması toplumda neye katkı sağlar?",
+        "a": [
+            "Huzur ve barışa",
+            "Hukuksuzluğa",
+            "Güvensizliğe",
+            "Haksızlığa"
+        ],
+        "c": 0,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 43,
+        "q": "Kitaptaki şemaya göre bilim alanında aranan iyi hangisidir?",
+        "a": [
+            "Kâr",
+            "Sağlık",
+            "Güzellik",
+            "Doğru"
+        ],
+        "c": 3,
+        "page": 43,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 44,
+        "q": "Kitaptaki şemaya göre ahlak alanında aranan iyi hangisidir?",
+        "a": [
+            "Başarı",
+            "Erdem",
+            "Kâr",
+            "Sağlık"
+        ],
+        "c": 1,
+        "page": 43,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 45,
+        "q": "Aşağıdakilerden hangisi kitapta sayılan ahlaki ilkelerden biridir?",
+        "a": [
+            "Kibirli olmak",
+            "Haksızlık etmek",
+            "Hata yapınca özür dileyip telafi etmek",
+            "İnsanları küçümsemek"
+        ],
+        "c": 2,
+        "page": 43,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 46,
+        "q": "Kitapta iyi kavramının ticaret alanındaki karşılığı hangisidir?",
+        "a": [
+            "Kâr",
+            "Güzellik",
+            "Sağlık",
+            "Erdem"
+        ],
+        "c": 0,
+        "page": 43,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 47,
+        "q": "Kitapta hukukun temel işlevlerinden biri nasıl anlatılır?",
+        "a": [
+            "Sanat eseri üretmek",
+            "İbadet vakitlerini belirlemek",
+            "Diller arasında çeviri yapmak",
+            "Sosyal hak ve görevleri belirlemek"
+        ],
+        "c": 3,
+        "page": 43,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 48,
+        "q": "Ehlikitap kavramı genellikle hangi dinlerin mensupları için kullanılır?",
+        "a": [
+            "Yalnız Mecusiler",
+            "Yahudiler ve Hristiyanlar",
+            "Yalnız Sâbiîler",
+            "Yalnız Müslümanlar"
+        ],
+        "c": 1,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 49,
+        "q": "Bazı âlimler Ehlikitap kavramının kapsamını hangi topluluğu da içerecek şekilde genişletmiştir?",
+        "a": [
+            "Yalnız Romalılar",
+            "Yalnız Yunanlar",
+            "Mecusiler",
+            "Yalnız Türkler"
+        ],
+        "c": 2,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 50,
+        "q": "Ankebut suresi 46. ayette Ehlikitap’la ilişkide hangi yöntem önerilir?",
+        "a": [
+            "En güzel yolla mücadele etmek",
+            "Her türlü diyaloğu reddetmek",
+            "Sürekli alay etmek",
+            "Hiçbir ortak noktayı kabul etmemek"
+        ],
+        "c": 0,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 51,
+        "q": "Kur’an’da Yahudi ve Hristiyanların dışında isimleri geçen iki dinî topluluk hangileridir?",
+        "a": [
+            "Budistler ve Hindular",
+            "Romalılar ve Persler",
+            "Antik Yunanlar ve Mısırlılar",
+            "Mecusiler ve Sâbiîler"
+        ],
+        "c": 3,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 52,
+        "q": "Kitaba göre Kur’an’da Mecusiler kaç yerde anılır?",
+        "a": [
+            "Üç",
+            "Bir",
+            "Beş",
+            "Yedi"
+        ],
+        "c": 1,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 53,
+        "q": "Kitaba göre Kur’an’da Sâbiîler kaç yerde anılır?",
+        "a": [
+            "Bir",
+            "İki",
+            "Üç",
+            "Altı"
+        ],
+        "c": 2,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 54,
+        "q": "Âl-i İmrân 64. ayette Ehlikitap’la buluşulması istenen ortak söz nedir?",
+        "a": [
+            "Yalnız Allah’a kulluk etmek ve O’na ortak koşmamak",
+            "Tüm ibadetleri bırakmak",
+            "Hiçbir peygambere inanmamak",
+            "Birçok ilaha ibadet etmek"
+        ],
+        "c": 0,
+        "page": 44,
+        "cat": "Dinlerarası"
+    },
+    {
+        "id": 55,
+        "q": "Mezheplerin ortaya çıkışı hangi alanla ilgilidir?",
+        "a": [
+            "Vahyin yeniden indirilmesi",
+            "İman esaslarının tamamen değişmesi",
+            "Peygamberliğin devam etmesi",
+            "Dinin anlaşılması ve yorumlanmasına dair farklı yaklaşımlar"
+        ],
+        "c": 3,
+        "page": 39,
+        "cat": "İnanç"
+    },
+    {
+        "id": 56,
+        "q": "Hacla ilgili yükümlülük hangi koşula bağlanır?",
+        "a": [
+            "Her yaştan herkese istisnasız",
+            "Yoluna güç yetirebilmek",
+            "Yalnız bir şehirde yaşamak",
+            "Yalnız belirli meslekte çalışmak"
+        ],
+        "c": 1,
+        "page": 41,
+        "cat": "İbadet"
+    },
+    {
+        "id": 57,
+        "q": "“Kendisi için istediğini kardeşi için de istemek” hadisinin vurgusu nedir?",
+        "a": [
+            "Kendini üstün görmek",
+            "Yalnız bireysel çıkar",
+            "Empati ve başkalarının iyiliğini istemek",
+            "Başkalarını küçümsemek"
+        ],
+        "c": 2,
+        "page": 42,
+        "cat": "Ahlak"
+    },
+    {
+        "id": 58,
+        "q": "Dünya ve ahiret dengesinde dünya hayatı nasıl nitelenir?",
+        "a": [
+            "Geçici",
+            "Ebedî",
+            "Sonsuz",
+            "Hesapsız"
+        ],
+        "c": 0,
+        "page": 37,
+        "cat": "İnanç"
+    }
+];
+    let questions = [];
+    let selectedMode = "solo";
+    let teamScores = [0,0];
+    function selectGameMode(mode){selectedMode=mode;}
+    function backToModeSelection(){stopTimer();document.getElementById("game-over").style.display="none";document.getElementById("start-screen").style.display="flex";}
+
+    const moneyLadder = [
+        "1.000 TL", "5.000 TL", "10.000 TL", "25.000 TL", "50.000 TL", 
+        "100.000 TL", "200.000 TL", "400.000 TL", "750.000 TL", "1.000.000 TL"
+    ];
+
+
+    // Her yeni yarışmada 10 farklı soru; yakın zamanda kullanılanları sona bırakır.
+    const HISTORY_KEY = 'islamiyet-milyoner-siyer-tasarim-soru-gecmisi-v1';
+    function shuffled(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+    function buildQuestions() {
+        let seen = [];
+        try { seen = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch (e) {}
+        if (!Array.isArray(seen)) seen = [];
+        const seenSet = new Set(seen);
+        const unused = shuffled(questionBank.filter(q => !seenSet.has(q.id)));
+        const older = shuffled(questionBank.filter(q => seenSet.has(q.id)));
+        const picks = [...unused, ...older].slice(0, moneyLadder.length);
+        // Kullanılmış havuz sıfırlandığında eski sorulara tekrar yer aç.
+        const recent = [...seen, ...picks.map(q => q.id)].slice(-Math.min(38, questionBank.length - 10));
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(recent)); } catch (e) {}
+        return picks.map(question => {
+            const variants = shuffled(question.a.map((answer, i) => ({answer, correct: i === question.c})));
+            return {...question, a: variants.map(v => v.answer), c: variants.findIndex(v => v.correct)};
+        });
+    }
+
+    let currentStep = 0;
+    let isAnswering = false;
+    let usedJokers = { half: false, audience: false, phone: false };
+    let timeLeft = 20;
+    let timerInterval = null;
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 20;
+        const timerEl = document.getElementById('timer-container');
+        timerEl.innerText = timeLeft;
+        timerEl.style.color = "var(--gold)";
+        timerEl.style.borderColor = "var(--gold)";
+
+        timerInterval = setInterval(() => {
+            if (!isAnswering) {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                
+                if (timeLeft > 0) sounds.tick(timeLeft <= 10);
+
+                if (timeLeft <= 10) {
+                    timerEl.style.color = "var(--wrong)";
+                    timerEl.style.borderColor = "var(--wrong)";
+                    timerEl.style.transform = "scale(1.1)";
+                } else {
+                    timerEl.style.transform = "scale(1)";
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    isAnswering = true;
+                    sounds.wrong();
+                    if(selectedMode==="group"){setTimeout(advanceGroup,1200)}else endGame(false, "Süreniz Doldu!");
+                }
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        document.getElementById('timer-container').style.transform = "scale(1)";
+    }
+
+    function initGame() {
+        initAudio();
+        
+        currentStep = 0;
+        teamScores = [0,0];
+        questions = buildQuestions();
+        document.getElementById("group-scoreboard").style.display=selectedMode==="group"?"block":"none";
+        refreshTeamScores();
+        isAnswering = false;
+        usedJokers = { half: false, audience: false, phone: false };
+        
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game-over').style.display = 'none';
+        document.getElementById('phone-call-ui').style.display = 'none';
+        document.getElementById('audience-poll').style.display = 'none';
+        
+        document.querySelectorAll('.joker').forEach(j => j.classList.remove('used'));
+        
+        setupSidebar();
+        loadQuestion();
+    }
+
+    function refreshTeamScores(){document.getElementById("team-score-a").textContent=teamScores[0];document.getElementById("team-score-b").textContent=teamScores[1];document.getElementById("team-turn").textContent=currentStep%2?"Grup B":"Grup A";}
+    function advanceGroup(){currentStep++;if(currentStep>=questions.length){endGroupGame();return;}loadQuestion();document.getElementById("phone-call-ui").style.display="none";document.getElementById("audience-poll").style.display="none";}
+    function endGroupGame(){stopTimer();const a=teamScores[0],b=teamScores[1];document.getElementById("game-over").style.display="flex";document.getElementById("result-title").textContent=a===b?"BERABERE!":(a>b?"GRUP A KAZANDI!":"GRUP B KAZANDI!");document.getElementById("result-desc").textContent="Grup A: "+a+" puan • Grup B: "+b+" puan";}
+    function setupSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.innerHTML = '';
+        moneyLadder.forEach((money, index) => {
+            const div = document.createElement('div');
+            div.className = 'money-step';
+            if (index === 2 || index === 6 || index === 9) div.classList.add('checkpoint');
+            div.id = `step-${index}`;
+            div.innerHTML = `<span>${index + 1}</span> <span>${money}</span>`;
+            sidebar.appendChild(div);
+        });
+    }
+
+    function loadQuestion() {
+        isAnswering = false;
+        refreshTeamScores();
+        const question = questions[currentStep];
+        document.getElementById('question-box').innerText = question.q;
+        const options = document.querySelectorAll('.option');
+        options.forEach((opt, index) => {
+            opt.classList.remove('selected', 'correct', 'wrong', 'hidden');
+            opt.querySelector('p').innerText = question.a[index];
+        });
+        
+        document.querySelectorAll('.money-step').forEach(s => s.classList.remove('active'));
+        const activeStep = document.getElementById(`step-${currentStep}`);
+        if(activeStep) activeStep.classList.add('active');
+        
+        startTimer();
+    }
+
+    function handleAnswer(index) {
+        if (isAnswering) return;
+        const optionEl = document.getElementById(`opt-${index}`);
+        if (optionEl.classList.contains('hidden')) return;
+
+        isAnswering = true;
+        stopTimer();
+        sounds.select();
+        
+        const correctIndex = questions[currentStep].c;
+        const options = document.querySelectorAll('.option');
+        options[index].classList.add('selected');
+
+        setTimeout(() => {
+            if (index === correctIndex) {
+                if(selectedMode==="group"){teamScores[currentStep%2]+=10;refreshTeamScores();}
+                sounds.correct();
+                options[index].classList.replace('selected', 'correct');
+                
+                setTimeout(() => {
+                    if(selectedMode==="group"){advanceGroup();} else if (currentStep === questions.length - 1) {
+                        sounds.win();
+                        endGame(true);
+                    } else {
+                        currentStep++;
+                        loadQuestion();
+                        document.getElementById('phone-call-ui').style.display = 'none';
+                        document.getElementById('audience-poll').style.display = 'none';
+                    }
+                }, 2000);
+            } else {
+                sounds.wrong();
+                options[index].classList.replace('selected', 'wrong');
+                options[correctIndex].classList.add('correct');
+                setTimeout(() => selectedMode==="group"?advanceGroup():endGame(false), 2000);
+            }
+        }, 1500);
+    }
+
+    function useHalfJoker() {
+        if (usedJokers.half || isAnswering) return;
+        sounds.joker();
+        usedJokers.half = true;
+        document.getElementById('joker-50').classList.add('used');
+        
+        const correct = questions[currentStep].c;
+        let indices = [0, 1, 2, 3].filter(i => i !== correct).sort(() => Math.random() - 0.5);
+        document.getElementById(`opt-${indices[0]}`).classList.add('hidden');
+        document.getElementById(`opt-${indices[1]}`).classList.add('hidden');
+    }
+
+    function useAudienceJoker() {
+        if (usedJokers.audience || isAnswering) return;
+        sounds.joker();
+        usedJokers.audience = true;
+        document.getElementById('joker-audience').classList.add('used');
+        
+        const poll = document.getElementById('audience-poll');
+        poll.innerHTML = '';
+        poll.style.display = 'flex';
+        
+        const correct = questions[currentStep].c;
+        let votes = [0,0,0,0];
+        let rem = 100;
+        
+        votes[correct] = Math.floor(Math.random() * 40) + 50; 
+        rem -= votes[correct];
+        
+        const others = [0,1,2,3].filter(i => i !== correct);
+        others.forEach((i, idx) => {
+            let v = idx === others.length - 1 ? rem : Math.floor(Math.random() * rem);
+            votes[i] = v; rem -= v;
+        });
+
+        ['A', 'B', 'C', 'D'].forEach((l, i) => {
+            const b = document.createElement('div');
+            b.className = 'poll-bar';
+            b.style.height = `0%`;
+            b.innerHTML = `<div class="poll-label">${l}<br>${votes[i]}%</div>`;
+            poll.appendChild(b);
+            setTimeout(() => b.style.height = `${votes[i]}%`, 50);
+        });
+    }
+
+    function usePhoneJoker() {
+        if (usedJokers.phone || isAnswering) return;
+        sounds.joker();
+        usedJokers.phone = true;
+        document.getElementById('joker-phone').classList.add('used');
+
+        const phoneUI = document.getElementById('phone-call-ui');
+        phoneUI.style.display = 'block';
+        phoneUI.innerText = "Aranıyor...";
+
+        const correct = questions[currentStep].c;
+        const labels = ['A', 'B', 'C', 'D'];
+        
+        setTimeout(() => {
+            phoneUI.innerHTML = `<strong>Hoca:</strong> <br> "Sanırım doğru cevap ${labels[correct]} şıkkı evladım."`;
+        }, 2000);
+    }
+
+    function endGame(win, reason = "") {if(selectedMode==="group"){endGroupGame();return;}
+        stopTimer();
+        const overlay = document.getElementById('game-over');
+        overlay.style.display = 'flex';
+        const title = document.getElementById('result-title');
+        const desc = document.getElementById('result-desc');
+        
+        if (win) {
+            title.innerText = "TEBRİKLER!";
+            desc.innerText = "İslamiyet Bilgi Milyoneri Oldunuz! \n Ödül: 1.000.000 TL";
+        } else {
+            title.innerText = reason ? reason : "ELENDİNİZ";
+            let prize = "0 TL";
+            if (currentStep >= 7) prize = moneyLadder[6];
+            else if (currentStep >= 3) prize = moneyLadder[2];
+            desc.innerText = `Güzel bir yarışmaydı. \n Kazanılan Ödül: ${prize}`;
+        }
+    }
+</script>
+
+</body>
+</html>
