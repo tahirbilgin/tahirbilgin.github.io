@@ -347,6 +347,9 @@ html[data-tb-theme="dark"] #tb-discovery-compass .tb-compass-percent{color:#d0e6
 @media(max-width:720px){#tb-discovery-compass{width:60px;height:60px;right:11px;bottom:calc(13px + env(safe-area-inset-bottom))}#tb-discovery-compass svg{inset:5px;width:50px;height:50px}#tb-discovery-compass .tb-compass-center{width:32px;height:32px}#tb-discovery-compass .tb-compass-percent{bottom:1px}}
 @media(prefers-reduced-motion:reduce){#tb-discovery-compass,#tb-discovery-compass .tb-compass-progress{transition:none}}
 </style><style id="tb-compass-cleanup-style">
+/* Eski ışıklı ok/çubuk kontrolünü gizle; Keşif Pusulası tek kontrol kalsın. */
+#tb-scroll-control{display:none!important}
+
 /* Eski dikey kaydırma çizgisini gizle; kaydırma işlevi sürsün. */
 html,body,.hub-panel{scrollbar-width:none!important;-ms-overflow-style:none!important}
 html::-webkit-scrollbar,body::-webkit-scrollbar,.hub-panel::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
