@@ -341,13 +341,19 @@
         }
     
 .mode-picker{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:8px 0 25px}.mode-picker label{cursor:pointer;padding:13px 19px;border:1px solid #d4af37;border-radius:15px;background:#172251;color:white;font-weight:700}.mode-picker input{accent-color:#d4af37}#group-scoreboard{text-align:center;background:#13275a;border:1px solid #d4af37;border-radius:14px;margin-top:90px;padding:11px;color:#f6d883;font-weight:750}.overlay{overflow:auto}@media(max-width:850px){body{height:auto;min-height:100vh;overflow:auto}#game-container{height:auto;min-height:95vh}#group-scoreboard{margin-top:28px}.mode-picker{flex-direction:column}}
+
+#game-fullscreen-toggle{position:absolute;top:20px;left:175px;z-index:8;background:rgba(2,2,48,.9);color:#e9c96d;border:2px solid #d4af37;padding:8px 14px;border-radius:22px;font-size:14px;font-weight:800;cursor:pointer}
+#game-container:fullscreen{width:100vw;max-width:none;height:100dvh;min-height:0;border-radius:0;overflow:auto;margin:0}
+#game-container:fullscreen #main-area{justify-content:center}
+#game-container:fullscreen #sidebar{border-radius:0}
+@media(max-width:850px){#game-fullscreen-toggle{top:10px;left:125px;font-size:12px;padding:6px 9px}#game-container:fullscreen{height:100dvh;max-height:none;overflow:auto}}
 </style>
 </head>
 <body>
 
 <div id="game-container">
     <div id="main-area">
-        <button id="sound-toggle" onclick="toggleSound()">🔊 Ses: Açık</button>
+        <button id="sound-toggle" onclick="toggleSound()">🔊 Ses: Açık</button><button id="game-fullscreen-toggle" type="button" onclick="toggleGameFullscreen()" aria-label="Tam ekrana geç">⛶ Tam Ekran</button>
         <div id="timer-container">20</div>
         
         <div id="joker-container">
@@ -1296,8 +1302,29 @@
         document.getElementById('timer-container').style.transform = "scale(1)";
     }
 
+    
+    async function enterGameFullscreen(){
+        const el=document.getElementById('game-container');
+        if(!el||document.fullscreenElement)return;
+        try{if(el.requestFullscreen)await el.requestFullscreen();}catch(e){/* Tarayıcı engellerse düğme kullanılabilir. */}
+        syncGameFullscreen();
+    }
+    async function toggleGameFullscreen(){
+        try{
+          if(document.fullscreenElement){await document.exitFullscreen();}
+          else{await enterGameFullscreen();}
+        }catch(e){}
+        syncGameFullscreen();
+    }
+    function syncGameFullscreen(){
+        const btn=document.getElementById('game-fullscreen-toggle');
+        if(btn){const active=!!document.fullscreenElement;btn.textContent=active?'⤡ Tam Ekrandan Çık':'⛶ Tam Ekran';btn.setAttribute('aria-label',active?'Tam ekrandan çık':'Tam ekrana geç');}
+    }
+    document.addEventListener('fullscreenchange',syncGameFullscreen);
+
     function initGame() {
         initAudio();
+        enterGameFullscreen();
         
         currentStep = 0;
         teamScores = [0,0];
