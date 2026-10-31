@@ -1242,43 +1242,6 @@ html[data-tb-theme="dark"] #tb-idea-status{color:#b4e6f8}
 })();
 </script>
 
-<style id="tb-visible-hub-scroller-style">
-#tb-hub-scroll-track{position:fixed;right:3px;top:88px;bottom:12px;width:13px;z-index:500;display:none;border-radius:18px;background:rgba(38,76,112,.13);box-shadow:inset 0 0 0 1px rgba(90,120,150,.18);touch-action:none;cursor:pointer}
-#tb-hub-scroll-track.tb-on{display:block}
-#tb-hub-scroll-thumb{position:absolute;left:2px;right:2px;top:0;height:55px;min-height:42px;border-radius:18px;background:linear-gradient(180deg,#087f68,#55ac97);box-shadow:0 2px 6px #102c3560;touch-action:none;cursor:grab}
-#tb-hub-scroll-thumb:active{cursor:grabbing}
-html[data-tb-theme="dark"] #tb-hub-scroll-track{background:rgba(170,197,224,.17);box-shadow:inset 0 0 0 1px #67819b55}
-html[data-tb-theme="dark"] #tb-hub-scroll-thumb{background:linear-gradient(180deg,#d6ad60,#a7c4d0);box-shadow:0 2px 10px #0008}
-@media(max-width:720px){#tb-hub-scroll-track{right:2px;top:76px;bottom:10px;width:12px}}
-</style>
-<script id="tb-visible-hub-scroller-script">
-(function(){
- var track=document.createElement('div');track.id='tb-hub-scroll-track';track.setAttribute('role','scrollbar');track.setAttribute('aria-label','İç bölümde yukarı aşağı kaydır');track.setAttribute('aria-orientation','vertical');track.tabIndex=0;
- var thumb=document.createElement('div');thumb.id='tb-hub-scroll-thumb';track.appendChild(thumb);document.body.appendChild(track);
- var active=null,dragging=false,dragOffset=0,raf=0;
- function getPanel(){return document.querySelector('.hub-panel.is-active')||document.querySelector('.hub-chk:checked + .hub-panel')}
- function update(){
-   active=getPanel();
-   if(!active||active.scrollHeight<=active.clientHeight+5){track.classList.remove('tb-on');return}
-   track.classList.add('tb-on');
-   var full=track.clientHeight,max=active.scrollHeight-active.clientHeight;
-   var h=Math.max(42,Math.min(full,full*active.clientHeight/active.scrollHeight));
-   thumb.style.height=h+'px';
-   thumb.style.transform='translateY('+((active.scrollTop/max)*(full-h))+'px)';
-   track.setAttribute('aria-valuenow',String(Math.round(active.scrollTop/max*100)));
- }
- function schedule(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;update()})}
- function setByPointer(y,offset){if(!active)return;var rect=track.getBoundingClientRect(),height=thumb.offsetHeight,travel=Math.max(1,rect.height-height),pos=Math.max(0,Math.min(travel,y-rect.top-offset));active.scrollTop=pos/travel*(active.scrollHeight-active.clientHeight);schedule()}
- track.addEventListener('pointerdown',function(e){update();if(!active)return;dragging=true;dragOffset=e.target===thumb?e.clientY-thumb.getBoundingClientRect().top:thumb.offsetHeight/2;track.setPointerCapture(e.pointerId);setByPointer(e.clientY,dragOffset);e.preventDefault()});
- track.addEventListener('pointermove',function(e){if(dragging)setByPointer(e.clientY,dragOffset)});
- function stop(){dragging=false}track.addEventListener('pointerup',stop);track.addEventListener('pointercancel',stop);
- track.addEventListener('keydown',function(e){if(!active)return;var step=e.key==='ArrowDown'?80:e.key==='ArrowUp'?-80:e.key==='PageDown'?active.clientHeight*.8:e.key==='PageUp'?-active.clientHeight*.8:0;if(step){active.scrollTop+=step;e.preventDefault()}})
- document.querySelectorAll('.hub-panel').forEach(function(p){p.addEventListener('scroll',schedule,{passive:true})});
- document.querySelectorAll('.hub-chk').forEach(function(c){c.addEventListener('change',function(){setTimeout(schedule,80)})});
- var obs=new MutationObserver(schedule);document.querySelectorAll('.hub-panel').forEach(function(p){obs.observe(p,{attributes:true,attributeFilter:['class','style']})});
- window.addEventListener('resize',schedule);
- document.addEventListener('click',function(){setTimeout(schedule,80)});
- schedule();
-})();
-</script></body></html>
+
+</body></html>
 
