@@ -554,7 +554,7 @@ const classroomAnalogies={"islam": "Bir binanın sağlam kalması için temelini
 const lessons=Object.entries(principlesData).map(([id,x],i)=>({id,num:String(i+1).padStart(2,'0'),title:x.t,desc:x.s,body:x.d,page:x.page}));
 const $=id=>document.getElementById(id);
 const escapeHtml=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function go(id){setNavigationState(id==='home' && window.innerWidth>720,false);document.querySelectorAll('main section').forEach(e=>e.classList.toggle('hidden',e.id!==id));document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.to===id));document.querySelectorAll('.bottom-nav-link').forEach(e=>{const active=e.dataset.bottomTo===id;e.classList.toggle('active',active);if(active)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current')});$('crumbCurrent').textContent=({home:'Ana Sayfa',principles:'Konu Anlatımı',sources:'Ayet & Hadis',cards:'Kavramlar',quiz:'Bilgi Şöleni',scripture:'Kutsal Metinler',timeline:'Tarih Tüneli',atlas:'Harita Atlası',compare:'Karşılaştırmalar'})[id];window.scrollTo({top:0,behavior:'instant'})}
+function go(id){setNavigationState(window.innerWidth>720,false);document.querySelectorAll('main section').forEach(e=>e.classList.toggle('hidden',e.id!==id));document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.to===id));document.querySelectorAll('.bottom-nav-link').forEach(e=>{const active=e.dataset.bottomTo===id;e.classList.toggle('active',active);if(active)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current')});$('crumbCurrent').textContent=({home:'Ana Sayfa',principles:'Konu Anlatımı',sources:'Ayet & Hadis',cards:'Kavramlar',quiz:'Bilgi Şöleni',scripture:'Kutsal Metinler',timeline:'Tarih Tüneli',atlas:'Harita Atlası',compare:'Karşılaştırmalar'})[id];window.scrollTo({top:0,behavior:'instant'})}
 function showDetail(id){go('principles');openLesson(id)}
 function openLesson(id){
 const x=principlesData[id];if(!x)return;
@@ -620,7 +620,7 @@ function setNavigationState(expanded,drawer){
 }
 function closeNavigation(){
  const isHome=!document.getElementById('home').classList.contains('hidden');
- setNavigationState(isHome,false);
+ setNavigationState(window.innerWidth>720,false);
 }
 function toggleNavigation(){
  const shell=document.getElementById('appShell');
@@ -634,7 +634,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNavigation()});
 
 function updateScrollTopButton(){document.getElementById('scrollTopButton').classList.toggle('visible',window.scrollY>260)}
 window.addEventListener('scroll',updateScrollTopButton,{passive:true});
-window.addEventListener('resize',()=>{if(window.innerWidth<=720){setNavigationState(false,false)}else{const home=!document.getElementById('home').classList.contains('hidden');setNavigationState(home,false)}});
+window.addEventListener('resize',()=>{if(window.innerWidth<=720){setNavigationState(false,false)}else{const home=!document.getElementById('home').classList.contains('hidden');setNavigationState(true,false)}});
 if(window.innerWidth<=720)setNavigationState(false,false);
 updateScrollTopButton();
 setupMode();$('questionPool').textContent=questionBank.length+' soruluk havuz';
