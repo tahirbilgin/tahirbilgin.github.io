@@ -218,4 +218,39 @@ const info=[
 ['Mişna','Yahudi sözlü dinî geleneğinin derlenmiş kısmıdır.','Talmud geleneğinin temel bileşenlerinden biri olarak aktarılır; dinî hayatla ilgili hüküm ve açıklamaların aktarımında önem taşır.','Mişna’nın yazılı ve sözlü gelenek arasındaki yerini tartışınız.','57–59',YAH_IMG.syn],
 ['Gemara','Mişna çevresinde gelişen açıklama ve tartışma geleneğidir.','Talmud’un Mişna ile ilişkili diğer ana bileşenidir; yorumlama ve dinî değerlendirme sürecini anlamaya yardımcı olur.','Gemara’yı Mişna ile birlikte gösteren iki aşamalı şema hazırlayınız.','57–59',YAH_IMG.script]
 ];let c=info[n];if(c)popup(c[0],`<div class="scripture-study"><img class="scripture-cover" src="${c[5]}" alt="${c[0]} için görsel"><div class="scripture-study-lead">Dinler Tarihi · Kutsal Metinler · s. ${c[4]}</div><section><h3>📖 Pasaj / Metin Özeti</h3><p>${esc(c[1])}</p></section><section><h3>✦ Anlam ve Açıklama</h3><p>${esc(c[2])}</p></section><section><h3>◈ Sınıfta Tartış</h3><p>${esc(c[3])}</p></section><div class="source-block">Kaynak: YAHUDİLİK, Dinler Tarihi ders kitabı, s. ${c[4]}. Bunlar metinlerin birebir alıntıları değil, kitap temel alınarak hazırlanmış eğitim özetleridir.</div></div>`)}else if(target.hasAttribute('data-site')){let s=sites[+target.dataset.site];popup(s[0],`<p>${s[1]}</p><p>Kaynak: Ders kitabı, s. ${s[2]}</p>`)}else if(target.hasAttribute('data-remove-class')){state.classes.splice(+target.dataset.removeClass,1);persist();render()}else action(target.dataset.action)});document.addEventListener('input',e=>{if(e.target.id==='search'){state.search=e.target.value;document.getElementById('content').innerHTML=searchResults()||({home,lessons:()=>state.lesson===null?lessonsIndex():lessonDetail(),scripture,concepts:conceptsView,timeline,atlas,compare,quiz,resources}[state.route]||home)()}});document.getElementById('backdrop').onclick=()=>{state.drawer=false;side();renderTop()};document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')action('closeModal')});document.addEventListener('keydown',e=>{if(e.key==='Escape'){action('closeModal');state.drawer=false;side();renderTop()}});render();
-</script></body></html>
+</script>
+<style id="atelier-scroll-top-style">
+#atelierScrollTop{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:#287b8b;color:#fff;box-shadow:0 7px 22px #173d4c38;font:26px/1 system-ui;cursor:pointer;z-index:10000}
+#atelierScrollTop[hidden]{display:none!important}
+#atelierScrollTop:focus-visible{outline:3px solid #d6ad60;outline-offset:3px}
+@media(min-width:851px){#atelierScrollTop{right:25px;bottom:25px;width:48px;height:48px}}
+</style>
+<button type="button" id="atelierScrollTop" aria-label="Sayfanın başına dön" title="Sayfanın başına dön" hidden>↑</button>
+<script id="atelier-scroll-top-script">
+(()=>{
+ const button=document.getElementById('atelierScrollTop');
+ let scroller=window;
+ function validScroller(){
+  if(scroller!==window&&(!scroller.isConnected||!scroller.getClientRects().length))scroller=window;
+  return scroller;
+ }
+ function update(){
+  const target=validScroller();
+  button.hidden=(target===window?window.scrollY:target.scrollTop)<=260;
+ }
+ document.addEventListener('scroll',event=>{
+  const target=event.target;
+  if(target===document||target===document.documentElement||target===document.body)scroller=window;
+  else if(target instanceof HTMLElement&&!target.closest('.sidebar')&&target.scrollHeight>target.clientHeight)scroller=target;
+  update();
+ },{capture:true,passive:true});
+ window.addEventListener('scroll',update,{passive:true});
+ window.addEventListener('resize',update,{passive:true});
+ document.addEventListener('click',()=>requestAnimationFrame(update));
+ button.addEventListener('click',()=>{
+  validScroller().scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ });
+ update();
+})();
+</script>
+</body></html>
