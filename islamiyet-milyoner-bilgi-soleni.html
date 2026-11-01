@@ -392,6 +392,20 @@ html.game-expanded,body.game-expanded{overflow:hidden}
  #sidebar{gap:2px;padding:5px}
 }
 </style>
+<style id="compact-mobile-prizes">
+@media(max-width:850px){
+ #sidebar{flex:0 0 clamp(82px,21vw,104px);padding:14px 5px;gap:5px;justify-content:center;background:linear-gradient(180deg,#050a35,#080f42);border-left:1px solid #d4af3738}
+ #sidebar .money-step{flex:0 1 30px;min-height:0;width:100%;justify-content:center;padding:5px 2px;border:0;border-radius:6px;font-size:clamp(10px,2.65vw,12px);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.25px;color:#d8c797;box-shadow:none}
+ #sidebar .money-step span:first-child{display:none}
+ #sidebar .money-step.checkpoint{background:#d4af370c;color:#fff0c4}
+ #sidebar .money-step.active{background:linear-gradient(100deg,#a87822,#d4af37);color:#07102f;font-weight:800;box-shadow:inset 2px 0 #fff0c4,0 2px 8px #0004}
+ #main-area{padding-left:10px;padding-right:10px}
+}
+@media(max-width:850px) and (orientation:landscape){
+ #sidebar{padding:8px 5px;gap:3px}
+ #sidebar .money-step{flex-basis:27px;padding:2px;font-size:11px}
+}
+</style>
 </head>
 <body>
 
