@@ -202,4 +202,39 @@ document.addEventListener('click',function(e){const b=e.target.closest('[data-so
 document.addEventListener('click',e=>{if(e.target.closest('.modal')&&e.target.classList.contains('modal-backdrop'))return;const b=e.target.closest('[data-route],[data-action],[data-open-lesson],[data-scripture],[data-fav],[data-comparison],[data-concept-filter],[data-atlas-filter],[data-concept-id],[data-mini-answer],[data-quiz-answer],[data-class-delete],[data-info]');if(!b)return;if(b.dataset.route){state.modal=null;go(b.dataset.route)}else if(b.dataset.openLesson){state.lesson=lessons.findIndex(x=>x.id===b.dataset.openLesson);state.modal=null;go('lesson')}else if(b.dataset.scripture)openScripture(b.dataset.scripture);else if(b.dataset.fav)favorite(b.dataset.fav);else if(b.dataset.comparison!==undefined){state.comparison=Number(b.dataset.comparison);go('compare')}else if(b.dataset.conceptFilter){state.conceptFilter=b.dataset.conceptFilter;state.concept=0;state.flipped=false;render()}else if(b.dataset.atlasFilter){state.atlasFilter=b.dataset.atlasFilter;go('atlas')}else if(b.dataset.conceptId){state.conceptFilter='Tümü';state.reviewOnly=false;state.concept=concepts.findIndex(x=>x.id===b.dataset.conceptId);state.flipped=false;go('concepts')}else if(b.dataset.miniAnswer!==undefined){state.miniSelected=Number(b.dataset.miniAnswer);render()}else if(b.dataset.quizAnswer!==undefined)quizAnswer(Number(b.dataset.quizAnswer));else if(b.dataset.classDelete!==undefined){if(confirm('Bu yerel kaydı silmek istiyor musunuz?')){state.classes.splice(Number(b.dataset.classDelete),1);persist();render()}}else if(b.dataset.info)modal(b.dataset.info,`<p>${esc(b.dataset.detail)}</p>`);else if(b.dataset.action)action(b.dataset.action)});
 document.addEventListener('input',e=>{if(e.target.id==='globalSearch')searchResults(e.target.value)});document.addEventListener('change',e=>{if(e.target.id==='qmode'){document.getElementById('groupNames').style.display=e.target.value==='group'?'block':'none'}});document.addEventListener('submit',e=>{if(e.target.id==='classForm'){e.preventDefault();let d=new FormData(e.target);state.classes.push({name:String(d.get('name')).trim(),members:String(d.get('members')).trim(),note:String(d.get('note')).trim(),date:new Date().toLocaleDateString('tr-TR')});persist();toast('Grup kaydedildi.');render()}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){state.modal=null;state.drawer=false;render();document.querySelector('.search-results')?.remove()}if(e.key==='Enter'&&e.target.id==='flashcard')action('flip')});
 try{render()}catch(error){console.error('Uygulama açılış hatası:',error);document.getElementById('view').innerHTML='<section style="padding:24px;background:#fff;border-radius:18px;margin:24px"><h2>Uygulama açılışında bir sorun oluştu</h2><p>Sayfayı yenileyin veya dosyayı Chrome / Edge ile açın.</p></section>'}
-</script></body></html>
+</script>
+<style id="atelier-scroll-top-style">
+#atelierScrollTop{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:#287b8b;color:#fff;box-shadow:0 7px 22px #173d4c38;font:26px/1 system-ui;cursor:pointer;z-index:10000}
+#atelierScrollTop[hidden]{display:none!important}
+#atelierScrollTop:focus-visible{outline:3px solid #d6ad60;outline-offset:3px}
+@media(min-width:851px){#atelierScrollTop{right:25px;bottom:25px;width:48px;height:48px}}
+</style>
+<button type="button" id="atelierScrollTop" aria-label="Sayfanın başına dön" title="Sayfanın başına dön" hidden>↑</button>
+<script id="atelier-scroll-top-script">
+(()=>{
+ const button=document.getElementById('atelierScrollTop');
+ let scroller=window;
+ function validScroller(){
+  if(scroller!==window&&(!scroller.isConnected||!scroller.getClientRects().length))scroller=window;
+  return scroller;
+ }
+ function update(){
+  const target=validScroller();
+  button.hidden=(target===window?window.scrollY:target.scrollTop)<=260;
+ }
+ document.addEventListener('scroll',event=>{
+  const target=event.target;
+  if(target===document||target===document.documentElement||target===document.body)scroller=window;
+  else if(target instanceof HTMLElement&&!target.closest('.sidebar')&&target.scrollHeight>target.clientHeight)scroller=target;
+  update();
+ },{capture:true,passive:true});
+ window.addEventListener('scroll',update,{passive:true});
+ window.addEventListener('resize',update,{passive:true});
+ document.addEventListener('click',()=>requestAnimationFrame(update));
+ button.addEventListener('click',()=>{
+  validScroller().scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ });
+ update();
+})();
+</script>
+</body></html>
