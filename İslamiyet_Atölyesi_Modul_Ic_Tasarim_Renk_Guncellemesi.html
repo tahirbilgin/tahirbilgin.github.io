@@ -575,21 +575,15 @@ body{background:radial-gradient(ellipse at 82% -12%,#dfeef0 0%,transparent 39%),
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style id="mobile-navigation-fix">
 #backTrigger[hidden]{display:none!important}
 .topright{flex-shrink:0}
+.bottom-navigation{display:none!important}
 @media(max-width:720px){
  #navTrigger{display:inline-flex!important}
  .topright .avatar{display:none}
  .top{top:0;gap:8px}
  .top .top-left{gap:8px;flex:1}
  .shell.nav-drawer-open>.side{left:auto;right:0;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain}
- .bottom-navigation{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,44px);gap:5px;padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px));background:#fffdf8fa;z-index:30}
- .bottom-nav-link{display:flex;flex-direction:row;gap:7px;min-height:44px;padding:5px 4px;border:1px solid #dce6e2;border-radius:10px;background:#f2f6f3}
- .bottom-nav-link .b-icon{font-size:18px;flex-shrink:0}
- .bottom-nav-link .b-label{font-size:10px;white-space:normal;line-height:1.2;letter-spacing:0}
- .bottom-nav-link.active{border-color:#348b80;background:#dfefe9;color:#166f6a}
- .content{padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))}
- .scroll-top-button{bottom:calc(174px + env(safe-area-inset-bottom,0px))}
- html{scroll-padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))}
-}
+ .content{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+ .scroll-top-button{bottom:calc(18px + env(safe-area-inset-bottom,0px))}
 }
 </style></head><body>
 <div class="mobilebar"><button onclick="go('home')">⌂ Ana Sayfa</button><button onclick="go('principles')">◈ Konu Anlatımı</button><button onclick="go('sources')">☷ Ayet & Hadis</button><button onclick="go('cards')">▦ Kavramlar</button><button onclick="go('quiz')">✦ Bilgi Şöleni</button></div>
@@ -624,17 +618,7 @@ body{background:radial-gradient(ellipse at 82% -12%,#dfeef0 0%,transparent 39%),
 <section id="compare" class="hidden atelier-section modern-atelier"><div class="pageHead"><div class="eyebrow">KARŞILAŞTIR VE ÖĞREN</div><h1>Karşılaştırmalar</h1><p>Ders kitabındaki kavramları renkli cam panellerle yan yana inceleyin.</p></div><div class="modern-compare-grid"><article class="compare-glass"><span class="concept-pill">İBADET · S. 40</span><h2>İbadetin kapsamı</h2><div class="glass-sides"><div><small>GENEL ANLAM</small><p>Allah'ın rızasına uygun her iradî davranış</p></div><div><small>ÖZEL ANLAM</small><p>Belirlenmiş kulluk davranışları</p></div></div></article><article class="compare-glass"><span class="concept-pill">TEVHİT · S. 36</span><h2>Tevhidin iki yönü</h2><div class="glass-sides"><div><small>İLAHÎ YÖN</small><p>Allah'ın otoritesinin paylaşılmaması</p></div><div><small>BEŞERÎ YÖN</small><p>Sevgi ve itaatin Allah'a yöneltilmesi</p></div></div></article><article class="compare-glass"><span class="concept-pill">FIKHÎ TERİMLER · S. 41</span><h2>İbadetlerin sınıflandırılması</h2><div class="glass-sides"><div><small>HANEFİLER</small><p>Farz, vacip ve nafile ayrımı</p></div><div><small>DİĞER MEZHEPLER</small><p>Farz ve nafile ayrımı</p></div></div></article><article class="compare-glass"><span class="concept-pill">HAYAT · S. 37</span><h2>Dünya ve ahiret</h2><div class="glass-sides"><div><small>DÜNYA</small><p>Geçici yaşam, sorumluluk alanı</p></div><div><small>AHİRET</small><p>Kalıcı hayat ve hesap bilinci</p></div></div></article></div></section>
 </main></div>
 <button type="button" class="nav-scrim" id="navScrim" aria-label="Menüyü kapat" onclick="closeNavigation()"></button>
-<nav class="bottom-navigation" id="bottomNavigation" aria-label="Tüm öğrenme modülleri">
-<button type="button" class="bottom-nav-link active" data-bottom-to="home" onclick="go('home')" aria-current="page"><span class="b-icon" aria-hidden="true">⌂</span><span class="b-label">Ana Sayfa</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="principles" onclick="go('principles')"><span class="b-icon" aria-hidden="true">◈</span><span class="b-label">Konu Anlatımı</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="sources" onclick="go('sources')"><span class="b-icon" aria-hidden="true">☷</span><span class="b-label">Ayet & Hadis</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="cards" onclick="go('cards')"><span class="b-icon" aria-hidden="true">▦</span><span class="b-label">Kavramlar</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="scripture" onclick="go('scripture')"><span class="b-icon" aria-hidden="true">▤</span><span class="b-label">Kutsal Metinler</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="timeline" onclick="go('timeline')"><span class="b-icon" aria-hidden="true">◷</span><span class="b-label">Tarih Tüneli</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="atlas" onclick="go('atlas')"><span class="b-icon" aria-hidden="true">◎</span><span class="b-label">Harita Atlası</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="compare" onclick="go('compare')"><span class="b-icon" aria-hidden="true">⚖</span><span class="b-label">Karşılaştırmalar</span></button>
-<button type="button" class="bottom-nav-link" data-bottom-to="quiz" onclick="go('quiz')"><span class="b-icon" aria-hidden="true">✦</span><span class="b-label">Bilgi Şöleni</span></button>
-</nav>
+
 <button type="button" class="scroll-top-button" id="scrollTopButton" aria-label="Sayfanın başına dön" title="Yukarı Çık" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <div id="modalWrap" class="modalback hidden" onclick="if(event.target===this)closeModal()" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><div class="modal-accent"></div><div class="modal-head"><button class="modal-close" onclick="closeModal()" aria-label="Pencereyi kapat">×</button><div class="eyebrow" id="modalType"></div><h2 id="modalTitle"></h2></div><div class="modal-body"><div class="verse-quote" id="modalQuote"></div><div class="source-meaning"><h3>📖 Anlam ve Açıklama</h3><p id="modalText"></p></div><div class="related-pill"><span style="font-size:22px">🔗</span><div><small>İLGİLİ KONU</small><br><b id="modalRelated"></b></div></div><button class="primary" onclick="closeModal()">Anladım, Kapat</button></div></div></div>
 <script>
