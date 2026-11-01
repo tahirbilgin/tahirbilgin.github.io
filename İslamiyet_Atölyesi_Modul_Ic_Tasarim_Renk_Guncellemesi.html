@@ -572,10 +572,23 @@ body{background:radial-gradient(ellipse at 82% -12%,#dfeef0 0%,transparent 39%),
 #cards .flash-back-content strong{font-size:14px!important;line-height:1.65!important;overflow-wrap:break-word;word-break:normal}
 #cards .flash-face small{letter-spacing:0;line-height:1.5}
 }
-</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script></head><body>
+</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style id="mobile-navigation-fix">
+#backTrigger[hidden]{display:none!important}
+.topright{flex-shrink:0}
+@media(max-width:720px){
+ #navTrigger{display:inline-flex!important}
+ .topright .avatar{display:none}
+ .top{top:0;gap:8px}
+ .top .top-left{gap:8px;flex:1}
+ .shell.nav-drawer-open>.side{left:auto;right:0;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain}
+ .bottom-navigation{display:none!important}
+ .content{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+ .scroll-top-button{bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+}
+</style></head><body>
 <div class="mobilebar"><button onclick="go('home')">⌂ Ana Sayfa</button><button onclick="go('principles')">◈ Konu Anlatımı</button><button onclick="go('sources')">☷ Ayet & Hadis</button><button onclick="go('cards')">▦ Kavramlar</button><button onclick="go('quiz')">✦ Bilgi Şöleni</button></div>
 <div class="shell" id="appShell"><aside class="side" id="appSidebar"><div class="brand"><div class="logo">✺</div><div><b>İslamiyet Atölyesi</b><small>DİNLER TARİHİ</small></div><button type="button" class="nav-close" aria-label="Menüyü kapat" onclick="closeNavigation()">×</button></div><div class="caption">ÖĞRENME ALANI</div><button class="nav active" data-to="home" onclick="go('home')"><span class="ico">⌂</span>Ana Sayfa</button><button class="nav" data-to="principles" onclick="go('principles')"><span class="ico">◈</span>Konu Anlatımı</button><button class="nav" data-to="sources" onclick="go('sources')"><span class="ico">☷</span>Ayet & Hadis</button><button class="nav" data-to="cards" onclick="go('cards')"><span class="ico">▦</span>Kavramlar</button><button class="nav" data-to="scripture" onclick="go('scripture')"><span class="ico">▤</span>Kutsal Metinler</button><button class="nav" data-to="timeline" onclick="go('timeline')"><span class="ico">◷</span>Tarih Tüneli</button><button class="nav" data-to="atlas" onclick="go('atlas')"><span class="ico">◎</span>Harita Atlası</button><button class="nav" data-to="compare" onclick="go('compare')"><span class="ico">⚖</span>Karşılaştırmalar</button><button class="nav" data-to="quiz" onclick="go('quiz')"><span class="ico">✦</span>Bilgi Şöleni</button><div class="caption">DERS REHBERİ</div><div class="sidefoot"><small>✦ YENİ NESİL DERSLİK</small><p>İnançtan ibadete, ahlaktan diğer dinlerle ilişkilere: keşfederek öğren.</p><div class="progressbar"><i></i></div><small style="color:#cfdaed;letter-spacing:0">Konu keşif alanı</small></div></aside>
-<main class="content"><div class="top"><div class="top-left"><button type="button" class="nav-trigger" id="navTrigger" aria-label="Öğrenme alanı menüsünü aç veya kapat" aria-controls="appSidebar" aria-expanded="true" onclick="toggleNavigation()">☰</button><div class="crumb">Eğitim Portalı <span style="color:#59ead2"> / </span> <span id="crumbCurrent">Ana Sayfa</span></div></div><div class="topright"><span class="pill">✦ İnteraktif ders alanı</span><div class="avatar">İA</div></div></div>
+<main class="content"><div class="top"><div class="top-left"><button type="button" class="nav-trigger" id="backTrigger" aria-label="Önceki ekrana dön" onclick="navigateBack()" hidden>←</button><div class="crumb">Eğitim Portalı <span style="color:#59ead2"> / </span> <span id="crumbCurrent">Ana Sayfa</span></div></div><div class="topright"><button type="button" class="nav-trigger" id="navTrigger" aria-label="Öğrenme alanı menüsünü aç veya kapat" aria-controls="appSidebar" aria-expanded="true" onclick="toggleNavigation()">☰</button><span class="pill">✦ İnteraktif ders alanı</span><div class="avatar">İA</div></div></div>
 <section id="home" class="islam-dashboard">
 <div class="islam-hero"><div class="islam-hero-content"><div class="islam-eyebrow">DİNLER TARİHİ · DİJİTAL KEŞİF</div><h1>İslamiyet'i keşfet.<br><em>Bilgiyi deneyimle.</em></h1><p>İslamiyet'in inanç esaslarını, ibadetlerini, ahlaki değerlerini ve kutsal metinlerini keşfet. Kaynakları incele, öğren ve pekiştir.</p><div class="islam-hero-actions"><button onclick="go('principles')">Öğrenmeye Başla ↗</button><button onclick="go('quiz')">Bilgi Şöleni ✦</button></div></div></div>
 <div class="islam-section-title"><div><h2>Öğrenme Modülleri</h2><p>Keşfet · Öğren · Pekiştir</p></div><small>6 ÖĞRENME ALANI</small></div>
@@ -624,7 +637,8 @@ const classroomAnalogies={"islam": "Bir binanın sağlam kalması için temelini
 const lessons=Object.entries(principlesData).map(([id,x],i)=>({id,num:String(i+1).padStart(2,'0'),title:x.t,desc:x.s,body:x.d,page:x.page}));
 const $=id=>document.getElementById(id);
 const escapeHtml=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function go(id){setNavigationState(window.innerWidth>720,false);document.querySelectorAll('main section').forEach(e=>e.classList.toggle('hidden',e.id!==id));document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.to===id));document.querySelectorAll('.bottom-nav-link').forEach(e=>{const active=e.dataset.bottomTo===id;e.classList.toggle('active',active);if(active)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current')});$('crumbCurrent').textContent=({home:'Ana Sayfa',principles:'Konu Anlatımı',sources:'Ayet & Hadis',cards:'Kavramlar',quiz:'Bilgi Şöleni',scripture:'Kutsal Metinler',timeline:'Tarih Tüneli',atlas:'Harita Atlası',compare:'Karşılaştırmalar'})[id];window.scrollTo({top:0,behavior:'instant'});if(id==='atlas')setTimeout(initIslamAtlas,100);}
+const navigationTrail=[];
+function go(id,record=true){const current=document.querySelector('main section:not(.hidden)');if(record&&current&&current.id!==id)navigationTrail.push(current.id);document.getElementById('backTrigger').hidden=id==='home';setNavigationState(window.innerWidth>720,false);document.querySelectorAll('main section').forEach(e=>e.classList.toggle('hidden',e.id!==id));document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.to===id));document.querySelectorAll('.bottom-nav-link').forEach(e=>{const active=e.dataset.bottomTo===id;e.classList.toggle('active',active);if(active)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current')});$('crumbCurrent').textContent=({home:'Ana Sayfa',principles:'Konu Anlatımı',sources:'Ayet & Hadis',cards:'Kavramlar',quiz:'Bilgi Şöleni',scripture:'Kutsal Metinler',timeline:'Tarih Tüneli',atlas:'Harita Atlası',compare:'Karşılaştırmalar'})[id];window.scrollTo({top:0,behavior:'instant'});if(id==='atlas')setTimeout(initIslamAtlas,100);}
 function showDetail(id){go('principles');openLesson(id)}
 function openLesson(id){
 const x=principlesData[id];if(!x)return;
@@ -688,6 +702,12 @@ function setNavigationState(expanded,drawer){
  trigger.setAttribute('aria-label',drawer?'Öğrenme alanı menüsünü kapat':'Öğrenme alanı menüsünü aç');
  document.getElementById('navScrim').style.display=drawer?'block':'';
 }
+function navigateBack(){
+ if(!document.getElementById('modalWrap').classList.contains('hidden')){closeModal();return;}
+ const detail=document.getElementById('detail');
+ if(!document.getElementById('principles').classList.contains('hidden')&&!detail.classList.contains('hidden')){detail.classList.add('hidden');document.getElementById('lessonGrid').scrollIntoView({block:'start'});return;}
+ go(navigationTrail.pop()||'home',false);
+}
 function closeNavigation(){
  const isHome=!document.getElementById('home').classList.contains('hidden');
  setNavigationState(window.innerWidth>720,false);
@@ -697,7 +717,8 @@ function toggleNavigation(){
  if(shell.classList.contains('nav-drawer-open')){closeNavigation();return;}
  // Ana sayfada sabit menü; diğer modüllerde içerik üzerinde açılan çekmece.
  const isHome=!document.getElementById('home').classList.contains('hidden');
- if(isHome){setNavigationState(shell.classList.contains('nav-collapsed'),false);}
+ if(window.innerWidth<=720){setNavigationState(false,true);}
+ else if(isHome){setNavigationState(shell.classList.contains('nav-collapsed'),false);}
  else{setNavigationState(false,true);}
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNavigation()});
