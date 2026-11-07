@@ -514,7 +514,7 @@ html[data-tb-theme="dark"] .tb-section-count{color:#a7b6cc!important}
     <button type="button" class="tb-app-filter" data-category="dinler" aria-pressed="false">Dinler Tarihi</button>
     <button type="button" class="tb-app-filter" data-category="maarif" aria-pressed="false">Maarif</button>
   </div>
-  <p id="tb-app-result-count" class="tb-app-result-count" role="status" aria-live="polite">11 uygulama grubu gösteriliyor.</p>
+  <p id="tb-app-result-count" class="tb-app-result-count" role="status" aria-live="polite">15 uygulama grubu gösteriliyor.</p>
 </div>
 <div class="grid hub-items" id="tb-app-results">
 
@@ -524,6 +524,7 @@ html[data-tb-theme="dark"] .tb-section-count{color:#a7b6cc!important}
 <a class="tile" href="./tecvid.html" rel="noopener noreferrer" target="_blank"><div class="tile-cover tecvit-cover" style="background:#081d3b;padding:0;overflow:hidden"><img src="./Tecvit%20Treni_%20Gece%20Yolculu%C4%9Fu%20(1).png" alt="Tecvit Treni gece yolculuğu uygulama görseli" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover" decoding="async"></div><div class="tile-body"><h3>Tecvid Treni</h3><p>Tecvid kurallarını örnekler, etkileşimli çalışmalar ve eğlenceli öğrenme deneyimleriyle pekiştir.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
 
 <a class="tile" href="./tecvid-dedektifi.html" rel="noopener noreferrer" target="_blank" aria-label="Tecvit Dedektifi uygulamasını aç"><div class="tile-cover" style="padding:0;overflow:hidden;background:#0b1930"><img src="./tecvid-dedektifi-kapak.jpg" alt="Tecvit Dedektifi uygulama kapak görseli" loading="lazy" decoding="async" style="display:block;width:100%;height:100%;object-fit:cover"></div><div class="tile-body"><h3>Tecvit Dedektifi</h3><p>Kur’an ayetlerinde tecvit kurallarını keşfet; eşleştirmeler, hafıza kartları ve kural çarklarıyla öğren.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
+<a class="tile" href="./tecvid-carkifelek.html" target="_blank" rel="noopener noreferrer" aria-label="Tecvid Çarkıfelek uygulamasını aç" data-category="tecvid"><div class="tile-cover" style="padding:0;overflow:hidden;background:#09192b"><img src="./tecvid-carkifelek-kapak.svg" alt="Renkli dilimleri, altın çerçevesi ve ibresiyle Tecvid Çarkıfelek" loading="lazy" decoding="async" width="1200" height="600" style="display:block;width:100%;height:100%;object-fit:cover"></div><div class="tile-body"><h3>Tecvid Çarkıfelek</h3><p>9. sınıflar için sesli çarkı döndür; Arapça örneğe dokunarak tecvid kuralını ve açıklamasını keşfet. 12 kural, 24 örnek.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
 <div class="tile hub-entry"><label class="card-hit" for="chk-arapca" role="button" tabindex="0" aria-label="Arapça uygulamalarını gör"></label><div class="tile-cover" style="background:#064b3c;padding:0;overflow:hidden"><img src="./Arap%C3%A7a%20%C3%87al%C4%B1%C5%9Fma%20D%C3%BCnyas%C4%B1.png" alt="Arapça Uygulamaları tanıtım görseli" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover" decoding="async"></div><div class="tile-body"><h3>Arapça Uygulamaları</h3><p>Kelime çarkı, kelime oyunu, dil bilgisi ve bilgi yarışması.</p><label class="tile-link" for="chk-arapca" role="button" tabindex="0">Uygulamayı Aç ↗</label></div></div>
 <a class="tile" href="./namazi-ogreniyorum.html" rel="noopener noreferrer" target="_blank"><div class="tile-cover" style="padding:0;overflow:hidden;background:#07172b"><img src="./namazi-ogreniyorum-kapak.svg" alt="Namazı Öğreniyorum uygulaması kapak görseli" loading="lazy" style="display:block;width:100%;height:100%;min-height:155px;object-fit:cover" decoding="async"></div><div class="tile-body"><h3>Namazı Öğreniyorum</h3><p>Namazın 12 şartını kartlar, bilgi yarışması, eşleştirme ve günlük görevlerle öğren.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
 <a class="tile" href="./NAMAZ%20%C3%87E%C5%9E%C4%B0TLER%C4%B0%20OYUNU.html" rel="noopener noreferrer" target="_blank"><div class="tile-cover" style="padding:0;overflow:hidden;background:#061629"><img src="./namaz-cesitleri-kapak.svg?v=3kategori" alt="Namaz Çeşitleri Oyunu kapak görseli" loading="lazy" style="display:block;width:100%;height:100%;min-height:155px;object-fit:cover" decoding="async"></div><div class="tile-body"><h3>Namaz Çeşitleri Oyunu</h3><p>Farz, vacip ve nafile namazları doğru sepetlere yerleştir; bireysel veya takım olarak yarış.</p><span class="tile-link">Uygulamayı Aç ↗</span></div></a>
@@ -867,12 +868,13 @@ html[data-tb-theme="dark"] #tb-app-search .tb-app-result-count,html[data-tb-them
  var results=document.getElementById('tb-app-results');
  if(!panel||!input||!results)return;
  var cards=Array.prototype.slice.call(results.children).filter(function(el){return el.classList.contains('tile');});
- var categories=['fikih','kuran','tecvid','tecvid','arapca','namaz','namaz','maarif','hutbe','hadis','dinler','dinler'];
+ var categories=['fikih','kuran','tecvid','tecvid','tecvid','arapca','namaz','namaz','maarif','hutbe','hadis','dinler','dinler','dinler','fikih'];
  var keywords=[
    'fikih fıkıh ilkeler hukuk islam',
    'kuran kuran-i kerim kuranı kerim hafızlık hıfz ezber yüzüne okuma öğrenci takip',
    'tecvid tecvit kuran kıraat harfler',
    'tecvid dedektifi ayet eşleştirme hafıza kartları tecvid çarkı tecvit oyun',
+   'tecvid tecvit çarkıfelek carkifelek çark kural arapça 9 sınıf med ihfa izhar iklab kalkale oyun',
    'arapca arapça kelime çarkı kelime avı dil bilgisi nahiv sarf yarışma',
    'namaz ibadet namazı öğreniyorum',
    'namaz çeşitleri ibadet oyun',
@@ -882,13 +884,14 @@ html[data-tb-theme="dark"] #tb-app-search .tb-app-result-count,html[data-tb-them
    'islam islamiyet atölyesi dinler tarihi ayet hadis kavram',
    'hristiyanlık hristiyanlik atölyesi dinler tarihi kilise pavlus atlas kutsal metinler',
    'yahudilik yahudi musevilik dinler tarihi tevrat sinagog kutsal metinler atlas',
+   'fikih fıkıh keşif defteri helallerde genişlik kitap',
  ];
  var buttons=Array.prototype.slice.call(panel.querySelectorAll('.tb-app-filter'));
  var count=document.getElementById('tb-app-result-count');
  var clear=document.getElementById('tb-app-clear');
  var selected='all';
  var favoriteKey='tb-ai-lab:favorites:v1';
- var favoriteIds=['fikih-atolyesi','kuran-takip','tecvid-treni','tecvid-dedektifi','arapca-uygulamalari','namazi-ogreniyorum','namaz-cesitleri','maarif-modeli','hutbe-atolyesi','hadis-akademisi','islam-atolyesi-dinler-tarihi','hristiyanlik-atolyesi-dinler-tarihi','yahudilik-atolyesi-dinler-tarihi'];
+ var favoriteIds=['fikih-atolyesi','kuran-takip','tecvid-treni','tecvid-dedektifi','tecvid-carkifelek','arapca-uygulamalari','namazi-ogreniyorum','namaz-cesitleri','maarif-modeli','hutbe-atolyesi','hadis-akademisi','islam-atolyesi-dinler-tarihi','hristiyanlik-atolyesi-dinler-tarihi','yahudilik-atolyesi-dinler-tarihi','fikih-kesif-defteri'];
  var favorites=[];
  try{var stored=JSON.parse(localStorage.getItem(favoriteKey)||'[]');if(Array.isArray(stored))favorites=stored.filter(function(id){return favoriteIds.indexOf(id)!==-1;});}catch(err){}
  function save(){try{localStorage.setItem(favoriteKey,JSON.stringify(favorites));}catch(err){}}
